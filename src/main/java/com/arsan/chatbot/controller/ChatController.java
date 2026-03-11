@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/llm")
+@RequestMapping("/api/chatbot/")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -18,6 +18,6 @@ public class ChatController {
 
     @GetMapping("/chat")
     public String chat(@RequestParam String message) throws IOException {
-        return aiChatService.askQuestion(message);
+        return aiChatService.generateResponse(message);
     }
 }

@@ -19,7 +19,7 @@ public class AiChatService {
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
 
-    public String askQuestion(String message) throws IOException {
+    public String generateResponse(String message) throws IOException {
         if(isGreeting(message)){
             return "Hello! Please provide the aircraft registration number so I can analyze the fuel report.";
         }
