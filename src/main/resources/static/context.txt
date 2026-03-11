@@ -1,5 +1,3 @@
-FUEL DISCREPANCY DETECTION PROCEDURE
-
 DOMAIN CONTEXT:
 This procedure analyzes aviation fuel operations to detect discrepancies between recorded fuel quantities and aircraft locations. All comparisons require exact matches (==) for fuel values and location codes.
 
@@ -38,3 +36,6 @@ REQUIREMENTS:
 RESPONSE FORMAT:
 1. Brief explanation of detected discrepancy.
 2. Suggested fixes or corrective actions.
+
+
+User Message: {userMessage}

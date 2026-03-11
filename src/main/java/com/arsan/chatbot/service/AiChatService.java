@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -20,27 +21,26 @@ public class AiChatService {
     private final ChatMemory chatMemory;
 
     public String generateResponse(String message) throws IOException {
-        if(isGreeting(message)){
+        if (isGreeting(message)) {
             return "Hello! Please provide the aircraft registration number so I can analyze the fuel report.";
         }
-        log.info("User sent message: {} ", message);
+        log.info("User sent message: {}", message);
+
         ClassPathResource classPathResource = new ClassPathResource("/static/context.txt");
         String contextTxt = classPathResource.getContentAsString(StandardCharsets.UTF_8);
         PromptTemplate promptTemplate = new PromptTemplate(contextTxt);
-        Prompt prompt = promptTemplate.create();
+        Prompt prompt = promptTemplate.create(Map.of("userMessage", message));
 
         String outputText = chatClient
                 .prompt(prompt)
-                .user(message)
                 .call()
                 .content();
 
         chatMemory.get("default").forEach(m ->
-                System.out.println(m.getMessageType() + ": " + m.getText())
+                log.debug("{}: {}", m.getMessageType(), m.getText())
         );
 
-
-        log.info("Model responed with: {}", outputText.toString());
+        log.info("Model responded with: {}", outputText);
         return outputText;
     }
 
@@ -49,5 +49,3 @@ public class AiChatService {
         return lower.matches("^(hi|hello|hey|good morning|good afternoon|good evening)\\b.*");
     }
 }
-
-

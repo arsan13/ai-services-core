@@ -16,8 +16,8 @@ public class FuelServiceTool {
             description = "Returns BigDecimal fuel quantity when aircraft arrives at gate. Used in FUEL QUANTITY CHECK and REMAINING FUEL VALIDATION steps. Requires regisNbr parameter."
     )
     public BigDecimal getBlockInFuel(String regisNbr) {
-        log.info("Model fetched blockInFuel from FuelReportDTO for {}", regisNbr);
-        return BigDecimal.valueOf(27000);
+        log.info("Model fetched blockInFuel for {}", regisNbr);
+        return BigDecimal.valueOf(20000);
     }
 
     @Tool(
@@ -25,7 +25,7 @@ public class FuelServiceTool {
             description = "Returns FuelSlip object with fob (BigDecimal fuel on board) and location (String airport code). Used in FUEL QUANTITY CHECK and LOCATION CONSISTENCY steps. Requires regisNbr parameter."
     )
     public FuelSlip getFirstFuelSlip(String regisNbr) {
-        log.info("Model fetched location from FirstFuelSlip for {}", regisNbr);
+        log.info("Model fetched fuel slip for {}", regisNbr);
         FuelSlip fuelSlip = new FuelSlip();
         fuelSlip.setFob(BigDecimal.valueOf(27000));
         fuelSlip.setLocation("MEM");
