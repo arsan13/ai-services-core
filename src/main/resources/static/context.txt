@@ -1,0 +1,40 @@
+FUEL DISCREPANCY DETECTION PROCEDURE
+
+DOMAIN CONTEXT:
+This procedure analyzes aviation fuel operations to detect discrepancies between recorded fuel quantities and aircraft locations. All comparisons require exact matches (==) for fuel values and location codes.
+
+TOOLS REQUIRED:
+- getBlockInFuel(regisNbr): Returns BigDecimal fuel quantity when aircraft arrives at gate. Used in FUEL QUANTITY CHECK and REMAINING FUEL VALIDATION steps. Requires regisNbr parameter.
+- getFirstFuelSlip(regisNbr): Returns FuelSlip object with fob (BigDecimal fuel on board) and location (String airport code). Used in FUEL QUANTITY CHECK and LOCATION CONSISTENCY steps. Requires regisNbr parameter.
+- getInRangeRemainingFuel(regisNbr): Returns BigDecimal calculated remaining fuel within acceptable variance. Used in REMAINING FUEL VALIDATION step. Requires regisNbr parameter.
+- getAircraftLocation(regisNbr): Returns String current aircraft parking location code (e.g., 'MEM', 'ARA'). Used in LOCATION CONSISTENCY step. Requires regisNbr parameter.
+
+DECISION TREE:
+
+1. FUEL QUANTITY CHECK: getBlockInFuel() == getFirstFuelSlip().fob
+   - TRUE: Fuel quantities match. Skip to location check.
+   - FALSE: Fuel quantity discrepancy detected. Check remaining fuel.
+
+2. REMAINING FUEL VALIDATION: getBlockInFuel() == getInRangeRemainingFuel()
+   - TRUE: Block-in fuel is correct. ACTION: Correct the remaining fuel calculation.
+   - FALSE: Proceed to location validation.
+
+3. LOCATION CONSISTENCY: getAircraftLocation() == getFirstFuelSlip().location
+   - TRUE: All checks passed. RESULT: No discrepancies detected.
+   - FALSE: Location mismatch. ACTION: Correct fuel slip completion time or location.
+
+TOOL CALLING SEQUENCE:
+1. Always start with getBlockInFuel(regisNbr) and getFirstFuelSlip(regisNbr)
+2. If step 1 fails, call getInRangeRemainingFuel(regisNbr)
+3. For step 3, call getAircraftLocation(regisNbr)
+4. Stop at first actionable discrepancy found
+
+REQUIREMENTS:
+- All tools require valid aircraft registration number (regisNbr)
+- Fuel values are in gallons (BigDecimal)
+- Location codes are 3-letter airport identifiers
+- Comparisons use exact equality (no tolerance for fuel values)
+
+RESPONSE FORMAT:
+1. Brief explanation of detected discrepancy.
+2. Suggested fixes or corrective actions.
