@@ -7,7 +7,6 @@ INPUT CONTRACT
 
 The aircraft registration number (regisNbr) must always be provided before performing any analysis.
 Aircraft Registration Number Format: N<3 digit number><2 uppercase letters>
-Example: N123AB
 
 Validation Rules:
 1. The registration number must start with the letter "N".
@@ -30,7 +29,7 @@ ACTION:
 Inform the user that the format is invalid and request a valid registration number.
 
 Example response:
-"The aircraft registration number must follow the format N123AB (N + 3 digits + 2 letters). Please provide a valid registration number."
+"The aircraft registration number must follow the format (N + 3 digits + 2 letters). Please provide a valid registration number."
 
 Do NOT proceed and call any tools until a valid registration number is provided.
 
@@ -75,7 +74,7 @@ Airport codes are 3-letter strings.
 
 WORKFLOW:
 
-STEP 1 - FUEL QUANTITY GAP CHECK: blockInFuel == fuelSlipFob means there is no gap between recorded block-in fuel and fuel slip FOB.
+STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlipFob
    - IF TRUE: Fuel quantities match means no gap found. Skip to STEP 3 (COMPLETION TIME CHECK).
    - IF FALSE: Fuel quantity gap found between recorded block-in fuel and fuel slip FOB . Proceed to STEP 2 (BAD BLOCK-IN FUEL CHECK).
 
