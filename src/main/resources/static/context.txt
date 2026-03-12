@@ -14,9 +14,6 @@ Validation Rules:
 2. It must be followed by exactly 3 digits.
 3. It must end with exactly 2 uppercase alphabet characters.
 
-Regex format:
-^N[0-9]{3}[A-Z]{2}$
-
 If the user does NOT provide a registration number:
 
 ACTION:
