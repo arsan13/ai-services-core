@@ -49,4 +49,40 @@ public class FuelServiceTool {
         log.info("Model fetched location from EfitAircraftExt for {}", regisNbr);
         return "ARA";
     }
+
+    @Tool(
+            name = "isWrongAircraft",
+            description = "Returns boolean indicating if the aircraft registration number is incorrect. Used in WRONG AIRCRAFT CHECK step. Requires regisNbr parameter."
+    )
+    public boolean isWrongAircraft(String regisNbr) {
+        log.info("Model checked if {} is wrong aircraft", regisNbr);
+        return false;
+    }
+
+    @Tool(
+            name = "isMissingUpliftFuelSlip",
+            description = "Returns boolean indicating if the uplift fuel slip is missing. Used in MISSING UPLIFT FUEL SLIP CHECK step. Requires regisNbr parameter."
+    )
+    public boolean isMissingUpliftFuelSlip(String regisNbr) {
+        log.info("Model checked if uplift fuel slip is missing for {}", regisNbr);
+        return false;
+    }
+
+    @Tool(
+            name = "isMissingApuRunFuelSlip",
+            description = "Returns boolean indicating if the apu run fuel slip is missing. Used in MISSING APU RUN FUEL SLIP CHECK step. Requires regisNbr parameter."
+    )
+    public boolean isMissingApuRunFuelSlip(String regisNbr) {
+        log.info("Model checked if APU run fuel slip is missing for {}", regisNbr);
+        return false;
+    }
+
+    @Tool(
+            name = "isBadFuelSlip",
+            description = "Returns boolean indicating if the fuel slip is bad. Used in BAD FUEL SLIP CHECK step. Requires regisNbr parameter."
+    )
+    public boolean isBadFuelSlip(String regisNbr) {
+        log.info("Model checked if fuel slip is bad for {}", regisNbr);
+        return false;
+    }
 }
