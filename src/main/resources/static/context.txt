@@ -50,9 +50,9 @@ AVAILABLE TOOLS
 TOOL USAGE AND REASONING RULES
 
 - Never infer or guess the aircraft registration number. It must be explicitly provided by the user.
-- Always call tools when data is required.
-- Never guess fuel values or locations.
-- If data is not found from tools, ask from user.
+- Before calling any tool, determine which step of the workflow you are currently executing and which tool is required for that step.
+- Call only the tool required for the current workflow step. Do not call multiple tools unless the workflow explicitly requires it.
+- Never guess fuel values or locations. Always call tools when data is required. If the data is not found from tools, ask from user.
 - Always use the returned tool values for comparisons.
 - Stop analysis immediately when a discrepancy with an action is found.
 
