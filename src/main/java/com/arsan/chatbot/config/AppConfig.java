@@ -44,7 +44,10 @@ public class AppConfig {
             return StreamUtils.copyToString(classPathResource.getInputStream(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.error("Failed to load system prompt: " + e.getMessage());
-            return "You are an AI assistant specialized in Aviation fuel operations analysis.";
+            return """
+                You are an AI assistant specialized in Aviation fuel operations analysis.
+                Always follow the fuel discrepancy workflow.
+            """;
         }
     }
 }

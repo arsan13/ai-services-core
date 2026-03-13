@@ -36,24 +36,33 @@ Do NOT proceed and call any tools until a valid registration number is provided.
 
 AVAILABLE TOOLS
 
-- getBlockInFuel(regisNbr): Returns BigDecimal fuel quantity when aircraft arrives at gate. Used in FUEL QUANTITY CHECK and REMAINING FUEL VALIDATION steps. Requires regisNbr parameter.
-- getFirstFuelSlip(regisNbr): Returns FuelSlip object with fob (BigDecimal fuel on board) and location (String airport code). Used in FUEL QUANTITY CHECK and COMPLETION TIME CHECK steps. Requires regisNbr parameter.
-- getInRangeRemainingFuel(regisNbr): Returns BigDecimal calculated remaining fuel within acceptable variance. Used in REMAINING FUEL VALIDATION step. Requires regisNbr parameter.
-- getAircraftLocation(regisNbr): Returns String current aircraft parking location code (e.g., 'MEM', 'ARA'). Used in COMPLETION TIME CHECK step. Requires regisNbr parameter.
-- isWrongAircraft(regisNbr): Returns boolean indicating if fuel slip is associated with incorrect aircraft registration number. Used in WRONG AIRCRAFT CHECK step. Requires regisNbr parameter.
-- isMissingUpliftFuelSlip(regisNbr): Returns boolean indicating if an uplift fuel slip is missing when a positive fuel quantity gap is detected. Used in MISSING UPLIFT FUEL SLIP CHECK step. Requires regisNbr parameter.
-- isMissingApuRunFuelSlip(regisNbr): Returns boolean indicating if an APU run fuel slip is missing when a negative fuel quantity gap is detected. Used in MISSING APU RUN FUEL SLIP CHECK step. Requires regisNbr parameter.
-- isBadFuelSlip(regisNbr): Returns boolean indicating if there are errors in fuel slip data entry. Used in BAD FUEL SLIP CHECK step. Requires regisNbr parameter.
+These tools retrieve operational data required for the workflow.
 
+getBlockInFuel(regisNbr)
+Returns the aircraft block-in fuel quantity recorded when the aircraft arrives at the gate.
 
-TOOL USAGE AND REASONING RULES
+getFirstFuelSlip(regisNbr)
+Returns a FuelSlip object containing:
+- fob: fuel on board recorded in the fuel slip
+- location: airport code where fueling occurred
 
-- Never infer or guess the aircraft registration number. It must be explicitly provided by the user.
-- Before calling any tool, determine which step of the workflow you are currently executing and which tool is required for that step.
-- Call only the tool required for the current workflow step. Do not call multiple tools unless the workflow explicitly requires it.
-- Never guess fuel values or locations. Always call tools when data is required. If the data is not found from tools, ask from user.
-- Always use the returned tool values for comparisons.
-- Stop analysis immediately when a discrepancy with an action is found.
+getInRangeRemainingFuel(regisNbr)
+Returns calculated remaining fuel within acceptable variance.
+
+getAircraftLocation(regisNbr)
+Returns the aircraft's parking location code.
+
+isWrongAircraft(regisNbr)
+Returns true if the fuel slip belongs to a different aircraft.
+
+isMissingUpliftFuelSlip(regisNbr)
+Returns true if an uplift fuel slip is missing.
+
+isMissingApuRunFuelSlip(regisNbr)
+Returns true if an APU run fuel slip is missing.
+
+isBadFuelSlip(regisNbr)
+Returns true if the fuel slip contains data entry errors.
 
 
 EXECUTION RULES
@@ -121,7 +130,3 @@ Explanation:
 
 Recommended Action:
 <Corrective action>
-
-
-USER QUERY
-{userMessage}

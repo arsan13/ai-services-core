@@ -21,27 +21,23 @@ public class AiChatService {
     private final ChatMemory chatMemory;
 
     public String generateResponse(String message) throws IOException {
-        if (isGreeting(message)) {
-            return "Hello! Please provide the aircraft registration number so I can analyze the fuel report.";
-        }
         log.info("User sent message: {}", message);
 
-        ClassPathResource classPathResource = new ClassPathResource("/static/context.txt");
-        String contextTxt = classPathResource.getContentAsString(StandardCharsets.UTF_8);
-        PromptTemplate promptTemplate = new PromptTemplate(contextTxt);
-        Prompt prompt = promptTemplate.create(Map.of("userMessage", message));
-
         String outputText = chatClient
-                .prompt(prompt)
+                .prompt()
+                .system(loadContext())
+                .user(message)
                 .call()
                 .content();
 
-        chatMemory.get("default").forEach(m ->
-                log.debug("{}: {}", m.getMessageType(), m.getText())
-        );
-
         log.info("Model responded with: {}", outputText);
+
         return outputText;
+    }
+
+    private String loadContext() throws IOException {
+        ClassPathResource classPathResource = new ClassPathResource("/static/context.txt");
+       return classPathResource.getContentAsString(StandardCharsets.UTF_8);
     }
 
     private boolean isGreeting(String msg) {
