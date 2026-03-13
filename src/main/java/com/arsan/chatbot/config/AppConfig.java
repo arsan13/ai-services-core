@@ -45,9 +45,9 @@ public class AppConfig {
         } catch (IOException e) {
             log.error("Failed to load system prompt: " + e.getMessage());
             return """
-                You are an AI assistant specialized in Aviation fuel operations analysis.
-                Always follow the fuel discrepancy workflow.
-            """;
+                    You are an AI assistant specialized in Aviation fuel operations analysis.
+                    Always follow the fuel discrepancy workflow.
+                    """;
         }
     }
 }

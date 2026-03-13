@@ -4,14 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -37,7 +34,7 @@ public class AiChatService {
 
     private String loadContext() throws IOException {
         ClassPathResource classPathResource = new ClassPathResource("/static/context.txt");
-       return classPathResource.getContentAsString(StandardCharsets.UTF_8);
+        return classPathResource.getContentAsString(StandardCharsets.UTF_8);
     }
 
     private boolean isGreeting(String msg) {

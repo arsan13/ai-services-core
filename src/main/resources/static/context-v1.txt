@@ -23,37 +23,38 @@ Do NOT call tools until a valid registration number is available.
 
 AVAILABLE TOOLS
 
+These tools retrieve operational fueling data.
+
 getBlockInFuel(regisNbr)
 Returns the aircraft block-in fuel quantity recorded when the aircraft arrives at the gate.
 
 getFirstFuelSlip(regisNbr)
-Returns a FuelSlip object containing
+Returns a FuelSlip object with:
 - fob : fuel on board recorded in the fuel slip
 - location : airport code where fueling occurred
 
 getInRangeRemainingFuel(regisNbr)
-Returns calculated remaining fuel within acceptable variance.
+Returns the calculated remaining fuel within acceptable variance.
 
 getAircraftLocation(regisNbr)
 Returns the aircraft's parking location code.
 
 isWrongAircraft(regisNbr)
-Returns true if the fuel slip belongs to a different aircraft.
+Returns TRUE if the fuel slip belongs to a different aircraft.
 
 isMissingUpliftFuelSlip(regisNbr)
-Returns true if an uplift fuel slip is missing.
+Returns TRUE if an uplift fuel slip is missing.
 
 isMissingApuRunFuelSlip(regisNbr)
-Returns true if an APU run fuel slip is missing.
+Returns TRUE if an APU run fuel slip is missing.
 
 isBadFuelSlip(regisNbr)
-Returns true if the fuel slip contains data entry errors.
+Returns TRUE if the fuel slip contains incorrect data.
 
 
+EXECUTION RULES
 
-MANDATORY INITIAL DATA RETRIEVAL
-
-Always start by retrieving baseline fueling data.
+At the start of analysis always retrieve the baseline fueling data:
 
 blockInFuel = getBlockInFuel(regisNbr)
 
@@ -64,193 +65,176 @@ fuelSlipLocation = fuelSlip.location
 
 
 
-DISCREPANCY ANALYSIS STEPS
+DISCREPANCY ANALYSIS WORKFLOW
 
 
-STEP 1 — FUEL QUANTITY GAP CHECK
+WORKFLOW
 
-Compare
 
+STEP 1 - FUEL QUANTITY GAP CHECK
+
+Check if the block-in fuel equals the fuel slip FOB.
+
+Condition:
 blockInFuel == fuelSlipFob
 
-If TRUE
+IF TRUE
 Fuel quantities match.
+No gap exists.
 
-Proceed to STEP 5 — LOCATION CONSISTENCY CHECK.
+Proceed to STEP 3 (COMPLETION TIME CHECK)
 
-If FALSE
-A fuel quantity discrepancy exists.
+IF FALSE
+Fuel quantity gap detected between block-in fuel and fuel slip FOB.
 
-Proceed to STEP 2.
+Proceed to STEP 2 (BAD BLOCK-IN FUEL CHECK)
 
 
 
-STEP 2 — REMAINING FUEL VALIDATION
+STEP 2 - BAD BLOCK-IN FUEL CHECK
 
-Call
+Retrieve remaining fuel:
 
-getInRangeRemainingFuel(regisNbr)
+remainingFuel = getInRangeRemainingFuel(regisNbr)
 
-Compare
+Condition:
+blockInFuel == remainingFuel
 
-blockInFuel == inRangeRemainingFuel
+IF TRUE
+Block-in fuel is correct.
 
-If TRUE
-
-Issue
-Remaining fuel calculation error.
-
-Action
+ACTION
 Correct the remaining fuel calculation.
 
-Stop analysis.
+STOP analysis.
 
-If FALSE
-
-Proceed to STEP 3.
-
-
-
-STEP 3 — GAP TYPE IDENTIFICATION
-
-Calculate
-
-gap = fuelSlipFob − blockInFuel
-
-If gap > 0
-Positive fuel gap detected.
-
-Proceed to STEP 4.
-
-If gap < 0
-Negative fuel gap detected.
-
-Proceed to STEP 4.
+IF FALSE
+Proceed to STEP 3 (COMPLETION TIME CHECK)
 
 
 
-STEP 4 — WRONG AIRCRAFT CHECK
+STEP 3 - COMPLETION TIME CHECK
 
-Call
+Retrieve aircraft location:
 
-isWrongAircraft(regisNbr)
+aircraftLocation = getAircraftLocation(regisNbr)
 
-If TRUE
-
-Issue
-Fuel slip belongs to the wrong aircraft.
-
-Action
-Verify the aircraft registration number used in the fuel slip.
-
-Stop analysis.
-
-If FALSE
-
-Continue analysis.
-
-If gap > 0
-Proceed to STEP 6.
-
-If gap < 0
-Proceed to STEP 7.
-
-
-
-STEP 5 — LOCATION CONSISTENCY CHECK
-
-Call
-
-getAircraftLocation(regisNbr)
-
-Compare
-
+Condition:
 aircraftLocation == fuelSlipLocation
 
-If TRUE
+IF TRUE
+All checks passed.
 
-Result
-No discrepancy detected.
+RESULT
+No discrepancies detected.
 
-If FALSE
+STOP analysis.
 
-Issue
-Fuel slip location mismatch.
-
-Action
-Correct the fuel slip completion location or timestamp.
-
-Stop analysis.
+IF FALSE
+Proceed to STEP 4 (WRONG AIRCRAFT CHECK)
 
 
 
-STEP 6 — MISSING UPLIFT FUEL SLIP CHECK
+STEP 4 - WRONG AIRCRAFT CHECK
 
-Call
+Check whether the fuel slip belongs to the correct aircraft.
 
+Condition:
+isWrongAircraft(regisNbr)
+
+IF TRUE
+
+ACTION
+Verify the aircraft registration number used in the fuel slip.
+
+STOP analysis.
+
+IF FALSE
+
+Proceed to STEP 5 (GAP TYPE CHECK)
+
+
+
+STEP 5 - GAP TYPE CHECK
+
+Calculate the fuel gap:
+
+gap = fuelSlipFob - blockInFuel
+
+IF gap == 0
+No gap exists.
+
+ACTION
+Escalate the discrepancy for manual investigation.
+
+STOP analysis.
+
+IF gap > 0
+Positive gap detected.
+
+Proceed to STEP 6 (MISSING UPLIFT FUEL SLIP CHECK)
+
+IF gap < 0
+Negative gap detected.
+
+Proceed to STEP 7 (MISSING APU RUN FUEL SLIP CHECK)
+
+
+
+STEP 6 - MISSING UPLIFT FUEL SLIP CHECK
+
+Condition:
 isMissingUpliftFuelSlip(regisNbr)
 
-If TRUE
+IF TRUE
 
-Issue
-Missing uplift fuel slip.
+ACTION
+Create Uplift Fuel Slip.
 
-Action
-Create the missing uplift fuel slip.
+STOP analysis.
 
-Stop analysis.
+IF FALSE
 
-If FALSE
-
-Proceed to STEP 8.
+Proceed to STEP 8 (BAD FUEL SLIP CHECK)
 
 
 
-STEP 7 — MISSING APU RUN FUEL SLIP CHECK
+STEP 7 - MISSING APU RUN FUEL SLIP CHECK
 
-Call
-
+Condition:
 isMissingApuRunFuelSlip(regisNbr)
 
-If TRUE
+IF TRUE
 
-Issue
-Missing APU run fuel slip.
+ACTION
+Create APU Run Fuel Slip.
 
-Action
-Create the missing APU run fuel slip.
+STOP analysis.
 
-Stop analysis.
+IF FALSE
 
-If FALSE
-
-Proceed to STEP 8.
+Proceed to STEP 8 (BAD FUEL SLIP CHECK)
 
 
 
-STEP 8 — BAD FUEL SLIP CHECK
+STEP 8 - BAD FUEL SLIP CHECK
 
-Call
-
+Condition:
 isBadFuelSlip(regisNbr)
 
-If TRUE
+IF TRUE
 
-Issue
-Fuel slip contains incorrect data.
+ACTION
+Correct fuel slip records and ensure accurate data entry.
 
-Action
-Correct fuel slip data entry.
+STOP analysis.
 
-Stop analysis.
+IF FALSE
 
-If FALSE
+ACTION
+Escalate the discrepancy for manual investigation.
 
-Issue
-Unknown discrepancy.
-
-Action
-Escalate for manual investigation.
+STOP analysis.
 
 
 
