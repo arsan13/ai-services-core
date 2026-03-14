@@ -123,16 +123,14 @@ Condition:
 aircraftLocation == fuelSlipLocation
 
 IF TRUE
-All checks passed.
-
-RESULT
-No discrepancies detected.
-
-STOP analysis.
-
-IF FALSE
 Proceed to STEP 4 (WRONG AIRCRAFT CHECK)
 
+IF FALSE
+
+RESULT
+Fix the fuel slip.
+
+STOP analysis.
 
 
 STEP 4 - WRONG AIRCRAFT CHECK

@@ -27,7 +27,7 @@ public class FuelServiceTool {
     public FuelSlip getFirstFuelSlip(String regisNbr) {
         log.info("Model fetched fuel slip for {}", regisNbr);
         FuelSlip fuelSlip = new FuelSlip();
-        fuelSlip.setFob(BigDecimal.valueOf(27000));
+        fuelSlip.setFob(BigDecimal.valueOf(15000));
         fuelSlip.setLocation("MEM");
         return fuelSlip;
     }
@@ -38,7 +38,7 @@ public class FuelServiceTool {
     )
     public BigDecimal getInRangeRemainingFuel(String regisNbr) {
         log.info("Model fetched inRangeRemainingFuel from EfitForteLegExt for {}", regisNbr);
-        return BigDecimal.valueOf(20000);
+        return BigDecimal.valueOf(25000);
     }
 
     @Tool(
@@ -47,7 +47,7 @@ public class FuelServiceTool {
     )
     public String getAircraftLocation(String regisNbr) {
         log.info("Model fetched location from EfitAircraftExt for {}", regisNbr);
-        return "ARA";
+        return "MEM";
     }
 
     @Tool(
@@ -83,6 +83,6 @@ public class FuelServiceTool {
     )
     public boolean isBadFuelSlip(String regisNbr) {
         log.info("Model checked if fuel slip is bad for {}", regisNbr);
-        return false;
+        return true;
     }
 }
