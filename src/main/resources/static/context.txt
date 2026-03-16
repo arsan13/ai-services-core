@@ -102,8 +102,9 @@ STEP 4 - WRONG AIRCRAFT CHECK: isWrongAircraft(regisNbr) checks if the fuel slip
 STEP 5 - GAP TYPE CHECK:
     Calculate gap:
     gap = fuelSlipFob - blockInFuel
-   - IF gap > 0: Positive Gap. Proceed to STEP (6) MISSING UPLIFT FUEL SLIP CHECK.
-   - IF gap < 0: Negative Gap. Proceed to STEP (7) MISSING APU RUN FUEL SLIP CHECK.
+   - IF gap == 0: No gap exists. ACTION: Escalate for further investigation. STOP analysis.
+   - IF gap > 0: Positive Gap. Proceed to STEP 6 (MISSING UPLIFT FUEL SLIP CHECK).
+   - IF gap < 0: Negative Gap. Proceed to STEP 7 (MISSING APU RUN FUEL SLIP CHECK).
 
 STEP 6 - MISSING UPLIFT FUEL SLIP CHECK: isMissingUpliftFuelSlip(regisNbr) checks for missing uplift fuel slip when gap is positive.
    - IF TRUE: ACTION: Create Uplift Fuel Slip. STOP analysis.
