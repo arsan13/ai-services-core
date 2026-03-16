@@ -22,13 +22,18 @@ public class FuelServiceTool {
 
     @Tool(
             name = "getFirstFuelSlip",
-            description = "Returns FuelSlip object with fob (BigDecimal fuel on board) and location (String airport code). Used in FUEL QUANTITY CHECK and LOCATION CONSISTENCY steps. Requires regisNbr parameter."
+            description = "Returns FuelSlip object with fob (BigDecimal fuel on board) and location (String airport code). Used in FUEL QUANTITY CHECK, COMPLETION TIME CHECK and BAD FUEL SLIP CHECK steps. Requires regisNbr parameter."
     )
     public FuelSlip getFirstFuelSlip(String regisNbr) {
         log.info("Model fetched fuel slip for {}", regisNbr);
         FuelSlip fuelSlip = new FuelSlip();
+        fuelSlip.setPreFob(BigDecimal.valueOf(10000));
         fuelSlip.setFob(BigDecimal.valueOf(15000));
         fuelSlip.setLocation("MEM");
+        fuelSlip.setComputed(BigDecimal.valueOf(10000));
+        fuelSlip.setIndicated(BigDecimal.valueOf(10000));
+        fuelSlip.setMeteredFuel(BigDecimal.valueOf(1000));
+        fuelSlip.setDensity(6.7);
         return fuelSlip;
     }
 
@@ -43,7 +48,7 @@ public class FuelServiceTool {
 
     @Tool(
             name = "getAircraftLocation",
-            description = "Returns String current aircraft parking location code (e.g., 'MEM', 'ARA'). Used in LOCATION CONSISTENCY step. Requires regisNbr parameter."
+            description = "Returns String current aircraft parking location code (e.g., 'MEM', 'ARA'). Used in COMPLETION TIME CHECK step. Requires regisNbr parameter."
     )
     public String getAircraftLocation(String regisNbr) {
         log.info("Model fetched location from EfitAircraftExt for {}", regisNbr);
@@ -75,14 +80,5 @@ public class FuelServiceTool {
     public boolean isMissingApuRunFuelSlip(String regisNbr) {
         log.info("Model checked if APU run fuel slip is missing for {}", regisNbr);
         return false;
-    }
-
-    @Tool(
-            name = "isBadFuelSlip",
-            description = "Returns boolean indicating if the fuel slip is bad. Used in BAD FUEL SLIP CHECK step. Requires regisNbr parameter."
-    )
-    public boolean isBadFuelSlip(String regisNbr) {
-        log.info("Model checked if fuel slip is bad for {}", regisNbr);
-        return true;
     }
 }

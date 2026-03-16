@@ -40,9 +40,6 @@ Always begin by retrieving:
 blockInFuel = getBlockInFuel(regisNbr)
 fuelSlip = getFirstFuelSlip(regisNbr)
 
-fuelSlipFob = fuelSlip.fob
-fuelSlipLocation = fuelSlip.location
-
 Fuel comparisons must use exact equality.
 Fuel quantity values are in gallons.
 Airport codes are 3-letter strings.
@@ -50,7 +47,7 @@ Airport codes are 3-letter strings.
 
 WORKFLOW:
 
-STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlipFob
+STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlip.fob
    - IF TRUE: Fuel quantities match means no gap found. Skip to STEP 3 (COMPLETION TIME CHECK).
    - IF FALSE: Fuel quantity gap found between recorded block-in fuel and fuel slip FOB . Proceed to STEP 2 (BAD BLOCK-IN FUEL CHECK).
 
@@ -58,7 +55,7 @@ STEP 2 - BAD BLOCK-IN FUEL CHECK: blockInFuel == getInRangeRemainingFuel(regisNb
    - IF TRUE: Block-in fuel is correct. ACTION: Correct the remaining fuel calculation. STOP analysis.
    - IF FALSE: Proceed to STEP 3 (COMPLETION TIME CHECK).
 
-STEP 3 - COMPLETION TIME CHECK: getAircraftLocation(regisNbr) == fuelSlipLocation
+STEP 3 - COMPLETION TIME CHECK: getAircraftLocation(regisNbr) == fuelSlip.location
    - IF TRUE: Proceed to STEP 4 (WRONG AIRCRAFT CHECK).
    - IF FALSE: ACTION: Verify correct fueling location and ensure fuel slip is associated with the correct airport. STOP analysis.
 
@@ -68,7 +65,7 @@ STEP 4 - WRONG AIRCRAFT CHECK: isWrongAircraft(regisNbr) checks if the fuel slip
 
 STEP 5 - GAP TYPE CHECK:
     Calculate gap:
-    gap = fuelSlipFob - blockInFuel
+    gap = fuelSlip.fob - blockInFuel
    - IF gap == 0: No gap exists. ACTION: Escalate for further investigation. STOP analysis.
    - IF gap > 0: Positive Gap. Proceed to STEP 6 (MISSING UPLIFT FUEL SLIP CHECK).
    - IF gap < 0: Negative Gap. Proceed to STEP 7 (MISSING APU RUN FUEL SLIP CHECK).
@@ -81,9 +78,10 @@ STEP 7 - MISSING APU RUN FUEL SLIP CHECK: isMissingApuRunFuelSlip(regisNbr) chec
    - IF TRUE: ACTION: Create APU Run Fuel Slip. STOP analysis.
    - IF FALSE: Proceed to STEP 8 (BAD FUEL SLIP CHECK).
 
-STEP 8 - BAD FUEL SLIP CHECK: isBadFuelSlip(regisNbr) checks for errors in fuel slip data entry.
-   - IF TRUE: ACTION: Correct fuel slip records and ensure accurate data entry. STOP analysis.
-   - IF FALSE: ACTION: Escalate. STOP analysis.
+STEP 8 - BAD FUEL SLIP CHECK: Checks for errors in fuel slip.
+   - IF fuelSlip.computed < fuelSlip.indicated: Indicates the Before Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the Before FOB in the fuel slip . STOP analysis.
+   - IF fuelSlip.computed > fuelSlip.indicated: Indicates the After Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the After FOB in the fuel slip . STOP analysis.
+   - IF fuelSlip.computed == fuelSlip.indicated: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate. STOP analysis.
 
 
 OUTPUT FORMAT

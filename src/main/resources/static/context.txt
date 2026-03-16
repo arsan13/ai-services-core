@@ -114,9 +114,11 @@ STEP 7 - MISSING APU RUN FUEL SLIP CHECK: isMissingApuRunFuelSlip(regisNbr) chec
    - IF TRUE: ACTION: Create APU Run Fuel Slip. STOP analysis.
    - IF FALSE: Proceed to STEP 8 (BAD FUEL SLIP CHECK).
 
-STEP 8 - BAD FUEL SLIP CHECK: isBadFuelSlip(regisNbr) checks for errors in fuel slip data entry.
-   - IF TRUE: ACTION: Correct fuel slip records and ensure accurate data entry. STOP analysis.
-   - IF FALSE: ACTION: Escalate. STOP analysis.
+STEP 8 - BAD FUEL SLIP CHECK: Checks for errors in fuel slip.
+   - IF fuelSlip.computed < fuelSlip.indicated: Indicates the Before Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the Before FOB in the fuel slip . STOP analysis.
+   - IF fuelSlip.computed > fuelSlip.indicated: Indicates the After Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the After FOB in the fuel slip . STOP analysis.
+   - IF fuelSlip.computed == fuelSlip.indicated: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate. STOP analysis.
+   - IF fuelSlip.meteredFuel < 0 AND fuelSlip.preFob < fuelSlip.fob: Indicates Uplift as Defuel. ACTION: Correct the metered fuel value in the fuel slip. STOP analysis.
 
 
 OUTPUT FORMAT
