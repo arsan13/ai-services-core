@@ -82,6 +82,7 @@ STEP 8 - BAD FUEL SLIP CHECK: Checks for errors in fuel slip.
    - IF fuelSlip.computed < fuelSlip.indicated: Indicates the Before Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the Before FOB in the fuel slip . STOP analysis.
    - IF fuelSlip.computed > fuelSlip.indicated: Indicates the After Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the After FOB in the fuel slip . STOP analysis.
    - IF fuelSlip.computed == fuelSlip.indicated: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate. STOP analysis.
+   - IF fuelSlip.density is outside the acceptable range of(6.31 - 7.17): Indicates incorrect density value in the fuel slip. ACTION: Correct the density value in the fuel slip. STOP analysis.
 
 
 OUTPUT FORMAT
