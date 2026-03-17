@@ -85,17 +85,3 @@ STEP 8 - BAD FUEL SLIP CHECK: Checks for errors in fuel slip.
    - IF fuelSlip.density is outside the acceptable range of(6.31 - 7.17): Indicates incorrect density value in the fuel slip. ACTION: Correct the density value in the fuel slip.
    - IF fuelSlip.computed == fuelSlip.indicated: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate.
    Stop analysis after taking the appropriate action based on the above conditions.
-
-
-OUTPUT FORMAT
-
-Always respond using this structure
-
-**Issue:**
-<Detected problem>
-
-**Explanation:**
-<Why this issue occurred>
-
-**Recommended Action:**
-<Corrective action>

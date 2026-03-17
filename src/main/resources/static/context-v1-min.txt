@@ -1,0 +1,45 @@
+WORKFLOW:
+
+STEP 1: GAP_CHECK
+Call getBlockInFuel(regisNbr=regisNbr) and assign to blockInFuel
+Call getFirstFuelSlip(regisNbr=regisNbr) and assign to fuelSlip
+If blockInFuel equals fuelSlip.preFob then go to STEP 3
+Else go to STEP 2
+
+STEP 2: BLOCK_IN_VALIDATION
+Call getInRangeRemainingFuel(regisNbr=regisNbr) and assign to inRangeFuel
+If blockInFuel equals inRangeFuel then perform action: Correct remaining fuel calculation
+Else go to STEP 3
+
+STEP 3: COMPLETION_TIME_CHECK
+Call getAircraftLocation(regisNbr=regisNbr) and assign to aircraftLocation
+If aircraftLocation does not equal fuelSlip.location then perform action: Verify fueling location and correct airport
+Else go to STEP 4
+
+STEP 4: AIRCRAFT_CHECK
+Call isWrongAircraft(regisNbr=regisNbr) and assign to wrongAircraft
+If wrongAircraft is true then perform action: Verify aircraft registration in fuel slip
+Else go to STEP 5
+
+STEP 5: GAP_TYPE
+Set gap equal to fuelSlip.preFob minus blockInFuel
+If gap equals 0 then perform action: Escalate for investigation
+If gap greater than 0 then go to STEP 6
+If gap less than 0 then go to STEP 7
+
+STEP 6: MISSING_UPLIFT
+Call isMissingUpliftFuelSlip(regisNbr=regisNbr) and assign to missingUplift
+If missingUplift is true then perform action: Create Uplift Fuel Slip
+Else go to STEP 8
+
+STEP 7: MISSING_APU
+Call isMissingApuRunFuelSlip(regisNbr=regisNbr) and assign to missingApu
+If missingApu is true then perform action: Create APU Run Fuel Slip
+Else go to STEP 8
+
+STEP 8: FUEL_SLIP_VALIDATION
+If fuelSlip.computed less than fuelSlip.indicated then perform action: Correct Before FOB
+If fuelSlip.computed greater than fuelSlip.indicated then perform action: Correct After FOB
+If fuelSlip.meteredFuel less than 0 and fuelSlip.preFob less than fuelSlip.fob then perform action: Correct metered fuel value
+If fuelSlip.density less than 6.31 or greater than 7.17 then perform action: Correct density value
+If fuelSlip.computed equals fuelSlip.indicated then perform action: Escalate
