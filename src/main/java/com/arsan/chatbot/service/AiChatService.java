@@ -38,8 +38,13 @@ public class AiChatService {
         return chatMemory.get("default");
     }
 
-    private String loadContext() throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource("/static/context-V1.txt");
-        return classPathResource.getContentAsString(StandardCharsets.UTF_8);
+    private String loadContext() {
+        try {
+            ClassPathResource classPathResource = new ClassPathResource("/static/context-v1-min.txt");
+            return classPathResource.getContentAsString(StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error("Failed to load workflow context: {}", e.getMessage());
+            return "";
+        }
     }
 }
