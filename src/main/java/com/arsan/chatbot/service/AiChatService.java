@@ -39,7 +39,7 @@ public class AiChatService {
     }
 
     private String loadContext() throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource("/static/context.txt");
+        ClassPathResource classPathResource = new ClassPathResource("/static/context-V1.txt");
         return classPathResource.getContentAsString(StandardCharsets.UTF_8);
     }
 }

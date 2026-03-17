@@ -73,7 +73,7 @@ Always begin by retrieving:
 blockInFuel = getBlockInFuel(regisNbr)
 fuelSlip = getFirstFuelSlip(regisNbr)
 
-fuelSlipFob = fuelSlip.fob
+fuelSlipPreFob = fuelSlip.preFob
 fuelSlipLocation = fuelSlip.location
 
 Fuel comparisons must use exact equality.
@@ -83,7 +83,7 @@ Airport codes are 3-letter strings.
 
 WORKFLOW:
 
-STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlipFob
+STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlipPreFob
    - IF TRUE: Fuel quantities match means no gap found. Skip to STEP 3 (COMPLETION TIME CHECK).
    - IF FALSE: Fuel quantity gap found between recorded block-in fuel and fuel slip FOB . Proceed to STEP 2 (BAD BLOCK-IN FUEL CHECK).
 
@@ -101,7 +101,7 @@ STEP 4 - WRONG AIRCRAFT CHECK: isWrongAircraft(regisNbr) checks if the fuel slip
 
 STEP 5 - GAP TYPE CHECK:
     Calculate gap:
-    gap = fuelSlipFob - blockInFuel
+    gap = fuelSlipPreFob - blockInFuel
    - IF gap == 0: No gap exists. ACTION: Escalate for further investigation. STOP analysis.
    - IF gap > 0: Positive Gap. Proceed to STEP 6 (MISSING UPLIFT FUEL SLIP CHECK).
    - IF gap < 0: Negative Gap. Proceed to STEP 7 (MISSING APU RUN FUEL SLIP CHECK).

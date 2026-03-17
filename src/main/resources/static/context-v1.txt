@@ -47,7 +47,7 @@ Airport codes are 3-letter strings.
 
 WORKFLOW:
 
-STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlip.fob
+STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlip.preFob
    - IF TRUE: Fuel quantities match means no gap found. Skip to STEP 3 (COMPLETION TIME CHECK).
    - IF FALSE: Fuel quantity gap found between recorded block-in fuel and fuel slip FOB . Proceed to STEP 2 (BAD BLOCK-IN FUEL CHECK).
 
@@ -65,7 +65,7 @@ STEP 4 - WRONG AIRCRAFT CHECK: isWrongAircraft(regisNbr) checks if the fuel slip
 
 STEP 5 - GAP TYPE CHECK:
     Calculate gap:
-    gap = fuelSlip.fob - blockInFuel
+    gap = fuelSlip.preFob - blockInFuel
    - IF gap == 0: No gap exists. ACTION: Escalate for further investigation. STOP analysis.
    - IF gap > 0: Positive Gap. Proceed to STEP 6 (MISSING UPLIFT FUEL SLIP CHECK).
    - IF gap < 0: Negative Gap. Proceed to STEP 7 (MISSING APU RUN FUEL SLIP CHECK).
@@ -79,10 +79,12 @@ STEP 7 - MISSING APU RUN FUEL SLIP CHECK: isMissingApuRunFuelSlip(regisNbr) chec
    - IF FALSE: Proceed to STEP 8 (BAD FUEL SLIP CHECK).
 
 STEP 8 - BAD FUEL SLIP CHECK: Checks for errors in fuel slip.
-   - IF fuelSlip.computed < fuelSlip.indicated: Indicates the Before Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the Before FOB in the fuel slip . STOP analysis.
-   - IF fuelSlip.computed > fuelSlip.indicated: Indicates the After Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the After FOB in the fuel slip . STOP analysis.
-   - IF fuelSlip.computed == fuelSlip.indicated: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate. STOP analysis.
-   - IF fuelSlip.density is outside the acceptable range of(6.31 - 7.17): Indicates incorrect density value in the fuel slip. ACTION: Correct the density value in the fuel slip. STOP analysis.
+   - IF fuelSlip.computed < fuelSlip.indicated: Indicates the Before Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the Before FOB in the fuel slip.
+   - IF fuelSlip.computed > fuelSlip.indicated: Indicates the After Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the After FOB in the fuel slip.
+   - IF fuelSlip.meteredFuel < 0 AND fuelSlip.preFob < fuelSlip.fob: Indicates Uplift as Defuel. ACTION: Correct the metered fuel value in the fuel slip.
+   - IF fuelSlip.density is outside the acceptable range of(6.31 - 7.17): Indicates incorrect density value in the fuel slip. ACTION: Correct the density value in the fuel slip.
+   - IF fuelSlip.computed == fuelSlip.indicated: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate.
+   Stop analysis after taking the appropriate action based on the above conditions.
 
 
 OUTPUT FORMAT

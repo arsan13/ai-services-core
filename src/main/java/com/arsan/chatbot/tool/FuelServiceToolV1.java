@@ -27,7 +27,8 @@ public class FuelServiceToolV1 {
     public FuelSlip getFirstFuelSlip(String regisNbr) {
         log.info("Model fetched fuel slip for {}", regisNbr);
         FuelSlip fuelSlip = new FuelSlip();
-        fuelSlip.setFob(BigDecimal.valueOf(15000));
+        fuelSlip.setPreFob(BigDecimal.valueOf(22000));
+        fuelSlip.setFob(BigDecimal.valueOf(25000));
         fuelSlip.setLocation("MEM");
         fuelSlip.setComputed(BigDecimal.valueOf(10000));
         fuelSlip.setIndicated(BigDecimal.valueOf(10000));
