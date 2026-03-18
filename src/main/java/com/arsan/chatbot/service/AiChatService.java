@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,7 +32,7 @@ public class AiChatService {
 
         log.info("Model responded with: {}", outputText);
 
-        return outputText;
+        return Optional.ofNullable(outputText).orElse("Sorry, I couldn't generate a response.");
     }
 
     public List<Message> getChatHistory() {
@@ -40,7 +41,7 @@ public class AiChatService {
 
     private String loadContext() {
         try {
-            ClassPathResource classPathResource = new ClassPathResource("/static/context-v1-min.txt");
+            ClassPathResource classPathResource = new ClassPathResource("/static/context-v1.txt");
             return classPathResource.getContentAsString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.error("Failed to load workflow context: {}", e.getMessage());

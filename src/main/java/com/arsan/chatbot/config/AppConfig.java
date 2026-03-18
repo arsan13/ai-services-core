@@ -30,7 +30,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ChatClient chatClient(FuelServiceToolV1Min fuelServiceTool, ChatClient.Builder builder, ChatMemory chatMemory) {
+    public ChatClient chatClient(FuelServiceToolV1 fuelServiceTool, ChatClient.Builder builder, ChatMemory chatMemory) {
         return builder
                 .defaultSystem(loadSystemPrompt())
                 .defaultAdvisors(
