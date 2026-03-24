@@ -1,8 +1,6 @@
 package com.arsan.chatbot.config;
 
-import com.arsan.chatbot.tool.FuelServiceTool;
 import com.arsan.chatbot.tool.FuelServiceToolV1;
-import com.arsan.chatbot.tool.FuelServiceToolV1Min;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;

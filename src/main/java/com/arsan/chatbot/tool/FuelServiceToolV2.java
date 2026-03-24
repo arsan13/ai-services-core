@@ -11,115 +11,58 @@ import java.math.BigDecimal;
 @Component
 public class FuelServiceToolV2 {
 
-    @Tool(
-            name = "getBlockInFuel",
-            description = """
-                    Retrieve the aircraft block-in fuel quantity recorded when the aircraft arrives at the gate.
-                    This value is required at the start of the workflow and is used in STEP 1 - FUEL QUANTITY GAP CHECK.
-                    """
-    )
+    // STEP 1 & STEP 2: FUEL QUANTITY & BLOCK-IN VALIDATION
+    @Tool(name = "getBlockInFuel", description = "Returns aircraft block-in fuel in gallons. Requires regisNbr.")
     public BigDecimal getBlockInFuel(String regisNbr) {
-        log.info("Fetching block-in fuel for {}", regisNbr);
+        log.info("Fetched blockInFuel for {}", regisNbr);
         return BigDecimal.valueOf(20000);
     }
 
-    @Tool(
-            name = "getFirstFuelSlip",
-            description = """
-                    Retrieve the first fuel slip for the aircraft.
-                    
-                    Returns:
-                    - fob : fuel on board recorded in the fuel slip
-                    - location : airport code where fueling occurred
-                    
-                    Used in STEP 1 - FUEL QUANTITY GAP CHECK and STEP 3 - COMPLETION TIME CHECK.
-                    """
-    )
+    @Tool(name = "getFirstFuelSlip", description = "Returns FuelSlip object. Required for gap, location, and slip validation checks. Requires regisNbr.")
     public FuelSlip getFirstFuelSlip(String regisNbr) {
-        log.info("Fetching fuel slip for {}", regisNbr);
-
+        log.info("Fetched first fuel slip for {}", regisNbr);
         FuelSlip slip = new FuelSlip();
-        slip.setFob(BigDecimal.valueOf(27000));
+        slip.setPreFob(BigDecimal.valueOf(22000));
+        slip.setFob(BigDecimal.valueOf(25000));
         slip.setLocation("MEM");
-
+        slip.setComputed(BigDecimal.valueOf(10000));
+        slip.setIndicated(BigDecimal.valueOf(10000));
+        slip.setMeteredFuel(BigDecimal.valueOf(1000));
+        slip.setDensity(7.7);
         return slip;
     }
 
-    @Tool(
-            name = "getInRangeRemainingFuel",
-            description = """
-                    Retrieve the calculated remaining fuel within acceptable variance.
-                    
-                    Used in STEP 2 - BAD BLOCK-IN FUEL CHECK to determine whether the remaining fuel calculation is incorrect.
-                    """
-    )
+    @Tool(name = "getInRangeRemainingFuel", description = "Returns calculated remaining fuel within acceptable variance. STEP 2 validation. Requires regisNbr.")
     public BigDecimal getInRangeRemainingFuel(String regisNbr) {
-        log.info("Fetching remaining fuel for {}", regisNbr);
-        return BigDecimal.valueOf(20000);
+        log.info("Fetched inRangeRemainingFuel for {}", regisNbr);
+        return BigDecimal.valueOf(25000);
     }
 
-    @Tool(
-            name = "getAircraftLocation",
-            description = """
-                    Retrieve the aircraft parking location code.
-                    
-                    Used in STEP 3 - COMPLETION TIME CHECK to compare aircraft location with fuel slip location.
-                    """
-    )
+    // STEP 3: COMPLETION TIME CHECK
+    @Tool(name = "getAircraftLocation", description = "Returns current aircraft location code (3-letter). Requires regisNbr.")
     public String getAircraftLocation(String regisNbr) {
-        log.info("Fetching aircraft location for {}", regisNbr);
-        return "ARA";
+        log.info("Fetched aircraft location for {}", regisNbr);
+        return "MEM";
     }
 
-    @Tool(
-            name = "isWrongAircraft",
-            description = """
-                    Determine whether the fuel slip belongs to the correct aircraft registration number.
-                    
-                    Used in STEP 4 - WRONG AIRCRAFT CHECK.
-                    """
-    )
+    // STEP 4: WRONG AIRCRAFT CHECK
+    @Tool(name = "isWrongAircraft", description = "Returns true if fuel slip is associated with wrong aircraft. Requires regisNbr.")
     public boolean isWrongAircraft(String regisNbr) {
-        log.info("Checking wrong aircraft for {}", regisNbr);
+        log.info("Checked wrong aircraft for {}", regisNbr);
         return false;
     }
 
-    @Tool(
-            name = "isMissingUpliftFuelSlip",
-            description = """
-                    Check whether an uplift fuel slip is missing when a positive fuel gap exists.
-                    
-                    Used in STEP 6 - MISSING UPLIFT FUEL SLIP CHECK.
-                    """
-    )
+    // STEP 6: MISSING UPLIFT FUEL SLIP
+    @Tool(name = "isMissingUpliftFuelSlip", description = "Returns true if uplift fuel slip is missing. Requires regisNbr.")
     public boolean isMissingUpliftFuelSlip(String regisNbr) {
-        log.info("Checking missing uplift slip for {}", regisNbr);
+        log.info("Checked missing uplift fuel slip for {}", regisNbr);
         return false;
     }
 
-    @Tool(
-            name = "isMissingApuRunFuelSlip",
-            description = """
-                    Check whether an APU run fuel slip is missing when a negative fuel gap exists.
-                    
-                    Used in STEP 7 - MISSING APU RUN FUEL SLIP CHECK.
-                    """
-    )
+    // STEP 7: MISSING APU RUN FUEL SLIP
+    @Tool(name = "isMissingApuRunFuelSlip", description = "Returns true if APU run fuel slip is missing. Requires regisNbr.")
     public boolean isMissingApuRunFuelSlip(String regisNbr) {
-        log.info("Checking missing APU run slip for {}", regisNbr);
-        return false;
-    }
-
-    @Tool(
-            name = "isBadFuelSlip",
-            description = """
-                    Check whether the fuel slip contains incorrect or inconsistent data entries.
-                    
-                    Used in STEP 8 - BAD FUEL SLIP CHECK.
-                    """
-    )
-    public boolean isBadFuelSlip(String regisNbr) {
-        log.info("Checking bad fuel slip for {}", regisNbr);
+        log.info("Checked missing APU run fuel slip for {}", regisNbr);
         return false;
     }
 }
