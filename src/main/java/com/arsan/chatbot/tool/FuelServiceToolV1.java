@@ -1,5 +1,6 @@
 package com.arsan.chatbot.tool;
 
+import com.arsan.chatbot.model.FuelDetails;
 import com.arsan.chatbot.model.FuelSlip;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.annotation.Tool;
@@ -32,8 +33,8 @@ public class FuelServiceToolV1 {
         fuelSlip.setLocation("MEM");
         fuelSlip.setComputed(BigDecimal.valueOf(10000));
         fuelSlip.setIndicated(BigDecimal.valueOf(10000));
-        fuelSlip.setMeteredFuel(BigDecimal.valueOf(-1000));
-        fuelSlip.setDensity(7.7);
+        fuelSlip.setMeteredFuel(BigDecimal.valueOf(1000));
+        fuelSlip.setDensity(6.7);
         return fuelSlip;
     }
 
@@ -70,7 +71,7 @@ public class FuelServiceToolV1 {
     )
     public boolean isMissingUpliftFuelSlip(String regisNbr) {
         log.info("Model checked if uplift fuel slip is missing for {}", regisNbr);
-        return false;
+        return true;
     }
 
     @Tool(
@@ -80,5 +81,23 @@ public class FuelServiceToolV1 {
     public boolean isMissingApuRunFuelSlip(String regisNbr) {
         log.info("Model checked if APU run fuel slip is missing for {}", regisNbr);
         return false;
+    }
+
+    @Tool(
+            name = "getAcarsFuelDetails",
+            description = "Returns FuelDetails object with ACARS fuel details in terms of Gallons. Requires regisNbr parameter."
+    )
+    public FuelDetails getAcarsFuelDetails(String regisNbr) {
+        log.info("Model fetched ACARS fuel details for {}", regisNbr);
+        FuelDetails fuelDetails = new FuelDetails();
+        fuelDetails.setPreTotalFob(22000.0);
+        fuelDetails.setPreTank1Fob(10000.0);
+        fuelDetails.setPreTank2Fob(12000.0);
+        fuelDetails.setPreTank3Fob(0.0);
+        fuelDetails.setTotalFob(25000.0);
+        fuelDetails.setTank1Fob(15000.0);
+        fuelDetails.setTank2Fob(10000.0);
+        fuelDetails.setTank3Fob(0.0);
+        return fuelDetails;
     }
 }
