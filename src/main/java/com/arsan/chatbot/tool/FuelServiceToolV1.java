@@ -34,7 +34,7 @@ public class FuelServiceToolV1 {
         fuelSlip.setComputed(BigDecimal.valueOf(10000));
         fuelSlip.setIndicated(BigDecimal.valueOf(10000));
         fuelSlip.setMeteredFuel(BigDecimal.valueOf(1000));
-        fuelSlip.setDensity(6.7);
+        fuelSlip.setDensity(7.7);
         return fuelSlip;
     }
 
@@ -71,7 +71,7 @@ public class FuelServiceToolV1 {
     )
     public boolean isMissingUpliftFuelSlip(String regisNbr) {
         log.info("Model checked if uplift fuel slip is missing for {}", regisNbr);
-        return true;
+        return false;
     }
 
     @Tool(
@@ -85,7 +85,7 @@ public class FuelServiceToolV1 {
 
     @Tool(
             name = "getAcarsFuelDetails",
-            description = "Returns FuelDetails object with ACARS fuel details in terms of Gallons. Requires regisNbr parameter."
+            description = "Returns FuelDetails object with ACARS fuel details. Requires regisNbr parameter."
     )
     public FuelDetails getAcarsFuelDetails(String regisNbr) {
         log.info("Model fetched ACARS fuel details for {}", regisNbr);

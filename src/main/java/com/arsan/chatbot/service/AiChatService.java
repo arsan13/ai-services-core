@@ -25,7 +25,6 @@ public class AiChatService {
 
         String outputText = chatClient
                 .prompt()
-                .system(loadContext())
                 .user(message)
                 .call()
                 .content();
@@ -37,15 +36,5 @@ public class AiChatService {
 
     public List<Message> getChatHistory() {
         return chatMemory.get("default");
-    }
-
-    private String loadContext() {
-        try {
-            ClassPathResource classPathResource = new ClassPathResource("/static/context-v1.txt");
-            return classPathResource.getContentAsString(StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.error("Failed to load workflow context: {}", e.getMessage());
-            return "";
-        }
     }
 }
