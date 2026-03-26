@@ -1,5 +1,6 @@
 package com.arsan.chatbot.config;
 
+import com.arsan.chatbot.advisor.TokenUsageAdvisor;
 import com.arsan.chatbot.tool.FuelServiceToolV1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -28,11 +29,12 @@ public class AppConfig {
     }
 
     @Bean
-    public ChatClient chatClient(FuelServiceToolV1 fuelServiceTool, ChatClient.Builder builder, ChatMemory chatMemory) {
+    public ChatClient chatClient(FuelServiceToolV1 fuelServiceTool, ChatClient.Builder builder, ChatMemory chatMemory, TokenUsageAdvisor tokenUsageAdvisor) {
         return builder
                 .defaultSystem(systemPrompt)
                 .defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+                        MessageChatMemoryAdvisor.builder(chatMemory).build(),
+                        tokenUsageAdvisor
                 )
                 .defaultTools(fuelServiceTool)
                 .build();
