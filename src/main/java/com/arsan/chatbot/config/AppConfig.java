@@ -7,17 +7,17 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.StreamUtils;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import org.springframework.core.io.Resource;
 
 @Slf4j
 @Configuration
 public class AppConfig {
+
+    @Value("classpath:/static/system-prompt.st")
+    private Resource systemPrompt;
 
     @Bean
     public ChatMemory chatMemory() {
@@ -30,24 +30,11 @@ public class AppConfig {
     @Bean
     public ChatClient chatClient(FuelServiceToolV1 fuelServiceTool, ChatClient.Builder builder, ChatMemory chatMemory) {
         return builder
-                .defaultSystem(loadSystemPrompt())
+                .defaultSystem(systemPrompt)
                 .defaultAdvisors(
                         MessageChatMemoryAdvisor.builder(chatMemory).build()
                 )
                 .defaultTools(fuelServiceTool)
                 .build();
-    }
-
-    private String loadSystemPrompt() {
-        try {
-            ClassPathResource classPathResource = new ClassPathResource("/static/system-prompt.txt");
-            return StreamUtils.copyToString(classPathResource.getInputStream(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.error("Failed to load system prompt: " + e.getMessage());
-            return """
-                    You are an AI assistant specialized in Aviation fuel operations analysis.
-                    Always follow the fuel discrepancy workflow.
-                    """;
-        }
     }
 }
