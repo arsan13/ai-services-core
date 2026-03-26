@@ -1,6 +1,6 @@
 package com.arsan.chatbot.controller;
 
-import com.arsan.chatbot.model.ChatResponse;
+import com.arsan.chatbot.dto.ChatResponse;
 import com.arsan.chatbot.service.AiChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
