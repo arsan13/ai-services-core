@@ -11,6 +11,8 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 
 @Component
 public class TokenUsageAdvisor implements CallAdvisor {
@@ -19,13 +21,13 @@ public class TokenUsageAdvisor implements CallAdvisor {
     public ChatClientResponse adviseCall(ChatClientRequest chatClientRequest, CallAdvisorChain callAdvisorChain) {
         long startTime = System.currentTimeMillis();
         ChatClientResponse chatClientResponse = callAdvisorChain.nextCall(chatClientRequest);
-        long latency = System.currentTimeMillis() - startTime;
+        long latencyMs = (System.currentTimeMillis() - startTime);
 
         ChatResponse chatResponse = chatClientResponse.chatResponse();
 
         TokenUsageAudit audit = TokenUsageAudit.create();
         audit.setUserId("default-user");
-        audit.setLatencyMs(latency);
+        audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
         audit.setProvider("openai");
 
         if (chatResponse != null) {

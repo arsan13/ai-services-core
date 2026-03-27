@@ -35,7 +35,7 @@ public class TokenUsageAudit {
 
     // Timing
     private LocalDateTime createdAt;
-    private long latencyMs;
+    private double latencySec;
 
     // Optional factory method for defaults
     public static TokenUsageAudit create() {
