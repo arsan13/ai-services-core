@@ -44,4 +44,6 @@ public class TokenUsageAudit {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    // TODO :: Add PrePersist method to set createdAt when converted to entity.
 }
