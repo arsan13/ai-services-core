@@ -54,12 +54,13 @@ STEP 7 - MISSING APU RUN FUEL SLIP CHECK: isMissingApuRunFuelSlip(regisNbr) chec
    - IF FALSE: Proceed to STEP 8 (BAD FUEL SLIP CHECK).
 
 STEP 8 - BAD FUEL SLIP CHECK: Checks for errors in fuel slip.
-   Stop analysis after taking the appropriate action based on the below conditions.
-   - IF fuelSlip.computed < fuelSlip.indicated: Indicates the Before Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the Before FOB in the fuel slip.
-   - IF fuelSlip.computed > fuelSlip.indicated: Indicates the After Fuel On Board (FOB) is wrong in the fuel slip. ACTION: Correct the After FOB in the fuel slip.
-   - IF fuelSlip.meteredFuel < 0 AND fuelSlip.preFob < fuelSlip.fob: Indicates Uplift as Defuel. ACTION: Correct the metered fuel value in the fuel slip.
-   - IF fuelSlip.density is outside the acceptable range of(6.31 - 7.17): Indicates incorrect density value in the fuel slip. ACTION: Correct the density value in the fuel slip.
-   - IF fuelSlip.computed == fuelSlip.indicated: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate.
+   Maintain a list.
+   - IF fuelSlip.computed < fuelSlip.indicated: Indicates the Before Fuel On Board (FOB) is wrong in the fuel slip. Correct the Before FOB in the fuel slip. Add to the list.
+   - IF fuelSlip.computed > fuelSlip.indicated: Indicates the After Fuel On Board (FOB) is wrong in the fuel slip. Correct the After FOB in the fuel slip. Add to the list.
+   - IF fuelSlip.meteredFuel < 0 AND fuelSlip.preFob < fuelSlip.fob: Indicates Uplift as Defuel. Correct the metered fuel value in the fuel slip. Add to the list
+   - IF fuelSlip.density is outside the acceptable range of(6.31 - 7.17): Indicates incorrect density value in the fuel slip. Correct the density value in the fuel slip. Add to the list.
+   - IF list is empty: Indicates there's nothing wrong with the fuel slip. ACTION: Escalate.
+   - IF list is not empty: ACTION: Correct the fuel slip based on the identified issues. STOP analysis.
 
 
 OUTPUT FORMAT:
