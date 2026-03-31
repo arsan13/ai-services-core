@@ -1,4 +1,4 @@
-package com.arsan.chatbot.advisor;
+package com.arsan.chatbot.advice;
 
 import com.arsan.chatbot.model.TokenUsageAudit;
 import com.arsan.chatbot.util.OpenAiCostCalculator;
