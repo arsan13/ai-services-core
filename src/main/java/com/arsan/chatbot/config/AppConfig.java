@@ -17,7 +17,7 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class AppConfig {
 
-    @Value("classpath:/static/system-prompt.st")
+    @Value("classpath:/prompts/system-prompt.st")
     private Resource systemPrompt;
 
     @Bean
