@@ -31,7 +31,7 @@ public class FuelServiceToolV1 {
         fuelSlip.setPreFob(BigDecimal.valueOf(22000));
         fuelSlip.setFob(BigDecimal.valueOf(25000));
         fuelSlip.setLocation("MEM");
-        fuelSlip.setComputed(BigDecimal.valueOf(12000));
+        fuelSlip.setComputed(BigDecimal.valueOf(10000));
         fuelSlip.setIndicated(BigDecimal.valueOf(10000));
         fuelSlip.setMeteredFuel(BigDecimal.valueOf(1000));
         fuelSlip.setDensity(7.7);
