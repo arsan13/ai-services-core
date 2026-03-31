@@ -24,8 +24,8 @@ public class AiChatService {
 
         String outputText = chatClient
                 .prompt()
-                .user(message)
                 .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, userId))
+                .user(message)
                 .call()
                 .content();
 
