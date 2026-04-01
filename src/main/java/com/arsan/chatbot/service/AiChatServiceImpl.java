@@ -30,7 +30,6 @@ public class AiChatServiceImpl implements AiChatService {
 
         log.info("Model responded with: {}", outputText);
 
-        outputText = Optional.ofNullable(outputText).orElse("Sorry, I couldn't generate a response.");
         return new ChatResponse(outputText);
     }
 }

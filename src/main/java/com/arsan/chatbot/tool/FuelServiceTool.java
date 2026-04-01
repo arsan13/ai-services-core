@@ -1,5 +1,6 @@
 package com.arsan.chatbot.tool;
 
+import com.arsan.chatbot.dto.FuelDetails;
 import com.arsan.chatbot.dto.FuelSlip;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.annotation.Tool;
@@ -22,7 +23,7 @@ public class FuelServiceTool {
 
     @Tool(
             name = "getFirstFuelSlip",
-            description = "Returns FuelSlip object with fob (BigDecimal fuel on board) and location (String airport code). Used in FUEL QUANTITY CHECK, COMPLETION TIME CHECK and BAD FUEL SLIP CHECK steps. Requires regisNbr parameter."
+            description = "Returns FuelSlip object. Used in FUEL QUANTITY CHECK, COMPLETION TIME CHECK and BAD FUEL SLIP CHECK steps. Requires regisNbr parameter."
     )
     public FuelSlip getFirstFuelSlip(String regisNbr) {
         log.info("Model fetched fuel slip for {}", regisNbr);
@@ -33,7 +34,7 @@ public class FuelServiceTool {
         fuelSlip.setComputed(BigDecimal.valueOf(10000));
         fuelSlip.setIndicated(BigDecimal.valueOf(10000));
         fuelSlip.setMeteredFuel(BigDecimal.valueOf(1000));
-        fuelSlip.setDensity(6.7);
+        fuelSlip.setDensity(7.7);
         return fuelSlip;
     }
 
@@ -80,5 +81,23 @@ public class FuelServiceTool {
     public boolean isMissingApuRunFuelSlip(String regisNbr) {
         log.info("Model checked if APU run fuel slip is missing for {}", regisNbr);
         return false;
+    }
+
+    @Tool(
+            name = "getAcarsFuelDetails",
+            description = "Returns FuelDetails object with ACARS fuel details. Requires regisNbr parameter."
+    )
+    public FuelDetails getAcarsFuelDetails(String regisNbr) {
+        log.info("Model fetched ACARS fuel details for {}", regisNbr);
+        FuelDetails fuelDetails = new FuelDetails();
+        fuelDetails.setPreTotalFob(22000.0);
+        fuelDetails.setPreTank1Fob(10000.0);
+        fuelDetails.setPreTank2Fob(12000.0);
+        fuelDetails.setPreTank3Fob(0.0);
+        fuelDetails.setTotalFob(25000.0);
+        fuelDetails.setTank1Fob(15000.0);
+        fuelDetails.setTank2Fob(10000.0);
+        fuelDetails.setTank3Fob(0.0);
+        return fuelDetails;
     }
 }
