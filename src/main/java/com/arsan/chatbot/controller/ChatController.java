@@ -1,17 +1,21 @@
 package com.arsan.chatbot.controller;
 
-import com.arsan.chatbot.model.ChatResponse;
+import com.arsan.chatbot.dto.ApiResponse;
+import com.arsan.chatbot.dto.ChatRequest;
+import com.arsan.chatbot.dto.ChatResponse;
+import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.service.AiChatService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.messages.Message;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import static org.springframework.ai.chat.memory.ChatMemory.DEFAULT_CONVERSATION_ID;
 
 @RestController
 @RequestMapping("/api/ai/chat")
@@ -22,20 +26,12 @@ public class ChatController {
 
     private final AiChatService aiChatService;
 
-    @GetMapping
-    public ChatResponse chat(@RequestParam String message) throws Exception {
-        try {
-            String response = aiChatService.generateResponse(message);
-            return new ChatResponse(response);
-        } catch (Exception e) {
-            log.error("Error generating response: {}", e.getMessage());
-            return  new ChatResponse("Sorry, something went wrong while processing your request. Try again later.");
-        }
-    }
-
-    @GetMapping("/history")
-    public List<Message> getChatHistory() {
-        return aiChatService.getChatHistory();
+    @PostMapping
+    public ApiResponse<ChatResponse> chat(
+            @RequestHeader(value = "userId", required = false, defaultValue = DEFAULT_CONVERSATION_ID) String userId,
+            @RequestBody @Valid ChatRequest chatRequest) throws AiServiceException {
+        ChatResponse response = aiChatService.generateResponse(chatRequest.getMessage(), userId);
+        return ApiResponse.success(response);
     }
 }
 

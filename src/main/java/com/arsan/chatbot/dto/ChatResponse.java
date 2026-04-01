@@ -1,4 +1,4 @@
-package com.arsan.chatbot.model;
+package com.arsan.chatbot.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
