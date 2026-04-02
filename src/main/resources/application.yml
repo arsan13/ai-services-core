@@ -1,6 +1,27 @@
 spring:
   application:
     name: spring-ai-chatbot
+
+  datasource:
+    url: jdbc:h2:file:~/testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  sql:
+    init:
+      mode: always
+
   ai:
     openai:
       api-key: dummy-api-key
@@ -8,7 +29,6 @@ spring:
       chat:
         options:
           model: dummy-model
-
 #    ollama:
 #      base-url: http://localhost:11434
 #      chat:
