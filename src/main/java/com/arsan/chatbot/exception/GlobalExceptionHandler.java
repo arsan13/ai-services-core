@@ -1,6 +1,6 @@
 package com.arsan.chatbot.exception;
 
-import com.arsan.chatbot.dto.ApiResponse;
+import com.arsan.chatbot.model.ApiResponse;
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

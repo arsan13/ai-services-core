@@ -1,8 +1,8 @@
 package com.arsan.chatbot.controller;
 
-import com.arsan.chatbot.dto.ApiResponse;
-import com.arsan.chatbot.dto.ChatRequest;
-import com.arsan.chatbot.dto.ChatResponse;
+import com.arsan.chatbot.model.ApiResponse;
+import com.arsan.chatbot.model.ChatRequest;
+import com.arsan.chatbot.model.ChatResponse;
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.service.AiChatService;
 import jakarta.validation.Valid;

@@ -1,6 +1,6 @@
 package com.arsan.chatbot.service.impl;
 
-import com.arsan.chatbot.dto.DateRange;
+import com.arsan.chatbot.model.DateRange;
 import com.arsan.chatbot.entity.TokenUsageAudit;
 import com.arsan.chatbot.proection.UserTokenUsage;
 import com.arsan.chatbot.repository.TokenUsageAuditRepository;
@@ -13,7 +13,6 @@ import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
