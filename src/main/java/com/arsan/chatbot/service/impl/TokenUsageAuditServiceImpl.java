@@ -1,5 +1,6 @@
 package com.arsan.chatbot.service.impl;
 
+import com.arsan.chatbot.dto.DateRange;
 import com.arsan.chatbot.entity.TokenUsageAudit;
 import com.arsan.chatbot.proection.UserTokenUsage;
 import com.arsan.chatbot.repository.TokenUsageAuditRepository;
@@ -12,9 +13,8 @@ import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -22,52 +22,44 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
 
-    private final TokenUsageAuditRepository tokenUsageAuditRepository;
+    private final TokenUsageAuditRepository repository;
 
     @Override
-    public List<TokenUsageAudit> findAll() {
-        return tokenUsageAuditRepository.findAll();
+    public List<TokenUsageAudit> getAll() {
+        return repository.findAll();
     }
 
     @Override
-    public List<TokenUsageAudit> findByUserId(String userId) {
-        return tokenUsageAuditRepository.findByUserId(userId);
-    }
-
-    @Override
-    public List<TokenUsageAudit> getTodayAudits() {
-        LocalDate today = LocalDate.now();
-        return getAuditsByDateRange(today.atStartOfDay(), today.atTime(LocalTime.MAX));
+    public List<TokenUsageAudit> getByUserId(String userId) {
+        return repository.findByUserId(userId);
     }
 
     @Override
     public List<TokenUsageAudit> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        return tokenUsageAuditRepository.findByCreatedDateBetween(startDate, endDate);
+        DateRange range = DateRange.resolve(startDate, endDate);
+        return repository.findByCreatedDateBetween(range.start(), range.end());
     }
 
     @Override
-    public Long getTodayTotalTokens() {
-        LocalDate today = LocalDate.now();
-        return getTotalTokensByDateRange(today.atStartOfDay(), today.atTime(LocalTime.MAX));
+    public Long getTotalTokens(LocalDateTime startDate, LocalDateTime endDate) {
+        DateRange range = DateRange.resolve(startDate, endDate);
+        return repository.sumTotalTokensByCreatedDateBetween(range.start(), range.end());
     }
 
     @Override
-    public Long getTotalTokensByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        return tokenUsageAuditRepository.getTotalTokensUsedBetween(startDate, endDate);
-    }
-
-    public Long getTodayUsageByUser(Long userId) {
-        LocalDate today = LocalDate.now();
-        return tokenUsageAuditRepository.getUserTotalTokensBetween(userId, today.atStartOfDay(), today.atTime(LocalTime.MAX));
-    }
-
-    public List<UserTokenUsage> getTodayUsageOfAllUsers() {
-        LocalDate today = LocalDate.now();
-        return tokenUsageAuditRepository.getUserTokenUsageBetween(today.atStartOfDay(), today.atTime(LocalTime.MAX));
+    public Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        DateRange range = DateRange.resolve(startDate, endDate);
+        return repository.sumTotalTokensByUserIdAndCreatedDateBetween(userId, range.start(), range.end());
     }
 
     @Override
-    public TokenUsageAudit auditTokenUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
+    public List<UserTokenUsage> getUserTokenUsageSummary(LocalDateTime startDate, LocalDateTime endDate) {
+        DateRange range = DateRange.resolve(startDate, endDate);
+        return repository.findUserTokenUsageByCreatedDateBetween(range.start(), range.end());
+    }
+
+    @Override
+    public TokenUsageAudit recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
         TokenUsageAudit audit = new TokenUsageAudit();
         audit.setUserId("default-user");
         audit.setProvider("openai");
@@ -91,6 +83,6 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
             audit.setOutputSummary(chatResponse.getResult().getOutput().getText());
         }
 
-        return tokenUsageAuditRepository.save(audit);
+        return repository.save(audit);
     }
 }

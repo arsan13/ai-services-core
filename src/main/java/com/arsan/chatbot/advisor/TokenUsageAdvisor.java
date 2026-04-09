@@ -24,7 +24,7 @@ public class TokenUsageAdvisor implements CallAdvisor {
         ChatClientResponse chatClientResponse = callAdvisorChain.nextCall(chatClientRequest);
         long latencyMs = (System.currentTimeMillis() - startTime);
 
-        TokenUsageAudit auditedTokenUsage = tokenUsageAuditService.auditTokenUsage(chatClientRequest, chatClientResponse, latencyMs);
+        TokenUsageAudit auditedTokenUsage = tokenUsageAuditService.recordUsage(chatClientRequest, chatClientResponse, latencyMs);
         log.info("Prompt: {}", auditedTokenUsage);
 
         return chatClientResponse;

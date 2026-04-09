@@ -50,5 +50,5 @@ public class TokenUsageAudit {
     private String outputSummary;
 
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime createdDate;
 }

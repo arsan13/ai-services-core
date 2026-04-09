@@ -10,21 +10,17 @@ import java.util.List;
 
 public interface TokenUsageAuditService {
 
-    List<TokenUsageAudit> findAll();
+    List<TokenUsageAudit> getAll();
 
-    List<TokenUsageAudit> findByUserId(String userId);
-
-    List<TokenUsageAudit> getTodayAudits();
+    List<TokenUsageAudit> getByUserId(String userId);
 
     List<TokenUsageAudit> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
-    Long getTodayTotalTokens();
+    Long getTotalTokens(LocalDateTime startDate, LocalDateTime endDate);
 
-    Long getTotalTokensByDateRange(LocalDateTime startDate, LocalDateTime endDate);
+    Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
-    Long getTodayUsageByUser(Long userId);
+    List<UserTokenUsage> getUserTokenUsageSummary(LocalDateTime startDate, LocalDateTime endDate);
 
-    List<UserTokenUsage> getTodayUsageOfAllUsers();
-
-    TokenUsageAudit auditTokenUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatResponse, long latencyMs);
+    TokenUsageAudit recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatResponse, long latencyMs);
 }

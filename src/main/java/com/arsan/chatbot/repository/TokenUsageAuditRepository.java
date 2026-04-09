@@ -16,36 +16,39 @@ public interface TokenUsageAuditRepository extends JpaRepository<TokenUsageAudit
     List<TokenUsageAudit> findByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 
     @Query("""
-                SELECT COALESCE(SUM(t.totalTokens), 0)
-                FROM TokenUsageAudit t
-                WHERE t.createdDate BETWEEN :start AND :end
+             SELECT COALESCE(SUM(t.totalTokens), 0)
+             FROM TokenUsageAudit t
+             WHERE t.createdDate BETWEEN :start AND :end
             """)
-    Long getTotalTokensUsedBetween(
+    Long sumTotalTokensByCreatedDateBetween(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
 
     @Query("""
-                SELECT COALESCE(SUM(t.totalTokens), 0)
-                FROM TokenUsageAudit t
-                WHERE t.userId = :userId
-                  AND t.createdDate BETWEEN :start AND :end
+             SELECT COALESCE(SUM(t.totalTokens), 0)
+             FROM TokenUsageAudit t
+             WHERE t.userId = :userId
+               AND t.createdDate BETWEEN :start AND :end
             """)
-    Long getUserTotalTokensBetween(
+    Long sumTotalTokensByUserIdAndCreatedDateBetween(
             @Param("userId") Long userId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
 
     @Query("""
-                SELECT t.userId as userId,
-                       SUM(t.totalTokens) as totalTokens
-                FROM TokenUsageAudit t
-                WHERE t.createdDate BETWEEN :start AND :end
-                GROUP BY t.userId
+             SELECT t.userId as userId,
+                    SUM(t.totalTokens) as totalTokens
+             FROM TokenUsageAudit t
+             WHERE t.createdDate BETWEEN :start AND :end
+             GROUP BY t.userId
             """)
-    List<UserTokenUsage> getUserTokenUsageBetween(
+    List<UserTokenUsage> findUserTokenUsageByCreatedDateBetween(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
+
+//    Long sumTotalTokensByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
+//    Long sumTotalTokensByUserIdAndCreatedDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
 }
