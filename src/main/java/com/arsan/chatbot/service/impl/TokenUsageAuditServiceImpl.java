@@ -74,7 +74,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
             audit.setTotalTokens(usage.getTotalTokens());
 
             double cost = OpenAiCostCalculator.calculateCost(audit.getModel(), audit.getPromptTokens(), audit.getCompletionTokens());
-            audit.setCostInUSD(cost);
+            audit.setCostInUsd(cost);
         }
 
         audit.setInputSummary(chatClientRequest.prompt().getUserMessage().getText());

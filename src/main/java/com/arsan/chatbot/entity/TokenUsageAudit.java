@@ -38,7 +38,7 @@ public class TokenUsageAudit {
     private int completionTokens;
     private int totalTokens;
 
-    private double costInUSD;
+    private double costInUsd;
     private double latencySec;
 
     @Lob

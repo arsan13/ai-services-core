@@ -6,7 +6,7 @@ spring:
     url: jdbc:h2:file:~/testdb
     driver-class-name: org.h2.Driver
     username: sa
-    password: ""
+    password:
 
   h2:
     console:
@@ -17,10 +17,12 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: true
 
   sql:
     init:
       mode: always
+      data-locations: 'classpath:sql/data.sql'
 
   ai:
     openai:
