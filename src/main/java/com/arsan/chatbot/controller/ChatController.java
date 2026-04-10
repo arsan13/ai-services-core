@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.ai.chat.memory.ChatMemory.DEFAULT_CONVERSATION_ID;
 
 @RestController
-@RequestMapping("/api/ai/chat")
+@RequestMapping("/ai/chat")
 @RequiredArgsConstructor
 @CrossOrigin
 @Slf4j
