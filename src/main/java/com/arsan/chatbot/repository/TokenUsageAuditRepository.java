@@ -1,7 +1,7 @@
 package com.arsan.chatbot.repository;
 
 import com.arsan.chatbot.entity.TokenUsageAudit;
-import com.arsan.chatbot.proection.UserTokenUsage;
+import com.arsan.chatbot.projection.UserTokenUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

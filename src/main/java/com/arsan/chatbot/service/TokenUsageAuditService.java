@@ -1,7 +1,7 @@
 package com.arsan.chatbot.service;
 
 import com.arsan.chatbot.entity.TokenUsageAudit;
-import com.arsan.chatbot.proection.UserTokenUsage;
+import com.arsan.chatbot.projection.UserTokenUsage;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 
