@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("token-usage")
+@RequestMapping("/token-usage")
 @RequiredArgsConstructor
 public class TokenUsageAuditController {
 
