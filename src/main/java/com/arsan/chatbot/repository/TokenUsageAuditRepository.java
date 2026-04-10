@@ -32,14 +32,15 @@ public interface TokenUsageAuditRepository extends JpaRepository<TokenUsageAudit
                AND t.createdDate BETWEEN :start AND :end
             """)
     Long sumTotalTokensByUserIdAndCreatedDateBetween(
-            @Param("userId") Long userId,
+            @Param("userId") String userId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
 
     @Query("""
              SELECT t.userId as userId,
-                    SUM(t.totalTokens) as totalTokens
+                    SUM(t.totalTokens) as totalTokens,
+                    SUM(t.costInUsd) as costInUsd
              FROM TokenUsageAudit t
              WHERE t.createdDate BETWEEN :start AND :end
              GROUP BY t.userId

@@ -46,7 +46,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     }
 
     @Override
-    public Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+    public Long getTotalTokensByUser(String userId, LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
         return repository.sumTotalTokensByUserIdAndCreatedDateBetween(userId, range.start(), range.end());
     }

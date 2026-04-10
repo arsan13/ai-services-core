@@ -47,7 +47,7 @@ public class TokenUsageAuditController {
 
     @GetMapping("/total-tokens/user/{userId}")
     public Long getTotalTokensByUser(
-            @PathVariable Long userId,
+            @PathVariable String userId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return service.getTotalTokensByUser(userId, startDate, endDate);
