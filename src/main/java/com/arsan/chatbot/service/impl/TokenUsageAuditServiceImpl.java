@@ -46,7 +46,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     }
 
     @Override
-    public Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+    public Long getTotalTokensByUser(String userId, LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
         return repository.sumTotalTokensByUserIdAndCreatedDateBetween(userId, range.start(), range.end());
     }
@@ -64,6 +64,8 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
         audit.setProvider("openai");
         audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
 
+        audit.setInputSummary(chatClientRequest.prompt().getUserMessage().getText());
+
         ChatResponse chatResponse = chatClientResponse.chatResponse();
         if (chatResponse != null) {
             audit.setModel(chatResponse.getMetadata().getModel());
@@ -75,10 +77,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
 
             double cost = OpenAiCostCalculator.calculateCost(audit.getModel(), audit.getPromptTokens(), audit.getCompletionTokens());
             audit.setCostInUsd(cost);
-        }
 
-        audit.setInputSummary(chatClientRequest.prompt().getUserMessage().getText());
-        if (chatResponse != null) {
             audit.setOutputSummary(chatResponse.getResult().getOutput().getText());
         }
 
