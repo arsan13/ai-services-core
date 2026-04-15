@@ -52,3 +52,8 @@ springdoc:
 app:
   security:
     enabled: true
+    public-endpoints:
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /swagger-ui.html
+      - /h2-console/**
