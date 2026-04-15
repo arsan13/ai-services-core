@@ -43,6 +43,12 @@ server:
     context-path: /api
   port: 8080
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 app:
   security:
-    enabled: false
+    enabled: true
