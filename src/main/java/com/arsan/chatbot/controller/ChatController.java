@@ -1,13 +1,12 @@
 package com.arsan.chatbot.controller;
 
+import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.model.ApiResponse;
 import com.arsan.chatbot.model.ChatRequest;
 import com.arsan.chatbot.model.ChatResponse;
-import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.service.AiChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,9 +18,8 @@ import static org.springframework.ai.chat.memory.ChatMemory.DEFAULT_CONVERSATION
 
 @RestController
 @RequestMapping("/ai/chat")
-@RequiredArgsConstructor
 @CrossOrigin
-@Slf4j
+@RequiredArgsConstructor
 public class ChatController {
 
     private final AiChatService aiChatService;
