@@ -1,7 +1,7 @@
 package com.arsan.chatbot.tool;
 
-import com.arsan.chatbot.dto.FuelDetails;
-import com.arsan.chatbot.dto.FuelSlip;
+import com.arsan.chatbot.model.FuelDetails;
+import com.arsan.chatbot.model.FuelSlip;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;

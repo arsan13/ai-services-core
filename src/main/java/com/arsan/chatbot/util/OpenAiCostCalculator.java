@@ -34,5 +34,6 @@ public class OpenAiCostCalculator {
         return Math.round(value * 1_000_000d) / 1_000_000d;
     }
 
-    private record ModelPricing(double inputCostPer1K, double outputCostPer1K) {}
+    private record ModelPricing(double inputCostPer1K, double outputCostPer1K) {
+    }
 }
