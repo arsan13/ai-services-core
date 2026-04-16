@@ -1,8 +1,12 @@
 package com.arsan.chatbot.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class FuelDetails {
     private Double preTotalFob;
     private Double preTank1Fob;
