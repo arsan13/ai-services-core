@@ -1,7 +1,8 @@
 package com.arsan.chatbot.exception;
 
-import com.arsan.chatbot.model.ApiResponse;
 import com.arsan.chatbot.exception.custom.AiServiceException;
+import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
+import com.arsan.chatbot.model.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,6 +42,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ApiResponse.failure("Validation failed", errors),
                 HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleResourceNotFound(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Not found: ", ex.getMessage()),
+                HttpStatus.NOT_FOUND
         );
     }
 

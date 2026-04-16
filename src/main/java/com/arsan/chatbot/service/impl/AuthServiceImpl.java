@@ -1,12 +1,13 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.User;
+import com.arsan.chatbot.enums.Role;
 import com.arsan.chatbot.model.AuthRequest;
 import com.arsan.chatbot.model.AuthResponse;
 import com.arsan.chatbot.model.RegisterRequest;
 import com.arsan.chatbot.repository.UserRepository;
-import com.arsan.chatbot.service.AuthService;
 import com.arsan.chatbot.security.JwtService;
+import com.arsan.chatbot.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +46,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.ROLE_USER)
                 .build();
 
         user = userRepository.save(user);

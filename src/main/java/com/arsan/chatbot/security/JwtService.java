@@ -1,7 +1,7 @@
 package com.arsan.chatbot.security;
 
-import com.arsan.chatbot.properties.SecurityProperties;
 import com.arsan.chatbot.entity.User;
+import com.arsan.chatbot.properties.SecurityProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
