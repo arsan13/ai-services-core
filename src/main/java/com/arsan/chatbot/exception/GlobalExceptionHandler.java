@@ -3,8 +3,12 @@ package com.arsan.chatbot.exception;
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
 import com.arsan.chatbot.model.ApiResponse;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,6 +54,38 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ApiResponse.failure("Not found: ", ex.getMessage()),
                 HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleUsernameNotFound(UsernameNotFoundException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("User not found", ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<?>> handleAuthenticationException(AuthenticationException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Authentication failed", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Access denied", ex.getMessage()),
+                HttpStatus.FORBIDDEN
+        );
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiResponse<?>> handleJwtException(JwtException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Invalid JWT", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
         );
     }
 
