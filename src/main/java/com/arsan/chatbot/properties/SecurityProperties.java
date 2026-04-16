@@ -23,6 +23,6 @@ public class SecurityProperties {
     @Getter
     public static class Jwt {
         private String secret;
-        private long expiration;
+        private long expirationInHours;
     }
 }

@@ -53,10 +53,11 @@ app:
   security:
     enabled: true
     public-endpoints:
+      - /auth/**
       - /swagger-ui/**
       - /v3/api-docs/**
       - /swagger-ui.html
       - /h2-console/**
     jwt:
       secret: "my-super-secret-key-change-this"
-      expiration: 3600000   # 1 hour in milliseconds
+      expiration-in-hours: 2
