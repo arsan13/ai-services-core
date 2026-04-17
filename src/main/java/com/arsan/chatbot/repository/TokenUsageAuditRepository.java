@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TokenUsageAuditRepository extends JpaRepository<TokenUsageAudit, Long> {
 
-    List<TokenUsageAudit> findByUserId(String userId);
+    List<TokenUsageAudit> findByUserId(Long userId);
 
     List<TokenUsageAudit> findByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 
@@ -32,7 +32,7 @@ public interface TokenUsageAuditRepository extends JpaRepository<TokenUsageAudit
                AND t.createdDate BETWEEN :start AND :end
             """)
     Long sumTotalTokensByUserIdAndCreatedDateBetween(
-            @Param("userId") String userId,
+            @Param("userId") Long userId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );

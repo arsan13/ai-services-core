@@ -1,11 +1,13 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.TokenUsageAudit;
+import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.model.common.DateRange;
 import com.arsan.chatbot.projection.UserTokenUsage;
 import com.arsan.chatbot.repository.TokenUsageAuditRepository;
 import com.arsan.chatbot.service.TokenUsageAuditService;
 import com.arsan.chatbot.util.OpenAiCostCalculator;
+import com.arsan.chatbot.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
@@ -29,7 +31,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     }
 
     @Override
-    public List<TokenUsageAudit> getByUserId(String userId) {
+    public List<TokenUsageAudit> getByUserId(Long userId) {
         return repository.findByUserId(userId);
     }
 
@@ -46,7 +48,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     }
 
     @Override
-    public Long getTotalTokensByUser(String userId, LocalDateTime startDate, LocalDateTime endDate) {
+    public Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
         return repository.sumTotalTokensByUserIdAndCreatedDateBetween(userId, range.start(), range.end());
     }
@@ -60,7 +62,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     @Override
     public TokenUsageAudit recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
         TokenUsageAudit audit = new TokenUsageAudit();
-        audit.setUserId("default-user");
+        audit.setUserId(SecurityUtils.getCurrentUserId());
         audit.setProvider("openai");
         audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
 

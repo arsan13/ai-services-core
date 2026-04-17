@@ -12,13 +12,13 @@ public interface TokenUsageAuditService {
 
     List<TokenUsageAudit> getAll();
 
-    List<TokenUsageAudit> getByUserId(String userId);
+    List<TokenUsageAudit> getByUserId(Long userId);
 
     List<TokenUsageAudit> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
     Long getTotalTokens(LocalDateTime startDate, LocalDateTime endDate);
 
-    Long getTotalTokensByUser(String userId, LocalDateTime startDate, LocalDateTime endDate);
+    Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
     List<UserTokenUsage> getUserTokenUsageSummary(LocalDateTime startDate, LocalDateTime endDate);
 

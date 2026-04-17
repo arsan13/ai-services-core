@@ -29,7 +29,7 @@ public class TokenUsageAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
+    private Long userId;
 
     private String model;
     private String provider;
