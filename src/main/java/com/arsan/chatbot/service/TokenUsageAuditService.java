@@ -1,6 +1,7 @@
 package com.arsan.chatbot.service;
 
 import com.arsan.chatbot.entity.TokenUsageAudit;
+import com.arsan.chatbot.projection.TokenUsageAuditView;
 import com.arsan.chatbot.projection.UserTokenUsage;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
@@ -10,11 +11,11 @@ import java.util.List;
 
 public interface TokenUsageAuditService {
 
-    List<TokenUsageAudit> getAll();
+    List<TokenUsageAuditView> getAll(int page, int size);
 
-    List<TokenUsageAudit> getByUserId(Long userId);
+    List<TokenUsageAuditView> getByUserId(Long userId);
 
-    List<TokenUsageAudit> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
+    List<TokenUsageAuditView> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
     Long getTotalTokens(LocalDateTime startDate, LocalDateTime endDate);
 

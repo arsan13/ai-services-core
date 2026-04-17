@@ -1,35 +1,50 @@
 package com.arsan.chatbot.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "token_usage_audit")
+@Table(
+        name = "token_usage_audit",
+        indexes = {
+                @Index(name = "idx_tua_created_date_id", columnList = "created_date, id"),
+                @Index(name = "idx_tua_user_id", columnList = "user_id")
+        }
+)
+@Immutable
 @Setter
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString
 public class TokenUsageAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String model;
     private String provider;
@@ -42,11 +57,9 @@ public class TokenUsageAudit {
     private double latencySec;
 
     @Lob
-    @ToString.Exclude
     private String inputSummary;
 
     @Lob
-    @ToString.Exclude
     private String outputSummary;
 
     @CreationTimestamp

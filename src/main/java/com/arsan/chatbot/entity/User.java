@@ -31,7 +31,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString
 public class User implements UserDetails {
 
     @Id
@@ -41,7 +40,7 @@ public class User implements UserDetails {
     private String fullName;
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
     @ToString.Exclude
@@ -52,6 +51,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.getRole().name()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 }

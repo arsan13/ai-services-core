@@ -1,17 +1,24 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.TokenUsageAudit;
+import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.model.common.DateRange;
+import com.arsan.chatbot.projection.TokenUsageAuditView;
 import com.arsan.chatbot.projection.UserTokenUsage;
 import com.arsan.chatbot.repository.TokenUsageAuditRepository;
 import com.arsan.chatbot.service.TokenUsageAuditService;
 import com.arsan.chatbot.util.OpenAiCostCalculator;
 import com.arsan.chatbot.util.SecurityUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,17 +32,18 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     private final TokenUsageAuditRepository repository;
 
     @Override
-    public List<TokenUsageAudit> getAll() {
-        return repository.findAll();
+    public List<TokenUsageAuditView> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending().and(Sort.by("id").descending()));
+        return repository.findAllBy(pageable);
     }
 
     @Override
-    public List<TokenUsageAudit> getByUserId(Long userId) {
+    public List<TokenUsageAuditView> getByUserId(Long userId) {
         return repository.findByUserId(userId);
     }
 
     @Override
-    public List<TokenUsageAudit> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<TokenUsageAuditView> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
         return repository.findByCreatedDateBetween(range.start(), range.end());
     }
@@ -49,7 +57,8 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     @Override
     public Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
-        return repository.sumTotalTokensByUserIdAndCreatedDateBetween(userId, range.start(), range.end());
+        User user = User.builder().id(userId).build(); // Prefer entityManager.getReference(User.class, userId);
+        return repository.sumTotalTokensByUserAndCreatedDateBetween(user, range.start(), range.end());
     }
 
     @Override
@@ -59,9 +68,10 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     }
 
     @Override
+    @Transactional
     public TokenUsageAudit recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
         TokenUsageAudit audit = new TokenUsageAudit();
-        audit.setUserId(SecurityUtils.getCurrentUserId());
+        audit.setUser(SecurityUtils.getCurrentUser().orElse(null));
         audit.setProvider("openai");
         audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
 
