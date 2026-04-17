@@ -95,4 +95,19 @@ public class JwtService {
         // DEVELOPMENT ONLY: uses plain text secret (not secure for production)
         return Keys.hmacShaKeyFor(securityProperties.getJwt().getSecret().getBytes());
     }
+
+    public String generateRefreshToken(User user) {
+        Map<String, Object> claims = Map.of(
+                "userId", user.getId(),
+                "type", "refresh"
+        );
+        long expiration = TimeUnit.DAYS.toMillis(securityProperties.getJwt().getRefreshExpirationInDays());
+        return Jwts.builder()
+                .subject(user.getUsername())
+                .claims(claims)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignKey())
+                .compact();
+    }
 }

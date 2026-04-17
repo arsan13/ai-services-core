@@ -61,3 +61,4 @@ app:
     jwt:
       secret: "my-secret-key-which-should-be-32-chars-min-change-this-later"
       expiration-in-hours: 2
+      refresh-expiration-in-days: 7

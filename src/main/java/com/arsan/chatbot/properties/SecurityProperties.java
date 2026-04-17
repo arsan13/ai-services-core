@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Setter
@@ -23,5 +24,6 @@ public class SecurityProperties {
     public static class Jwt {
         private String secret;
         private long expirationInHours;
+        private long refreshExpirationInDays;
     }
 }

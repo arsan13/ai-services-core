@@ -3,6 +3,7 @@ package com.arsan.chatbot.controller;
 import com.arsan.chatbot.model.AuthRequest;
 import com.arsan.chatbot.model.AuthResponse;
 import com.arsan.chatbot.model.RegisterRequest;
+import com.arsan.chatbot.model.RefreshRequest;
 import com.arsan.chatbot.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,10 @@ public class AuthController {
     @PostMapping("/register")
     public AuthResponse register(@RequestBody @Valid RegisterRequest request) {
         return authService.register(request);
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponse refresh(@RequestBody @Valid RefreshRequest request) {
+        return authService.refresh(request);
     }
 }
