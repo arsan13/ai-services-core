@@ -16,14 +16,14 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "token_usage_audit")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString
-@Table(name = "token_usage_audit")
-@Entity
 public class TokenUsageAudit {
 
     @Id

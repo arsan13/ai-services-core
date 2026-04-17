@@ -1,5 +1,6 @@
 INSERT INTO token_usage_audit
-(id, user_id, model, provider, prompt_tokens, completion_tokens, total_tokens, cost_in_usd, latency_sec, input_summary, output_summary, created_date)
+(id, user_id, model, provider, prompt_tokens, completion_tokens, total_tokens, cost_in_usd, latency_sec, input_summary,
+ output_summary, created_date)
 VALUES
 -- Heavy user (5 records)
 (1, 1, 'gpt-4', 'openai', 120, 80, 200, 0.004, 1.2, 'Login request', 'Login success', CURRENT_TIMESTAMP),

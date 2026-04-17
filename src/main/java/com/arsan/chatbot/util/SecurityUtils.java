@@ -8,7 +8,8 @@ import java.util.Optional;
 
 public final class SecurityUtils {
 
-    private SecurityUtils() {}
+    private SecurityUtils() {
+    }
 
     public static Long getCurrentUserId() {
         return getCurrentUser().map(User::getId).orElse(null);

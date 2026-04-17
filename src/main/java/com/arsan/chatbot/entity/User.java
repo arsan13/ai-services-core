@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Entity
+@Table(name = "app_user")
 @Setter
 @Getter
 @Builder
@@ -30,8 +32,6 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString
-@Table(name = "app_user")
-@Entity
 public class User implements UserDetails {
 
     @Id
