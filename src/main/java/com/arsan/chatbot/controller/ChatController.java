@@ -1,7 +1,7 @@
 package com.arsan.chatbot.controller;
 
 import com.arsan.chatbot.exception.custom.AiServiceException;
-import com.arsan.chatbot.model.ApiResponse;
+import com.arsan.chatbot.model.common.ApiResponse;
 import com.arsan.chatbot.model.ai.ChatRequest;
 import com.arsan.chatbot.model.ai.ChatResponse;
 import com.arsan.chatbot.service.AiChatService;

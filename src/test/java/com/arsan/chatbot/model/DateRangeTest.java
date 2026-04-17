@@ -1,5 +1,6 @@
 package com.arsan.chatbot.model;
 
+import com.arsan.chatbot.model.common.DateRange;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;

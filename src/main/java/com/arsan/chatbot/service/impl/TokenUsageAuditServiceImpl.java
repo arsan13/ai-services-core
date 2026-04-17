@@ -1,7 +1,7 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.TokenUsageAudit;
-import com.arsan.chatbot.model.DateRange;
+import com.arsan.chatbot.model.common.DateRange;
 import com.arsan.chatbot.projection.UserTokenUsage;
 import com.arsan.chatbot.repository.TokenUsageAuditRepository;
 import com.arsan.chatbot.service.TokenUsageAuditService;

@@ -2,7 +2,7 @@ package com.arsan.chatbot.exception;
 
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
-import com.arsan.chatbot.model.ApiResponse;
+import com.arsan.chatbot.model.common.ApiResponse;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
