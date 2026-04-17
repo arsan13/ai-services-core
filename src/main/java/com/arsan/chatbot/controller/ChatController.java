@@ -2,8 +2,8 @@ package com.arsan.chatbot.controller;
 
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.model.ApiResponse;
-import com.arsan.chatbot.model.ChatRequest;
-import com.arsan.chatbot.model.ChatResponse;
+import com.arsan.chatbot.model.ai.ChatRequest;
+import com.arsan.chatbot.model.ai.ChatResponse;
 import com.arsan.chatbot.service.AiChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

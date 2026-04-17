@@ -2,9 +2,9 @@ package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.enums.Role;
-import com.arsan.chatbot.model.AuthRequest;
-import com.arsan.chatbot.model.AuthResponse;
-import com.arsan.chatbot.model.RegisterRequest;
+import com.arsan.chatbot.model.auth.AuthRequest;
+import com.arsan.chatbot.model.auth.AuthResponse;
+import com.arsan.chatbot.model.auth.RegisterRequest;
 import com.arsan.chatbot.repository.UserRepository;
 import com.arsan.chatbot.security.JwtService;
 import com.arsan.chatbot.service.AuthService;

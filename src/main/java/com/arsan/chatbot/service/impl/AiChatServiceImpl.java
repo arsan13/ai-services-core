@@ -1,7 +1,7 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.exception.custom.AiServiceException;
-import com.arsan.chatbot.model.ChatResponse;
+import com.arsan.chatbot.model.ai.ChatResponse;
 import com.arsan.chatbot.service.AiChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.arsan.chatbot.model;
+package com.arsan.chatbot.model.user;
 
 import com.arsan.chatbot.enums.Role;
 import lombok.Getter;

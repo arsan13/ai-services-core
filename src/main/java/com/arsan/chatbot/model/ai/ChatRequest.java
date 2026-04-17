@@ -1,4 +1,4 @@
-package com.arsan.chatbot.model;
+package com.arsan.chatbot.model.ai;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

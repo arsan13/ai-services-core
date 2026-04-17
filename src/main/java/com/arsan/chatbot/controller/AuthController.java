@@ -1,8 +1,8 @@
 package com.arsan.chatbot.controller;
 
-import com.arsan.chatbot.model.AuthRequest;
-import com.arsan.chatbot.model.AuthResponse;
-import com.arsan.chatbot.model.RegisterRequest;
+import com.arsan.chatbot.model.auth.AuthRequest;
+import com.arsan.chatbot.model.auth.AuthResponse;
+import com.arsan.chatbot.model.auth.RegisterRequest;
 import com.arsan.chatbot.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

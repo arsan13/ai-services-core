@@ -1,4 +1,4 @@
-package com.arsan.chatbot.model;
+package com.arsan.chatbot.model.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,17 +10,10 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class RegisterRequest {
+public class RegisterRequest extends AuthRequest {
 
     @NotBlank(message = "Name cannot be blank")
     private String fullName;
-
-    @NotBlank(message = "Username cannot be blank")
-    private String username;
-
-    @NotBlank(message = "Password cannot be blank")
-    @Size(min = 6, message = "Password must be at least 6 characters")
-    private String password;
 
     @Email(message = "Invalid email format")
 //    @NotBlank(message = "Email cannot be blank")
