@@ -23,6 +23,6 @@ public class RegisterRequest {
     private String password;
 
     @Email(message = "Invalid email format")
-    @NotBlank(message = "Email cannot be blank")
+//    @NotBlank(message = "Email cannot be blank")
     private String email;
 }

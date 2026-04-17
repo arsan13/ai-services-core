@@ -28,16 +28,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            log.info("Incoming request: {}", request.getRequestURI());
+            log.info("Incoming request {}", request.getRequestURI());
             String token = extractToken(request);
 
             if (token != null) {
                 authenticateUser(token, request);
             }
 
-            log.info("JWT authentication successful.");
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            log.warn("JWT Authentication error: {}", e.getMessage());
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }

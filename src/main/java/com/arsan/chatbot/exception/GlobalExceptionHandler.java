@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ApiResponse<?>> handleJwtException(JwtException ex) {
         return new ResponseEntity<>(
-                ApiResponse.failure("Invalid JWT", ex.getMessage()),
+                ApiResponse.failure("JWT Error", ex.getMessage()),
                 HttpStatus.UNAUTHORIZED
         );
     }

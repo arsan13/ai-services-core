@@ -4,9 +4,9 @@ import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.properties.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -24,7 +24,9 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> claims = Map.of(
                 "userId", user.getId(),
-                "roles", user.getAuthorities()
+                "roles", user.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList()
         );
         return generateToken(claims, user);
     }
@@ -71,6 +73,26 @@ public class JwtService {
     }
 
     private SecretKey getSignKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(securityProperties.getJwt().getSecret()));
+
+        /**
+         * PRODUCTION USAGE:
+         * Use a strong, cryptographically secure key stored as a Base64-encoded string.
+         * Decode it before creating the signing key:
+         * <p>
+         * return Keys.hmacShaKeyFor(
+         *     Decoders.BASE64.decode(securityProperties.getJwt().getSecret())
+         * );
+         * <p>
+         * To generate a secure key (run once and store safely in config):
+         * <p>
+         * SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+         * String base64Key = Encoders.BASE64.encode(key.getEncoded());
+         * System.out.println(base64Key);
+         * <p>
+         * Store the generated value in application.properties or a secure secrets manager.
+         */
+
+        // DEVELOPMENT ONLY: uses plain text secret (not secure for production)
+        return Keys.hmacShaKeyFor(securityProperties.getJwt().getSecret().getBytes());
     }
 }
