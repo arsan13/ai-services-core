@@ -4,6 +4,7 @@ import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.enums.Role;
 import com.arsan.chatbot.model.auth.AuthRequest;
 import com.arsan.chatbot.model.auth.AuthResponse;
+import com.arsan.chatbot.model.auth.AvailabilityResponse;
 import com.arsan.chatbot.model.auth.RegisterRequest;
 import com.arsan.chatbot.repository.UserRepository;
 import com.arsan.chatbot.security.JwtService;
@@ -51,5 +52,16 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtService.generateToken(user);
 
         return new AuthResponse(token);
+    }
+
+    @Override
+    public AvailabilityResponse checkAvailability(String field, String value) {
+        boolean available = switch (field.toLowerCase()) {
+            case "username" -> !userRepository.existsByUsername(value);
+            case "email" -> !userRepository.existsByEmail(value);
+            default -> throw new IllegalArgumentException("Invalid field: " + field);
+        };
+
+        return new AvailabilityResponse(available);
     }
 }
