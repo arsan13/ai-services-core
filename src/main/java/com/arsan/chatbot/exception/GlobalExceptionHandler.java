@@ -4,6 +4,7 @@ import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
 import com.arsan.chatbot.model.common.ApiResponse;
 import io.jsonwebtoken.JwtException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -86,6 +88,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ApiResponse.failure("JWT Error", ex.getMessage()),
                 HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<?>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String msg = Optional.ofNullable(ex.getMostSpecificCause().getMessage()).orElse("").toLowerCase();
+
+        Map<String, String> errors = new HashMap<>();
+
+        if (msg.contains("uk_user_username")) {
+            errors.put("username", "Username already exists");
+        }
+        if (msg.contains("uk_user_email")) {
+            errors.put("email", "Email already exists");
+        }
+        if (errors.isEmpty()) {
+            errors.put("general", msg);
+        }
+
+        return new ResponseEntity<>(
+                ApiResponse.failure("Data integrity violation", errors),
+                HttpStatus.BAD_REQUEST
         );
     }
 

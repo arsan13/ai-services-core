@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -24,7 +25,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "app_user")
+@Table(
+        name = "app_user",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_username", columnNames = "username"),
+                @UniqueConstraint(name = "uk_user_email", columnNames = "email")
+        }
+)
 @Setter
 @Getter
 @Builder
@@ -38,11 +45,9 @@ public class User implements UserDetails {
     private Long id;
 
     private String fullName;
-
-    @Column(unique = true)
     private String email;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     @ToString.Exclude
