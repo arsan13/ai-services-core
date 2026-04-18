@@ -1,7 +1,7 @@
 package com.arsan.chatbot.controller.admin;
 
-import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.model.user.UpdateRoleRequest;
+import com.arsan.chatbot.projection.UserResponse;
 import com.arsan.chatbot.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +21,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<User> getUsers() {
+    public List<UserResponse> getUsers() {
         return userService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public UserResponse getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 
     @PatchMapping("/{id}/role")

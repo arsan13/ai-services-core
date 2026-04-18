@@ -38,6 +38,8 @@ public class User implements UserDetails {
     private Long id;
 
     private String fullName;
+
+    @Column(unique = true)
     private String email;
 
     @Column(unique = true, nullable = false)
