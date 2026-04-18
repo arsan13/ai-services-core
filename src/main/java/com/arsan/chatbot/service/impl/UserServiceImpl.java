@@ -3,6 +3,8 @@ package com.arsan.chatbot.service.impl;
 import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.enums.Role;
 import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
+import com.arsan.chatbot.mapper.UserMapper;
+import com.arsan.chatbot.model.user.UserDTO;
 import com.arsan.chatbot.repository.UserRepository;
 import com.arsan.chatbot.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +17,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
+    public List<UserDTO> getAll() {
+        List<User> users = userRepository.findAll();
+        return userMapper.toDtoList(users);
     }
 
     @Override

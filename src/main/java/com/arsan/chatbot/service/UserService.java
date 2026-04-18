@@ -1,13 +1,13 @@
 package com.arsan.chatbot.service;
 
-import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.enums.Role;
+import com.arsan.chatbot.model.user.UserDTO;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<User> getAll();
+    List<UserDTO> getAll();
 
     void updateRole(Long id, Role role);
 
