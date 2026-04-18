@@ -6,6 +6,7 @@ import com.arsan.chatbot.model.common.DateRange;
 import com.arsan.chatbot.projection.TokenUsageAuditView;
 import com.arsan.chatbot.projection.UserTokenUsage;
 import com.arsan.chatbot.repository.TokenUsageAuditRepository;
+import com.arsan.chatbot.repository.UserRepository;
 import com.arsan.chatbot.service.TokenUsageAuditService;
 import com.arsan.chatbot.util.OpenAiCostCalculator;
 import com.arsan.chatbot.util.SecurityUtils;
@@ -28,42 +29,43 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
 
-    private final TokenUsageAuditRepository repository;
+    private final UserRepository userRepository;
+    private final TokenUsageAuditRepository auditRepository;
 
     @Override
     public List<TokenUsageAuditView> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending().and(Sort.by("id").descending()));
-        return repository.findAllBy(pageable);
+        return auditRepository.findAllBy(pageable);
     }
 
     @Override
     public List<TokenUsageAuditView> getByUserId(Long userId) {
-        return repository.findByUserId(userId);
+        return auditRepository.findByUserId(userId);
     }
 
     @Override
     public List<TokenUsageAuditView> getAuditsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
-        return repository.findByCreatedDateBetween(range.start(), range.end());
+        return auditRepository.findByCreatedDateBetween(range.start(), range.end());
     }
 
     @Override
     public Long getTotalTokens(LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
-        return repository.sumTotalTokensByCreatedDateBetween(range.start(), range.end());
+        return auditRepository.sumTotalTokensByCreatedDateBetween(range.start(), range.end());
     }
 
     @Override
     public Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
-        User user = User.builder().id(userId).build(); // Prefer entityManager.getReference(User.class, userId);
-        return repository.sumTotalTokensByUserAndCreatedDateBetween(user, range.start(), range.end());
+        User user = userRepository.getReferenceById(userId);
+        return auditRepository.sumTotalTokensByUserAndCreatedDateBetween(user, range.start(), range.end());
     }
 
     @Override
     public List<UserTokenUsage> getUserTokenUsageSummary(LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
-        return repository.findUserTokenUsageByCreatedDateBetween(range.start(), range.end());
+        return auditRepository.findUserTokenUsageByCreatedDateBetween(range.start(), range.end());
     }
 
     @Override
@@ -91,6 +93,6 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
             audit.setOutputSummary(chatResponse.getResult().getOutput().getText());
         }
 
-        return repository.save(audit);
+        return auditRepository.save(audit);
     }
 }
