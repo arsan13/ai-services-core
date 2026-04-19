@@ -24,6 +24,17 @@ spring:
       mode: NEVER
       data-locations: 'classpath:sql/data.sql'
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1052371770015-n0guj5j8ktr2ljeot5o29dv0jm4gfocp.apps.googleusercontent.com
+            client-secret: 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
+#            scope:
+#              - email
+#              - profile
+
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
@@ -54,10 +65,11 @@ app:
     enabled: true
     public-endpoints:
       - /auth/**
+      - /oauth2/**
       - /swagger-ui/**
       - /v3/api-docs/**
       - /swagger-ui.html
       - /h2-console/**
     jwt:
-      secret: "my-secret-key-which-should-be-32-chars-min-change-this-later"
+      secret: my-secret-key-which-should-be-32-chars-min-change-this-later
       expiration-in-hours: 2

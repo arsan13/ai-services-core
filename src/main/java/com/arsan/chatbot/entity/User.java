@@ -1,5 +1,6 @@
 package com.arsan.chatbot.entity;
 
+import com.arsan.chatbot.enums.AuthProviderType;
 import com.arsan.chatbot.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,8 +29,7 @@ import java.util.List;
 @Table(
         name = "app_user",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_user_username", columnNames = "username"),
-                @UniqueConstraint(name = "uk_user_email", columnNames = "email")
+                @UniqueConstraint(name = "uk_user_username", columnNames = "username")
         }
 )
 @Setter
@@ -45,7 +45,6 @@ public class User implements UserDetails {
     private Long id;
 
     private String fullName;
-    private String email;
 
     @Column(nullable = false)
     private String username;
@@ -53,8 +52,15 @@ public class User implements UserDetails {
     @ToString.Exclude
     private String password;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.ROLE_USER;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private AuthProviderType providerType = AuthProviderType.LOCAL;
+
+    private String providerId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

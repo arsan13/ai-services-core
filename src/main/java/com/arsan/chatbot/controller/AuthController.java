@@ -33,10 +33,7 @@ public class AuthController {
     }
 
     @GetMapping("/availability")
-    public AvailabilityResponse check(
-            @RequestParam String field,
-            @RequestParam String value
-    ) {
-        return authService.checkAvailability(field, value);
+    public AvailabilityResponse check(@RequestParam String username) {
+        return authService.isUsernameAvailable(username);
     }
 }

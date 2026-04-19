@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -75,6 +76,14 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<?>> handleBadCredentials(BadCredentialsException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Bad credentials", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException ex) {
         return new ResponseEntity<>(
@@ -99,9 +108,6 @@ public class GlobalExceptionHandler {
 
         if (msg.contains("uk_user_username")) {
             errors.put("username", "Username already exists");
-        }
-        if (msg.contains("uk_user_email")) {
-            errors.put("email", "Email already exists");
         }
         if (errors.isEmpty()) {
             errors.put("general", msg);

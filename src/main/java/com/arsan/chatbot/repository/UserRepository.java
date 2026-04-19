@@ -1,6 +1,7 @@
 package com.arsan.chatbot.repository;
 
 import com.arsan.chatbot.entity.User;
+import com.arsan.chatbot.enums.AuthProviderType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 
-    boolean existsByUsername(String username);
+    Optional<User> findByProviderIdAndProviderType(String providerId, AuthProviderType providerType);
 
-    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 }

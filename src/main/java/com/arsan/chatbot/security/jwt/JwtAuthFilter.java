@@ -1,6 +1,7 @@
-package com.arsan.chatbot.security;
+package com.arsan.chatbot.security.jwt;
 
 import com.arsan.chatbot.entity.User;
+import com.arsan.chatbot.security.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

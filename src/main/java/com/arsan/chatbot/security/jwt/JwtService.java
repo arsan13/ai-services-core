@@ -1,4 +1,4 @@
-package com.arsan.chatbot.security;
+package com.arsan.chatbot.security.jwt;
 
 import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.properties.SecurityProperties;
