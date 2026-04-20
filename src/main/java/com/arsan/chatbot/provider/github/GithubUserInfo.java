@@ -4,6 +4,8 @@ import com.arsan.chatbot.enums.AuthProviderType;
 import com.arsan.chatbot.provider.core.OAuthUserInfo;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.Objects;
+
 public class GithubUserInfo implements OAuthUserInfo {
 
     private final OAuth2User user;
@@ -21,7 +23,7 @@ public class GithubUserInfo implements OAuthUserInfo {
     }
 
     public String getProviderId() {
-        return user.getAttribute("id");
+        return Objects.toString(user.getAttribute("id"), user.getAttribute("login"));
     }
 
     public AuthProviderType getProviderType() {

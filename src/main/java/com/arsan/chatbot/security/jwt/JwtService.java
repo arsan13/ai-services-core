@@ -1,6 +1,7 @@
 package com.arsan.chatbot.security.jwt;
 
 import com.arsan.chatbot.entity.User;
+import com.arsan.chatbot.enums.AuthProviderType;
 import com.arsan.chatbot.properties.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,8 +23,14 @@ public class JwtService {
     private final SecurityProperties securityProperties;
 
     public String generateToken(User user) {
+        return generateToken(user, AuthProviderType.LOCAL);
+    }
+
+    public String generateToken(User user, AuthProviderType provider) {
         Map<String, Object> claims = Map.of(
                 "userId", user.getId(),
+                "username", user.getUsername(),
+                "provider", provider.name(),
                 "roles", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList()

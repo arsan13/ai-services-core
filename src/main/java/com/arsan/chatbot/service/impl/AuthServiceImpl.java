@@ -64,9 +64,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User) {
-        OAuthUserInfo userInfo = oAuthUserInfoProviderRegistry.get(registrationId, oAuth2User);
-        User user = oauthUserResolver.resolve(userInfo);
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+        OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(registrationId, oAuth2User);
+        User user = oauthUserResolver.resolve(oAuthUserInfo);
+        String token = jwtService.generateToken(user, oAuthUserInfo.getProviderType());
+        return new AuthResponse(token, oAuthUserInfo.getProviderType());
     }
 }
