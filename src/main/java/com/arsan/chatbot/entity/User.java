@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,9 @@ import java.util.List;
         name = "app_user",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_user_username", columnNames = "username")
+        },
+        indexes = {
+                @Index(name = "idx_provider_id_provider_type", columnList = "providerId, providerType")
         }
 )
 @Setter

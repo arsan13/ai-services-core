@@ -29,7 +29,7 @@ public class OAuthUserResolver {
         }
 
         // 3. Link account
-        if (emailUser != null && emailUser.getProviderId() == null) {
+        if (emailUser.getProviderId() == null) {
             return link(emailUser, info);
         }
 

@@ -1,6 +1,8 @@
 spring:
   application:
     name: spring-ai-chatbot
+  profiles:
+    include: secrets
 
   datasource:
     url: jdbc:h2:file:~/testdb
@@ -29,15 +31,15 @@ spring:
       client:
         registration:
           google:
-            client-id: 1052371770015-n0guj5j8ktr2ljeot5o29dv0jm4gfocp.apps.googleusercontent.com
-            client-secret: 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
-#            scope:
-#              - email
-#              - profile
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+          github:
+            client-id: ${GITHUB_CLIENT_ID:}
+            client-secret: ${GITHUB_CLIENT_SECRET:}
 
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${OPENAI_API_KEY:}
       base-url: https://api.pawan.krd
       chat:
         options:
