@@ -19,18 +19,22 @@ public class AiChatServiceImpl implements AiChatService {
     private final ChatClient chatClient;
 
     public ChatResponse generateResponse(String message) throws AiServiceException {
-        log.info("User sent message: {}", message);
+        try {
+            log.info("User sent message: {}", message);
 
-        Long userId = SecurityUtils.getCurrentUserId();
-        String outputText = chatClient
-                .prompt()
-                .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, userId))
-                .user(message)
-                .call()
-                .content();
+            Long userId = SecurityUtils.getCurrentUserId();
+            String outputText = chatClient
+                    .prompt()
+                    .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, userId))
+                    .user(message)
+                    .call()
+                    .content();
 
-        log.info("Model responded with: {}", outputText);
+            log.info("Model responded with: {}", outputText);
 
-        return new ChatResponse(outputText);
+            return new ChatResponse(outputText);
+        } catch (Exception e) {
+            throw new AiServiceException("Failed to generate response. " + e.getMessage());
+        }
     }
 }

@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AiServiceException.class)
     public ResponseEntity<ApiResponse<?>> handleAi(AiServiceException ex) {
         return new ResponseEntity<>(
-                ApiResponse.failure("Something went wrong. Please try again!", ex.getMessage()),
+                ApiResponse.failure("AI Error", ex.getMessage()),
                 HttpStatus.BAD_GATEWAY
         );
     }
