@@ -1,7 +1,7 @@
 package com.arsan.chatbot.entity;
 
 import com.arsan.chatbot.enums.AuthProviderType;
-import com.arsan.chatbot.enums.Role;
+import com.arsan.chatbot.enums.RoleType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -58,7 +58,7 @@ public class User implements UserDetails {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Role role = Role.ROLE_USER;
+    private RoleType role = RoleType.ROLE_USER;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

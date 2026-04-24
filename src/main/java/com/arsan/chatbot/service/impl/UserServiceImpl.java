@@ -1,7 +1,7 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.User;
-import com.arsan.chatbot.enums.Role;
+import com.arsan.chatbot.enums.RoleType;
 import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
 import com.arsan.chatbot.projection.UserResponse;
 import com.arsan.chatbot.repository.UserRepository;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateRole(Long id, Role role) {
+    public void updateRole(Long id, RoleType role) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setRole(role);
         userRepository.save(user);
