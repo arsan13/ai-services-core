@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException ex) {
         return new ResponseEntity<>(
-                ApiResponse.failure("Access denied", ex.getMessage()),
+                ApiResponse.failure("Insufficient Privileges", ex.getMessage()),
                 HttpStatus.FORBIDDEN
         );
     }

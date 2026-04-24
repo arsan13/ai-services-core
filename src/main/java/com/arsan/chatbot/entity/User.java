@@ -1,6 +1,7 @@
 package com.arsan.chatbot.entity;
 
 import com.arsan.chatbot.enums.AuthProviderType;
+import com.arsan.chatbot.enums.PermissionType;
 import com.arsan.chatbot.enums.RoleType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -26,6 +27,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -64,6 +66,11 @@ public class User implements UserDetails {
     private Set<RoleType> roles = Set.of(RoleType.ROLE_USER);
 
     @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<PermissionType> permissions = Set.of(PermissionType.USER_READ);
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private AuthProviderType providerType = AuthProviderType.LOCAL;
 
@@ -71,8 +78,16 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        authorities.addAll(this.roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
-                .toList();
+                .toList());
+
+        authorities.addAll(this.permissions.stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getAuthority()))
+                .toList());
+
+        return authorities;
     }
 }

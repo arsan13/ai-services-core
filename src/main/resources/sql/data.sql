@@ -12,6 +12,17 @@ VALUES (1, 'ROLE_USER'),
        (1, 'ROLE_ADMIN'),
        (2, 'ROLE_USER');
 
+INSERT INTO user_permissions (user_id, permissions)
+VALUES (1, 'USER_READ'),
+       (1, 'USER_WRITE'),
+       (1, 'USER_DELETE'),
+       (1, 'USER_MANAGE'),
+       (1, 'ADMIN_READ'),
+       (1, 'ADMIN_WRITE'),
+       (1, 'ADMIN_DELETE'),
+       (1, 'TOKEN_USAGE_READ'),
+       (2, 'USER_READ');
+
 
 INSERT INTO token_usage_audit
 (id, user_id, model, provider, prompt_tokens, completion_tokens, total_tokens, cost_in_usd, latency_sec, input_summary,

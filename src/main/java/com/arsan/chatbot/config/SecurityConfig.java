@@ -1,5 +1,6 @@
 package com.arsan.chatbot.config;
 
+import com.arsan.chatbot.enums.PermissionType;
 import com.arsan.chatbot.properties.SecurityProperties;
 import com.arsan.chatbot.security.handler.OAuth2SuccessHandler;
 import com.arsan.chatbot.security.jwt.JwtAuthFilter;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @ConditionalOnProperty(name = "app.security.enabled", havingValue = "true", matchIfMissing = true)
+//@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -38,6 +41,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicPaths).permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/admin/token-usage/**").hasAuthority(PermissionType.TOKEN_USAGE_READ.getAuthority())
+                        .requestMatchers(HttpMethod.GET, "/admin/users/**").hasAuthority(PermissionType.USER_READ.getAuthority())
+                        .requestMatchers(HttpMethod.GET, "/admin/users/permission/available").hasAuthority(PermissionType.ADMIN_READ.getAuthority())
+                        .requestMatchers(HttpMethod.PATCH, "/admin/users/**").hasAuthority(PermissionType.ADMIN_WRITE.getAuthority())
+
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

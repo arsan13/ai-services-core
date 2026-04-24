@@ -1,6 +1,7 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.User;
+import com.arsan.chatbot.enums.PermissionType;
 import com.arsan.chatbot.enums.RoleType;
 import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
 import com.arsan.chatbot.projection.UserResponse;
@@ -30,27 +31,54 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void makeAdmin(Long id) {
+    public void grantRole(Long id, RoleType role) {
         User user = userRepository.findById(id).orElseThrow(this::userNotFound);
 
-        if (user.getRoles().contains(RoleType.ROLE_ADMIN)) {
-            throw new IllegalArgumentException("User is already an admin");
+        if (user.getRoles().contains(role)) {
+            throw new IllegalArgumentException("User already has this role");
         }
 
-        user.getRoles().add(RoleType.ROLE_ADMIN);
+        user.getRoles().add(role);
         userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void revokeAdmin(Long id) {
+    public void revokeRole(Long id, RoleType role) {
         User user = userRepository.findById(id).orElseThrow(this::userNotFound);
 
-        if (!user.getRoles().contains(RoleType.ROLE_ADMIN)) {
-            throw new IllegalArgumentException("User is not an admin");
+        if (!user.getRoles().contains(role)) {
+            throw new IllegalArgumentException("User does not have this role");
         }
 
-        user.getRoles().remove(RoleType.ROLE_ADMIN);
+        user.getRoles().remove(role);
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<PermissionType> availablePermissions() {
+        return List.of(PermissionType.values());
+    }
+
+    @Transactional
+    public void grantPermission(Long id, List<PermissionType> permissions) {
+        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
+
+        permissions.stream()
+                .filter(permission -> !user.getPermissions().contains(permission))
+                .forEach(permission -> user.getPermissions().add(permission));
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void revokePermission(Long id, List<PermissionType> permissions) {
+        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
+
+        permissions.stream()
+                .filter(permission -> user.getPermissions().contains(permission))
+                .forEach(permission -> user.getPermissions().remove(permission));
+
         userRepository.save(user);
     }
 
