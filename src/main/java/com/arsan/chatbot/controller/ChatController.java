@@ -3,7 +3,6 @@ package com.arsan.chatbot.controller;
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.model.ai.ChatRequest;
 import com.arsan.chatbot.model.ai.ChatResponse;
-import com.arsan.chatbot.model.common.ApiResponse;
 import com.arsan.chatbot.service.AiChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,8 @@ public class ChatController {
     private final AiChatService aiChatService;
 
     @PostMapping
-    public ApiResponse<ChatResponse> chat(@RequestBody @Valid ChatRequest chatRequest) throws AiServiceException {
-        ChatResponse response = aiChatService.generateResponse(chatRequest.getMessage());
-        return ApiResponse.success(response);
+    public ChatResponse chat(@RequestBody @Valid ChatRequest chatRequest) throws AiServiceException {
+        return aiChatService.generateResponse(chatRequest.getMessage());
     }
 }
 

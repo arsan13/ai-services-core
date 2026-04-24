@@ -1,6 +1,6 @@
 package com.arsan.chatbot.advice;
 
-import com.arsan.chatbot.dto.ApiResponse;
+import com.arsan.chatbot.model.common.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -14,13 +14,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @ControllerAdvice
 public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
 
+    public static final String SUCCESS = "Success";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         String packageName = returnType.getContainingClass().getPackageName();
-        return !packageName.contains("actuator") &&
-                !packageName.contains("swagger");
+        return !packageName.contains("actuator") && !packageName.contains("swagger");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
                                   ServerHttpResponse response) {
 
-        if (body instanceof ApiResponse) {
+        if (body instanceof ApiResponse<?>) {
             return body;
         }
 
@@ -40,7 +40,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
                 return responseEntity;
             }
 
-            ApiResponse<Object> wrapped = ApiResponse.success(responseBody, "Success");
+            ApiResponse<Object> wrapped = ApiResponse.success(responseBody, SUCCESS);
             return ResponseEntity
                     .status(responseEntity.getStatusCode())
                     .headers(responseEntity.getHeaders())
@@ -49,21 +49,19 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
 
         // Handle null
         if (body == null) {
-            return ApiResponse.success(null, "Success");
+            return ApiResponse.success(null, SUCCESS);
         }
 
         // Handle String separately
         if (body instanceof String) {
             try {
-                return objectMapper.writeValueAsString(
-                        ApiResponse.success(body, "Success")
-                );
+                return objectMapper.writeValueAsString(ApiResponse.success(body, SUCCESS));
             } catch (Exception e) {
                 throw new RuntimeException("Error wrapping response");
             }
         }
 
         // Default wrapping
-        return ApiResponse.success(body, "Success");
+        return ApiResponse.success(body, SUCCESS);
     }
 }

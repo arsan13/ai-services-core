@@ -12,7 +12,7 @@ public final class SecurityUtils {
     }
 
     public static Long getCurrentUserId() {
-        return getCurrentUser().map(User::getId).orElse(null);
+        return getCurrentUser().map(User::getId).orElse(0L);
     }
 
     public static Optional<User> getCurrentUser() {
