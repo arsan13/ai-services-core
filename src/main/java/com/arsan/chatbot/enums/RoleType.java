@@ -1,6 +1,6 @@
 package com.arsan.chatbot.enums;
 
-public enum Role {
+public enum RoleType {
     ROLE_USER,
     ROLE_ADMIN
 }

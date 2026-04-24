@@ -28,9 +28,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateRole(Long id, RoleType role) {
+    public void makeAdmin(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        user.setRole(role);
+
+        if (user.getRoles().contains(RoleType.ROLE_ADMIN)) {
+            throw new IllegalStateException("User is already an admin");
+        }
+
+        user.getRoles().add(RoleType.ROLE_ADMIN);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void revokeAdmin(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!user.getRoles().contains(RoleType.ROLE_ADMIN)) {
+            throw new IllegalStateException("User is not an admin");
+        }
+
+        user.getRoles().remove(RoleType.ROLE_ADMIN);
         userRepository.save(user);
     }
 }

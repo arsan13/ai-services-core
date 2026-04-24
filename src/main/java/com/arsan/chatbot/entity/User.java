@@ -3,9 +3,11 @@ package com.arsan.chatbot.entity;
 import com.arsan.chatbot.enums.AuthProviderType;
 import com.arsan.chatbot.enums.RoleType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +26,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -57,8 +59,9 @@ public class User implements UserDetails {
     private String password;
 
     @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private RoleType role = RoleType.ROLE_USER;
+    private Set<RoleType> roles = Set.of(RoleType.ROLE_USER);
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -68,6 +71,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return this.roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .toList();
     }
 }
