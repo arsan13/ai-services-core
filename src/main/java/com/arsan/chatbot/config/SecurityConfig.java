@@ -3,6 +3,8 @@ package com.arsan.chatbot.config;
 import com.arsan.chatbot.properties.SecurityProperties;
 import com.arsan.chatbot.security.handler.OAuth2SuccessHandler;
 import com.arsan.chatbot.security.jwt.JwtAuthFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -39,22 +41,20 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, exception) ->
-                                handlerExceptionResolver.resolveException(request, response, null, exception)
-                        )
-                        .accessDeniedHandler((request, response, exception) ->
-                                handlerExceptionResolver.resolveException(request, response, null, exception)
-                        )
-                )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oAuth2 -> oAuth2
                         .successHandler(oAuth2SuccessHandler)
-                        .failureHandler((request, response, exception) ->
-                                handlerExceptionResolver.resolveException(request, response, null, exception)
-                        )
+                        .failureHandler(this::handleException)
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(this::handleException)
+                        .accessDeniedHandler(this::handleException)
                 );
 
         return http.build();
+    }
+
+    private void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        handlerExceptionResolver.resolveException(request, response, null, exception);
     }
 }

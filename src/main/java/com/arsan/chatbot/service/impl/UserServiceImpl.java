@@ -6,6 +6,7 @@ import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
 import com.arsan.chatbot.projection.UserResponse;
 import com.arsan.chatbot.repository.UserRepository;
 import com.arsan.chatbot.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +25,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        return userRepository.findById(id, UserResponse.class).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userRepository.findById(id, UserResponse.class).orElseThrow(this::userNotFound);
     }
 
     @Override
+    @Transactional
     public void makeAdmin(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
 
         if (user.getRoles().contains(RoleType.ROLE_ADMIN)) {
-            throw new IllegalStateException("User is already an admin");
+            throw new IllegalArgumentException("User is already an admin");
         }
 
         user.getRoles().add(RoleType.ROLE_ADMIN);
@@ -40,14 +42,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void revokeAdmin(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
 
         if (!user.getRoles().contains(RoleType.ROLE_ADMIN)) {
-            throw new IllegalStateException("User is not an admin");
+            throw new IllegalArgumentException("User is not an admin");
         }
 
         user.getRoles().remove(RoleType.ROLE_ADMIN);
         userRepository.save(user);
+    }
+
+    private ResourceNotFoundException userNotFound() {
+        return new ResourceNotFoundException("User not found");
     }
 }

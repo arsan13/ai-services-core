@@ -1,3 +1,18 @@
+-- DROP TABLE IF EXISTS token_usage_audit;
+-- DROP TABLE IF EXISTS user_roles;
+-- DROP TABLE IF EXISTS app_user;
+
+INSERT INTO app_user (full_name, username, password, provider_type, provider_id)
+VALUES ('Anbarsan P', 'arsan', '$2a$12$HMOMeKWbuPgRiMDPCEZtv.SkguASLdtezd8HoXI/xqB91tQsLIfNy', 'LOCAL', NULL), -- password: admin123
+       ('John May', 'johnmay', '$2a$12$PuWTCiu.Bama.4X0ysVeTuerBD.0Y5JUQDm73gr6AE4jUSUuhV4ku', 'LOCAL', NULL); -- password: test123
+
+
+INSERT INTO user_roles (user_id, roles)
+VALUES (1, 'ROLE_USER'),
+       (1, 'ROLE_ADMIN'),
+       (2, 'ROLE_USER');
+
+
 INSERT INTO token_usage_audit
 (id, user_id, model, provider, prompt_tokens, completion_tokens, total_tokens, cost_in_usd, latency_sec, input_summary,
  output_summary, created_date)
@@ -9,8 +24,5 @@ VALUES (1, 1, 'gpt-4', 'openai', 120, 80, 200, 0.004, 1.1, 'Login request', 'Log
        (6, 1, 'gpt-4', 'openai', 200, 150, 350, 0.007, 1.5, 'Search query', 'Search results', CURRENT_TIMESTAMP),
        (7, 1, 'gpt-3.5', 'openai', 130, 90, 220, 0.004, 1.2, 'Chat', 'Response', CURRENT_TIMESTAMP),
 
-       (11, 6, 'gpt-3.5', 'openai', 100, 50, 150, 0.002, 0.8, 'Grammar check', 'Corrected', CURRENT_TIMESTAMP),
-       (12, 6, 'gpt-4', 'openai', 350, 250, 600, 0.012, 2.2, 'Email draft', 'Draft', CURRENT_TIMESTAMP),
-
-       (13, 11, 'gpt-3.5', 'openai', 140, 100, 240, 0.005, 1.3, 'Rewrite', 'Rewritten', CURRENT_TIMESTAMP),
-       (14, 11, 'gpt-4', 'openai', 320, 210, 530, 0.011, 2.1, 'Documentation', 'Docs', CURRENT_TIMESTAMP);
+       (11, 2, 'gpt-3.5', 'openai', 100, 50, 150, 0.002, 0.8, 'Grammar check', 'Corrected', CURRENT_TIMESTAMP),
+       (12, 2, 'gpt-4', 'openai', 350, 250, 600, 0.012, 2.2, 'Email draft', 'Draft', CURRENT_TIMESTAMP);
