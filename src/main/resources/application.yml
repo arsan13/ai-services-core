@@ -75,3 +75,16 @@ app:
     jwt:
       secret: my-secret-key-which-should-be-32-chars-min-change-this-later
       expiration-in-hours: 2
+
+  api:
+    response:
+      wrapper:
+        enabled: true
+        base-package: com.arsan.chatbot.controller
+        excluded-paths:
+          - /v3/api-docs
+          - /swagger
+          - /actuator
+          - /login
+          - /oauth2
+          - /error
