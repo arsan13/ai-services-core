@@ -38,6 +38,12 @@ spring:
             client-secret: ${GITHUB_CLIENT_SECRET:}
 
   ai:
+    retry:
+      max-attempts: 3
+      backoff:
+        initial-interval: 500
+        multiplier: 2
+        max-interval: 3000
     openai:
       api-key: ${OPENAI_API_KEY:}
       base-url: https://api.pawan.krd
