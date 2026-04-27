@@ -22,7 +22,7 @@ public class AiChatServiceImpl implements AiChatService {
         try {
             log.info("User sent message: {}", message);
 
-            Long userId = SecurityUtils.getCurrentUserId();
+            Long userId = SecurityUtils.getCurrentUserId().orElse(0L);
             String outputText = chatClient
                     .prompt()
                     .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, userId))

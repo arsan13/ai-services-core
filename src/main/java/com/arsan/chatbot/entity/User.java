@@ -87,6 +87,10 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
+    public User(Long id) {
+        this.id = id;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();

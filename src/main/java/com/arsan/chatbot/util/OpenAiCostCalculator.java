@@ -2,7 +2,11 @@ package com.arsan.chatbot.util;
 
 import java.util.Map;
 
-public class OpenAiCostCalculator {
+public final class OpenAiCostCalculator {
+
+    private OpenAiCostCalculator() {
+        throw new UnsupportedOperationException("Utility class");
+    }
 
     // USD per 1K tokens
     private static final Map<String, ModelPricing> PRICING = Map.of(
