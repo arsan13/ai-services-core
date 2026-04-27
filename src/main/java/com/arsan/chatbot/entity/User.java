@@ -22,10 +22,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,10 +37,10 @@ import java.util.Set;
 @Table(
         name = "app_user",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_user_username", columnNames = "username")
+                @UniqueConstraint(name = User.USERNAME_UNIQUE_KEY_NAME, columnNames = "username")
         },
         indexes = {
-                @Index(name = "idx_provider_id_provider_type", columnList = "providerId, providerType")
+                @Index(name = "idx_user_provider_id_provider_type", columnList = "providerId, providerType")
         }
 )
 @Setter
@@ -47,6 +50,8 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
+
+    public static final String USERNAME_UNIQUE_KEY_NAME = "uk_user_username";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +80,12 @@ public class User implements UserDetails {
     private AuthProviderType providerType = AuthProviderType.LOCAL;
 
     private String providerId;
+
+    @CreationTimestamp
+    private LocalDateTime createdDate;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

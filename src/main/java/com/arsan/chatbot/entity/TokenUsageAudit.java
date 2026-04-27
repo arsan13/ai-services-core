@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
 @Table(
         name = "token_usage_audit",
         indexes = {
-                @Index(name = "idx_tua_created_date_id", columnList = "created_date, id"),
-                @Index(name = "idx_tua_user_id", columnList = "user_id")
+                @Index(name = "idx_tua_user_created_id", columnList = "user_id, created_date, id"),
+                @Index(name = "idx_tua_created_date_id", columnList = "created_date, id")
         }
 )
 @Immutable

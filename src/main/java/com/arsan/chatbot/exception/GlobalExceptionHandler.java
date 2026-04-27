@@ -1,5 +1,6 @@
 package com.arsan.chatbot.exception;
 
+import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
 import com.arsan.chatbot.model.common.ApiResponse;
@@ -21,6 +22,10 @@ import java.util.Optional;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Map<String, String> constraintToField = Map.of(
+            User.USERNAME_UNIQUE_KEY_NAME, "username"
+    );
 
     @ExceptionHandler(AiServiceException.class)
     public ResponseEntity<ApiResponse<?>> handleAi(AiServiceException ex) {
@@ -114,9 +119,12 @@ public class GlobalExceptionHandler {
 
         Map<String, String> errors = new HashMap<>();
 
-        if (msg.contains("uk_user_username")) {
-            errors.put("username", "Username already exists");
-        }
+        constraintToField.forEach((constraint, field) -> {
+            if (msg.contains(constraint.toLowerCase())) {
+                errors.put(field, "This value already exists");
+            }
+        });
+
         if (errors.isEmpty()) {
             errors.put("general", msg);
         }
