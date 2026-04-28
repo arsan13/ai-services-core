@@ -1,6 +1,8 @@
 spring:
   application:
     name: spring-ai-chatbot
+  profiles:
+    include: secrets
 
   datasource:
     url: jdbc:h2:file:~/testdb
@@ -24,9 +26,26 @@ spring:
       mode: NEVER
       data-locations: 'classpath:sql/data.sql'
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+          github:
+            client-id: ${GITHUB_CLIENT_ID:}
+            client-secret: ${GITHUB_CLIENT_SECRET:}
+
   ai:
+    retry:
+      max-attempts: 3
+      backoff:
+        initial-interval: 500
+        multiplier: 2
+        max-interval: 3000
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${OPENAI_API_KEY:}
       base-url: https://api.pawan.krd
       chat:
         options:
@@ -42,3 +61,36 @@ server:
   servlet:
     context-path: /api
   port: 8080
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+app:
+  security:
+    enabled: true
+    public-endpoints:
+      - /auth/**
+      - /oauth2/**
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /swagger-ui.html
+      - /h2-console/**
+    jwt:
+      secret: my-secret-key-which-should-be-32-chars-min-change-this-later
+      expiration-in-hours: 2
+
+  api:
+    response:
+      wrapper:
+        enabled: true
+        base-package: com.arsan.chatbot.controller
+        excluded-paths:
+          - /v3/api-docs
+          - /swagger
+          - /actuator
+          - /login
+          - /oauth2
+          - /error

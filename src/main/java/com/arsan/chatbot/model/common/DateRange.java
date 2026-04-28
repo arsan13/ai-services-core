@@ -1,4 +1,4 @@
-package com.arsan.chatbot.model;
+package com.arsan.chatbot.model.common;
 
 import java.time.Clock;
 import java.time.LocalDate;
