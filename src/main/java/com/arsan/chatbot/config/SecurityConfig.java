@@ -2,6 +2,7 @@ package com.arsan.chatbot.config;
 
 import com.arsan.chatbot.enums.PermissionType;
 import com.arsan.chatbot.properties.SecurityProperties;
+import com.arsan.chatbot.security.handler.OAuth2FailureHandler;
 import com.arsan.chatbot.security.handler.OAuth2SuccessHandler;
 import com.arsan.chatbot.security.jwt.JwtAuthFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final SecurityProperties securityProperties;
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Bean
@@ -55,7 +57,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oAuth2 -> oAuth2
                         .successHandler(oAuth2SuccessHandler)
-                        .failureHandler(this::handleException)
+                        .failureHandler(oAuth2FailureHandler)
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(this::handleException)
