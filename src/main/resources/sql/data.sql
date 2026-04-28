@@ -1,5 +1,6 @@
 -- DROP TABLE IF EXISTS token_usage_audit;
 -- DROP TABLE IF EXISTS user_roles;
+-- DROP TABLE IF EXISTS user_permissions;
 -- DROP TABLE IF EXISTS app_user;
 
 INSERT INTO app_user (full_name, username, password, provider_type, provider_id, created_date, updated_date)
