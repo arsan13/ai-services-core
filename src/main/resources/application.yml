@@ -45,7 +45,7 @@ spring:
         multiplier: 2
         max-interval: 3000
     openai:
-      api-key: ${OPENAI_API_KEY:}
+      api-key: ${OPENAI_API_KEY}
       base-url: https://api.pawan.krd
       chat:
         options:
@@ -61,6 +61,15 @@ server:
   servlet:
     context-path: /api
   port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,loggers,threaddump
+  endpoint:
+    health:
+      show-details: always
 
 springdoc:
   api-docs:
