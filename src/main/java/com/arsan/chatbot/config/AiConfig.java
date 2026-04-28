@@ -15,7 +15,7 @@ import org.springframework.core.io.Resource;
 
 @Slf4j
 @Configuration
-public class AppConfig {
+public class AiConfig {
 
     @Value("classpath:/prompts/system-prompt.st")
     private Resource systemPrompt;

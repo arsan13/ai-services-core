@@ -1,6 +1,6 @@
 package com.arsan.chatbot.exception;
 
-import com.arsan.chatbot.dto.ApiResponse;
+import com.arsan.chatbot.model.ApiResponse;
 import com.arsan.chatbot.exception.custom.AiServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ApiResponse.failure("Something went wrong. Please try again!", ex.getMessage()),
                 HttpStatus.BAD_GATEWAY
+        );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<?>> handleIllegalArgument(IllegalArgumentException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Invalid argument provided", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
         );
     }
 

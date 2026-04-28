@@ -1,0 +1,62 @@
+package com.arsan.chatbot.controller;
+
+import com.arsan.chatbot.entity.TokenUsageAudit;
+import com.arsan.chatbot.projection.UserTokenUsage;
+import com.arsan.chatbot.service.TokenUsageAuditService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@RestController
+@RequestMapping("/admin/token-usage")
+@RequiredArgsConstructor
+public class TokenUsageAuditController {
+
+    private final TokenUsageAuditService service;
+
+    @GetMapping
+    public List<TokenUsageAudit> getAll() {
+        return service.getAll();
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<TokenUsageAudit> getByUserId(@PathVariable String userId) {
+        return service.getByUserId(userId);
+    }
+
+    @GetMapping("/date-range")
+    public List<TokenUsageAudit> getByDateRange(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return service.getAuditsByDateRange(startDate, endDate);
+    }
+
+    @GetMapping("/total-tokens")
+    public Long getTotalTokens(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return service.getTotalTokens(startDate, endDate);
+    }
+
+    @GetMapping("/total-tokens/user/{userId}")
+    public Long getTotalTokensByUser(
+            @PathVariable String userId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return service.getTotalTokensByUser(userId, startDate, endDate);
+    }
+
+    @GetMapping("/summary")
+    public List<UserTokenUsage> getUserTokenUsageSummary(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return service.getUserTokenUsageSummary(startDate, endDate);
+    }
+}

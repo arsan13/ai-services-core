@@ -1,6 +1,6 @@
 package com.arsan.chatbot.service;
 
-import com.arsan.chatbot.dto.ChatResponse;
+import com.arsan.chatbot.model.ChatResponse;
 import com.arsan.chatbot.exception.custom.AiServiceException;
 
 public interface AiChatService {

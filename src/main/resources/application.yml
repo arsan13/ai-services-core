@@ -1,16 +1,44 @@
 spring:
   application:
     name: spring-ai-chatbot
+
+  datasource:
+    url: jdbc:h2:file:~/testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: NEVER
+      data-locations: 'classpath:sql/data.sql'
+
   ai:
     openai:
-      api-key: dummy-api-key
-      base-url: dummy-base-url
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://api.pawan.krd
       chat:
         options:
-          model: dummy-model
-
+          model: gpt-oss-20b
+#          model: cosmosrp
 #    ollama:
 #      base-url: http://localhost:11434
 #      chat:
 #        options:
 #          model: qwen2.5:7b
+
+server:
+  servlet:
+    context-path: /api
+  port: 8080

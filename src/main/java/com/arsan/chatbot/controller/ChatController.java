@@ -1,13 +1,12 @@
 package com.arsan.chatbot.controller;
 
-import com.arsan.chatbot.dto.ApiResponse;
-import com.arsan.chatbot.dto.ChatRequest;
-import com.arsan.chatbot.dto.ChatResponse;
 import com.arsan.chatbot.exception.custom.AiServiceException;
+import com.arsan.chatbot.model.ApiResponse;
+import com.arsan.chatbot.model.ChatRequest;
+import com.arsan.chatbot.model.ChatResponse;
 import com.arsan.chatbot.service.AiChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.ai.chat.memory.ChatMemory.DEFAULT_CONVERSATION_ID;
 
 @RestController
-@RequestMapping("/api/ai/chat")
-@RequiredArgsConstructor
+@RequestMapping("/ai/chat")
 @CrossOrigin
-@Slf4j
+@RequiredArgsConstructor
 public class ChatController {
 
     private final AiChatService aiChatService;
