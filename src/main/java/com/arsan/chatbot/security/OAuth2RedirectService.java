@@ -21,11 +21,11 @@ public class OAuth2RedirectService {
                 .toUriString();
     }
 
-    public String buildErrorUrl(String errorCode) {
+    public String buildErrorUrl(String errorMsg) {
         return UriComponentsBuilder
                 .fromUriString(frontendUrl)
                 .path("/oauth-error")
-                .queryParam("code", errorCode)
+                .queryParam("message", errorMsg)
                 .build()
                 .toUriString();
     }
