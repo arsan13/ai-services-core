@@ -1,11 +1,13 @@
 package com.arsan.chatbot.model;
 
+import com.arsan.chatbot.model.common.DateRange;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DateRangeTest {
 

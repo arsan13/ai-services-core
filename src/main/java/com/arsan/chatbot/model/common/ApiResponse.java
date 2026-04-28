@@ -1,10 +1,14 @@
-package com.arsan.chatbot.model;
+package com.arsan.chatbot.model.common;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResponse<T> {

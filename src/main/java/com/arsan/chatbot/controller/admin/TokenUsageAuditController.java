@@ -1,6 +1,6 @@
-package com.arsan.chatbot.controller;
+package com.arsan.chatbot.controller.admin;
 
-import com.arsan.chatbot.entity.TokenUsageAudit;
+import com.arsan.chatbot.projection.TokenUsageAuditView;
 import com.arsan.chatbot.projection.UserTokenUsage;
 import com.arsan.chatbot.service.TokenUsageAuditService;
 import lombok.RequiredArgsConstructor;
@@ -15,24 +15,26 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/token-usage")
+@RequestMapping("/admin/token-usage")
 @RequiredArgsConstructor
 public class TokenUsageAuditController {
 
     private final TokenUsageAuditService service;
 
     @GetMapping
-    public List<TokenUsageAudit> getAll() {
-        return service.getAll();
+    public List<TokenUsageAuditView> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return service.getAll(page, size);
     }
 
     @GetMapping("/user/{userId}")
-    public List<TokenUsageAudit> getByUserId(@PathVariable String userId) {
+    public List<TokenUsageAuditView> getByUserId(@PathVariable Long userId) {
         return service.getByUserId(userId);
     }
 
     @GetMapping("/date-range")
-    public List<TokenUsageAudit> getByDateRange(
+    public List<TokenUsageAuditView> getByDateRange(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return service.getAuditsByDateRange(startDate, endDate);
@@ -47,7 +49,7 @@ public class TokenUsageAuditController {
 
     @GetMapping("/total-tokens/user/{userId}")
     public Long getTotalTokensByUser(
-            @PathVariable String userId,
+            @PathVariable Long userId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return service.getTotalTokensByUser(userId, startDate, endDate);
