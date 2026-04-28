@@ -35,7 +35,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
             String errorMessage = URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
-            String redirectUrl = redirectService.buildSuccessUrl(errorMessage);
+            String redirectUrl = redirectService.buildErrorUrl(errorMessage);
             response.sendRedirect(redirectUrl);
         }
     }
