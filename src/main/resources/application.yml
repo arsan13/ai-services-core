@@ -72,6 +72,7 @@ springdoc:
     enabled: true
 
 app:
+  frontend-url: http://localhost:4200
   security:
     enabled: true
     public-endpoints:
