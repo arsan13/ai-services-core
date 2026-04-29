@@ -72,7 +72,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     @Transactional
     public TokenUsageAudit recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
         TokenUsageAudit audit = new TokenUsageAudit();
-        audit.setUser(SecurityUtils.getCurrentUser().orElse(new User(0L)));
+        audit.setUser(SecurityUtils.getCurrentUser().orElse(null));
         audit.setProvider("openai");
         audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
 
