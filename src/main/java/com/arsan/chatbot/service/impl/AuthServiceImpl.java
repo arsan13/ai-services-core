@@ -1,6 +1,7 @@
 package com.arsan.chatbot.service.impl;
 
 import com.arsan.chatbot.entity.User;
+import com.arsan.chatbot.mapper.UserMapper;
 import com.arsan.chatbot.model.auth.AuthRequest;
 import com.arsan.chatbot.model.auth.AuthResponse;
 import com.arsan.chatbot.model.auth.AvailabilityResponse;
@@ -30,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final OAuthUserInfoProviderRegistry oAuthUserInfoProviderRegistry;
     private final OAuthUserResolver oauthUserResolver;
+    private final UserMapper userMapper;
 
     @Override
     public AuthResponse login(AuthRequest request) {
@@ -39,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = (User) authentication.getPrincipal();
         String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+        return new AuthResponse(token, userMapper.toUserProfile(user));
     }
 
     @Override
@@ -53,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
 
         user = userRepository.save(user);
         String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+        return new AuthResponse(token, userMapper.toUserProfile(user));
     }
 
     @Override
@@ -63,10 +65,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthResponse handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User) {
+    public String handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User) {
         OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(registrationId, oAuth2User);
         User user = oauthUserResolver.resolve(oAuthUserInfo);
-        String token = jwtService.generateToken(user, oAuthUserInfo.getProviderType());
-        return new AuthResponse(token, oAuthUserInfo.getProviderType());
+        return jwtService.generateToken(user);
     }
 }

@@ -1,6 +1,6 @@
 package com.arsan.chatbot.model.auth;
 
-import com.arsan.chatbot.enums.AuthProviderType;
+import com.arsan.chatbot.model.common.UserProfile;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class AuthResponse {
     private String token;
-    private AuthProviderType provider = AuthProviderType.LOCAL;
+    private UserProfile userProfile;
 
     public AuthResponse(String token) {
         this.token = token;

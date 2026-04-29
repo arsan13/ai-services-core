@@ -14,5 +14,5 @@ public interface AuthService {
 
     AvailabilityResponse isUsernameAvailable(String username);
 
-    AuthResponse handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User);
+    String handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User);
 }

@@ -1,6 +1,5 @@
 package com.arsan.chatbot.security.handler;
 
-import com.arsan.chatbot.model.auth.AuthResponse;
 import com.arsan.chatbot.security.OAuth2RedirectService;
 import com.arsan.chatbot.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,9 +28,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-            AuthResponse authResponse = authService.handleOAuth2LoginRequest(token.getAuthorizedClientRegistrationId(), oAuth2User);
+            String jwt = authService.handleOAuth2LoginRequest(token.getAuthorizedClientRegistrationId(), oAuth2User);
 
-            String redirectUrl = redirectService.buildSuccessUrl(authResponse.getToken());
+            String redirectUrl = redirectService.buildSuccessUrl(jwt);
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
             String errorMessage = URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);

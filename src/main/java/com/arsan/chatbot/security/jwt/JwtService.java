@@ -23,15 +23,11 @@ public class JwtService {
     private final SecurityProperties securityProperties;
 
     public String generateToken(User user) {
-        return generateToken(user, AuthProviderType.LOCAL);
-    }
-
-    public String generateToken(User user, AuthProviderType provider) {
         Map<String, Object> claims = Map.of(
                 "userId", user.getId(),
                 "username", user.getUsername(),
-                "provider", provider.name(),
-                "roles", user.getAuthorities().stream()
+                "provider", user.getProviderType().name(),
+                "authorities", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList()
         );
