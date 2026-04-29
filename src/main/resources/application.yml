@@ -1,6 +1,6 @@
 spring:
   application:
-    name: spring-ai-chatbot
+    name: ai-services-core
 
   security:
     oauth2:

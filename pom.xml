@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.arsan</groupId>
-    <artifactId>chatbot</artifactId>
+    <artifactId>ai-services-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-ai-chatbot</name>
+    <name>ai-services-core</name>
     <description>AI Chatbot For Aviation Domain</description>
     <url/>
     <licenses>
