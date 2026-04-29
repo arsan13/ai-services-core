@@ -1,23 +1,36 @@
 package com.arsan.chatbot.exception;
 
-import com.arsan.chatbot.model.ApiResponse;
+import com.arsan.chatbot.entity.User;
 import com.arsan.chatbot.exception.custom.AiServiceException;
+import com.arsan.chatbot.exception.custom.ResourceNotFoundException;
+import com.arsan.chatbot.model.common.ApiResponse;
+import io.jsonwebtoken.JwtException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Map<String, String> constraintToField = Map.of(
+            User.USERNAME_UNIQUE_KEY_NAME, "username"
+    );
+
     @ExceptionHandler(AiServiceException.class)
     public ResponseEntity<ApiResponse<?>> handleAi(AiServiceException ex) {
         return new ResponseEntity<>(
-                ApiResponse.failure("Something went wrong. Please try again!", ex.getMessage()),
+                ApiResponse.failure("AI Error", ex.getMessage()),
                 HttpStatus.BAD_GATEWAY
         );
     }
@@ -26,6 +39,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleIllegalArgument(IllegalArgumentException ex) {
         return new ResponseEntity<>(
                 ApiResponse.failure("Invalid argument provided", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<?>> handleIllegalState(IllegalStateException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Invalid state", ex.getMessage()),
                 HttpStatus.BAD_REQUEST
         );
     }
@@ -40,6 +61,76 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(
                 ApiResponse.failure("Validation failed", errors),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleResourceNotFound(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Not found: ", ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleUsernameNotFound(UsernameNotFoundException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("User not found", ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<?>> handleAuthenticationException(AuthenticationException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Authentication failed", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<?>> handleBadCredentials(BadCredentialsException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Bad credentials", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("Insufficient Privileges", ex.getMessage()),
+                HttpStatus.FORBIDDEN
+        );
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiResponse<?>> handleJwtException(JwtException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.failure("JWT Error", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<?>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String msg = Optional.ofNullable(ex.getMostSpecificCause().getMessage()).orElse("").toLowerCase();
+
+        Map<String, String> errors = new HashMap<>();
+
+        constraintToField.forEach((constraint, field) -> {
+            if (msg.contains(constraint.toLowerCase())) {
+                errors.put(field, "This value already exists");
+            }
+        });
+
+        if (errors.isEmpty()) {
+            errors.put("general", msg);
+        }
+
+        return new ResponseEntity<>(
+                ApiResponse.failure("Data integrity violation", errors),
                 HttpStatus.BAD_REQUEST
         );
     }

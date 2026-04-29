@@ -2,43 +2,61 @@ spring:
   application:
     name: spring-ai-chatbot
 
-  datasource:
-    url: jdbc:h2:file:~/testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    defer-datasource-initialization: true
-
-  sql:
-    init:
-      mode: NEVER
-      data-locations: 'classpath:sql/data.sql'
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+          github:
+            client-id: ${GITHUB_CLIENT_ID:}
+            client-secret: ${GITHUB_CLIENT_SECRET:}
 
   ai:
+    retry:
+      max-attempts: 3
+      backoff:
+        initial-interval: 500
+        multiplier: 2
+        max-interval: 3000
+
     openai:
       api-key: ${OPENAI_API_KEY}
       base-url: https://api.pawan.krd
       chat:
         options:
           model: gpt-oss-20b
-#          model: cosmosrp
-#    ollama:
-#      base-url: http://localhost:11434
-#      chat:
-#        options:
-#          model: qwen2.5:7b
 
 server:
   servlet:
     context-path: /api
-  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,loggers,threaddump
+  endpoint:
+    health:
+      show-details: always
+
+app:
+  security:
+    enabled: true
+    jwt:
+      secret: ${JWT_SECRET_KEY}
+      expiration-in-hours: 2
+
+  api:
+    response:
+      wrapper:
+        enabled: true
+        base-package: com.arsan.chatbot.controller
+        excluded-paths:
+          - /v3/api-docs
+          - /swagger
+          - /actuator
+          - /login
+          - /oauth2
+          - /error
