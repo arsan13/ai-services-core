@@ -3,10 +3,10 @@ spring:
     name: ai-services-core
 
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL:}
     driver-class-name: org.postgresql.Driver
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    username: ${DATABASE_USERNAME:}
+    password: ${DATABASE_PASSWORD:}
 
   security:
     oauth2:
@@ -28,7 +28,7 @@ spring:
         max-interval: 3000
 
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${OPENAI_API_KEY:}
       base-url: https://api.pawan.krd
       chat:
         options:
@@ -52,7 +52,7 @@ app:
   security:
     enabled: true
     jwt:
-      secret: ${JWT_SECRET_KEY}
+      secret: ${JWT_SECRET_KEY:}
       expiration-in-hours: 2
 
   api:
