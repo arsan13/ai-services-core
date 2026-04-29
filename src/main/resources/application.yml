@@ -26,7 +26,7 @@ spring:
       base-url: https://api.pawan.krd
       chat:
         options:
-          model: gpt-oss-20b
+          model: openai/gpt-oss-20b
 
 server:
   servlet:
@@ -52,7 +52,7 @@ app:
     response:
       wrapper:
         enabled: true
-        base-package: com.arsan.chatbot.controller
+        base-package: com.arsan.ai.controller
         excluded-paths:
           - /v3/api-docs
           - /swagger
