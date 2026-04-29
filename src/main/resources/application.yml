@@ -29,6 +29,7 @@ spring:
           model: gpt-oss-20b
 
 server:
+  port: 8080
   servlet:
     context-path: /api
 
