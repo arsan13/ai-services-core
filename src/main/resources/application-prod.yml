@@ -11,7 +11,7 @@ springdoc:
     enabled: false
 
 app:
-  frontend-url: http://localhost:4200
+  frontend-url: https://ai-services-console.vercel.app
   security:
     public-endpoints:
       - /auth/**
