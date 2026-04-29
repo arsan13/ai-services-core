@@ -1,6 +1,30 @@
 spring:
   application:
     name: spring-ai-chatbot
+  profiles:
+    include: secrets
+
+  datasource:
+    url: jdbc:h2:file:~/testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: NEVER
+      data-locations: 'classpath:sql/data.sql'
 
   security:
     oauth2:
@@ -20,7 +44,6 @@ spring:
         initial-interval: 500
         multiplier: 2
         max-interval: 3000
-
     openai:
       api-key: ${OPENAI_API_KEY}
       base-url: https://api.pawan.krd
@@ -31,6 +54,7 @@ spring:
 server:
   servlet:
     context-path: /api
+  port: 8080
 
 management:
   endpoints:
@@ -41,11 +65,25 @@ management:
     health:
       show-details: always
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 app:
   security:
     enabled: true
+    public-endpoints:
+      - /actuator/**
+      - /auth/**
+      - /oauth2/**
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /swagger-ui.html
+      - /h2-console/**
     jwt:
-      secret: ${JWT_SECRET_KEY}
+      secret: my-secret-key-which-should-be-32-chars-min-change-this-later
       expiration-in-hours: 2
 
   api:
