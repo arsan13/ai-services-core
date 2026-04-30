@@ -1,6 +1,6 @@
 package com.arsan.ai.service;
 
-import com.arsan.ai.entity.TokenUsageAudit;
+import com.arsan.ai.entity.User;
 import com.arsan.ai.projection.TokenUsageAuditView;
 import com.arsan.ai.projection.UserTokenUsage;
 import org.springframework.ai.chat.client.ChatClientRequest;
@@ -23,5 +23,5 @@ public interface TokenUsageAuditService {
 
     List<UserTokenUsage> getUserTokenUsageSummary(LocalDateTime startDate, LocalDateTime endDate);
 
-    TokenUsageAudit recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatResponse, long latencyMs);
+    void recordUsage(User user, ChatClientRequest chatClientRequest, ChatClientResponse chatResponse, long latencyMs);
 }
