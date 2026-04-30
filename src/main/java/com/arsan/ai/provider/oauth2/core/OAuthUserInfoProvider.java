@@ -1,4 +1,4 @@
-package com.arsan.ai.provider.core;
+package com.arsan.ai.provider.oauth2.core;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

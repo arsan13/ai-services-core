@@ -1,16 +1,14 @@
-package com.arsan.ai.provider.github;
+package com.arsan.ai.provider.oauth2.google;
 
 import com.arsan.ai.enums.AuthProviderType;
-import com.arsan.ai.provider.core.OAuthUserInfo;
+import com.arsan.ai.provider.oauth2.core.OAuthUserInfo;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Objects;
-
-public class GithubUserInfo implements OAuthUserInfo {
+public class GoogleUserInfo implements OAuthUserInfo {
 
     private final OAuth2User user;
 
-    public GithubUserInfo(OAuth2User user) {
+    public GoogleUserInfo(OAuth2User user) {
         this.user = user;
     }
 
@@ -23,10 +21,10 @@ public class GithubUserInfo implements OAuthUserInfo {
     }
 
     public String getProviderId() {
-        return Objects.toString(user.getAttribute("id"), user.getAttribute("login"));
+        return user.getAttribute("sub");
     }
 
     public AuthProviderType getProviderType() {
-        return AuthProviderType.GITHUB;
+        return AuthProviderType.GOOGLE;
     }
 }

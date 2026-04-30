@@ -1,4 +1,4 @@
-package com.arsan.ai.provider.core;
+package com.arsan.ai.provider.oauth2.core;
 
 import com.arsan.ai.enums.AuthProviderType;
 
