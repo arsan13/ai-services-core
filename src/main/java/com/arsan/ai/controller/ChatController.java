@@ -24,14 +24,14 @@ public class ChatController {
     @PostMapping
     public ChatResponse chat(
             @RequestBody @Valid ChatRequest chatRequest,
-            @RequestParam(value = "type", required = false, defaultValue = "generic") String chatType) throws AiServiceException {
+            @RequestParam("type") String chatType) throws AiServiceException {
         ChatType type = ChatType.fromCode(chatType);
         return aiChatService.generateResponse(chatRequest.getMessage(), type);
     }
 
     @DeleteMapping("/conversation")
     public void clearConversation(
-            @RequestParam(value = "type", required = false, defaultValue = "generic") String chatType) {
+            @RequestParam("type") String chatType) {
         ChatType type = ChatType.fromCode(chatType);
         aiChatService.clearConversation(type);
     }

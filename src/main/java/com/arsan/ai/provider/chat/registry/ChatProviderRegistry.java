@@ -13,16 +13,15 @@ import java.util.List;
 public class ChatProviderRegistry {
 
     private final List<ChatProvider> providers;
-    private final GenericChatProvider genericChatProvider;
 
     public ChatProvider getProvider(ChatType chatType) {
-        if(chatType == null) {
-            return genericChatProvider;
+        if (chatType == null) {
+            throw new IllegalArgumentException("Chat type must not be null");
         }
 
         return providers.stream()
                 .filter(provider -> provider.getChatType() == chatType)
                 .findFirst()
-                .orElse(genericChatProvider);
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported chat type: " + chatType));
     }
 }

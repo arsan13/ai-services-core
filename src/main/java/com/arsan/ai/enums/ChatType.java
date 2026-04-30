@@ -16,14 +16,14 @@ public enum ChatType {
     }
 
     public static ChatType fromCode(String code) {
-        if (code == null) {
-            return GENERIC;
+        if (code == null || code.isBlank()) {
+            throw new IllegalArgumentException("Chat type must not be null or blank");
         }
         for (ChatType type : ChatType.values()) {
             if (type.code.equalsIgnoreCase(code)) {
                 return type;
             }
         }
-        return GENERIC;
+        throw new IllegalArgumentException("Unsupported chat type: " + code);
     }
 }
