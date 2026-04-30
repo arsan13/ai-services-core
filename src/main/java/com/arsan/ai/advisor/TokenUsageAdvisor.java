@@ -1,7 +1,8 @@
 package com.arsan.ai.advisor;
 
-import com.arsan.ai.entity.TokenUsageAudit;
+import com.arsan.ai.entity.User;
 import com.arsan.ai.service.TokenUsageAuditService;
+import com.arsan.ai.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClientRequest;
@@ -24,8 +25,8 @@ public class TokenUsageAdvisor implements CallAdvisor {
         ChatClientResponse chatClientResponse = callAdvisorChain.nextCall(chatClientRequest);
         long latencyMs = (System.currentTimeMillis() - startTime);
 
-        TokenUsageAudit auditedTokenUsage = tokenUsageAuditService.recordUsage(chatClientRequest, chatClientResponse, latencyMs);
-        log.info("Prompt: {}", auditedTokenUsage);
+        User user = SecurityUtils.getCurrentUser().orElse(null);
+        tokenUsageAuditService.recordUsage(user, chatClientRequest, chatClientResponse, latencyMs);
 
         return chatClientResponse;
     }

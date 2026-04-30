@@ -6,6 +6,7 @@ import com.arsan.ai.model.ai.ChatResponse;
 import com.arsan.ai.service.AiChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,11 @@ public class ChatController {
     @PostMapping
     public ChatResponse chat(@RequestBody @Valid ChatRequest chatRequest) throws AiServiceException {
         return aiChatService.generateResponse(chatRequest.getMessage());
+    }
+
+    @DeleteMapping("/conversation")
+    public void clearConversation() {
+        aiChatService.clearConversation();
     }
 }
 

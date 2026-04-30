@@ -9,9 +9,9 @@ import com.arsan.ai.repository.TokenUsageAuditRepository;
 import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.service.TokenUsageAuditService;
 import com.arsan.ai.util.OpenAiCostCalculator;
-import com.arsan.ai.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.metadata.Usage;
@@ -19,6 +19,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
 
@@ -69,30 +71,35 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     }
 
     @Override
+    @Async("auditTaskExecutor")
     @Transactional
-    public TokenUsageAudit recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
-        TokenUsageAudit audit = new TokenUsageAudit();
-        audit.setUser(SecurityUtils.getCurrentUser().orElse(null));
-        audit.setProvider("openai");
-        audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
+    public void recordUsage(User user, ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
+        try {
+            TokenUsageAudit audit = new TokenUsageAudit();
+            audit.setUser(user);
 
-        audit.setInputSummary(chatClientRequest.prompt().getUserMessage().getText());
+            audit.setProvider("openai");
+            audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
+            audit.setInputSummary(chatClientRequest.prompt().getUserMessage().getText());
 
-        ChatResponse chatResponse = chatClientResponse.chatResponse();
-        if (chatResponse != null) {
-            audit.setModel(chatResponse.getMetadata().getModel());
+            ChatResponse chatResponse = chatClientResponse.chatResponse();
+            if (chatResponse != null) {
+                audit.setModel(chatResponse.getMetadata().getModel());
 
-            Usage usage = chatResponse.getMetadata().getUsage();
-            audit.setPromptTokens(usage.getPromptTokens());
-            audit.setCompletionTokens(usage.getCompletionTokens());
-            audit.setTotalTokens(usage.getTotalTokens());
+                Usage usage = chatResponse.getMetadata().getUsage();
+                audit.setPromptTokens(usage.getPromptTokens());
+                audit.setCompletionTokens(usage.getCompletionTokens());
+                audit.setTotalTokens(usage.getTotalTokens());
 
-            double cost = OpenAiCostCalculator.calculateCost(audit.getModel(), audit.getPromptTokens(), audit.getCompletionTokens());
-            audit.setCostInUsd(cost);
+                double cost = OpenAiCostCalculator.calculateCost(audit.getModel(), audit.getPromptTokens(), audit.getCompletionTokens());
+                audit.setCostInUsd(cost);
 
-            audit.setOutputSummary(chatResponse.getResult().getOutput().getText());
+                audit.setOutputSummary(chatResponse.getResult().getOutput().getText());
+            }
+
+            auditRepository.save(audit);
+        } catch (Exception ex) {
+            log.warn("Failed to persist token usage audit", ex);
         }
-
-        return auditRepository.save(audit);
     }
 }
