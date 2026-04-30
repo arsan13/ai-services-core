@@ -1,4 +1,10 @@
 spring:
+  datasource:
+    url: ${DATABASE_URL:}
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USERNAME:}
+    password: ${DATABASE_PASSWORD:}
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -11,7 +17,7 @@ springdoc:
     enabled: false
 
 app:
-  frontend-url: https://ai-services-console.vercel.app
+  frontend-url: https://ai-services-console.onrender.com
   security:
     public-endpoints:
       - /auth/**

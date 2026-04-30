@@ -2,12 +2,6 @@ spring:
   application:
     name: ai-services-core
 
-  datasource:
-    url: ${DATABASE_URL:}
-    driver-class-name: org.postgresql.Driver
-    username: ${DATABASE_USERNAME:}
-    password: ${DATABASE_PASSWORD:}
-
   security:
     oauth2:
       client:
@@ -58,7 +52,7 @@ app:
   cors:
     allowed-origins:
       - http://localhost:4200
-      - https://ai-services-console.vercel.app
+      - https://ai-services-console.onrender.com
     allowed-methods:
       - GET
       - POST
