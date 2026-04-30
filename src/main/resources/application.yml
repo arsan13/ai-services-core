@@ -55,6 +55,18 @@ app:
       secret: ${JWT_SECRET_KEY:}
       expiration-in-hours: 2
 
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+      - https://ai-services-console.vercel.app
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+
   api:
     response:
       wrapper:
