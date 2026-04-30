@@ -33,14 +33,18 @@ Key dependency definitions: `pom.xml`.
 
 ```mermaid
 flowchart TD
-  Client[Web or API Client] --> API[Spring REST Controllers]
-  API --> Auth[Security Layer JWT and OAuth2]
+  Client[Client (Web / API)] --> API[REST API Layer]
+
+  API --> Security[Authentication & Authorization]
   API --> Services[Application Services]
-  Services --> AI[Spring AI ChatClient]
-  AI --> Tools[FuelServiceTool Functions]
-  Services --> Repos[Spring Data Repositories]
-  Repos --> DB[(H2 or PostgreSQL)]
-  AI --> Audit[TokenUsageAdvisor]
+
+  Services --> AI[AI Integration Layer]
+  AI --> Tools[Domain Tools (Fuel Services)]
+
+  Services --> Data[Data Access Layer]
+  Data --> DB[(Database)]
+
+  AI --> Audit[Usage & Token Tracking]
   Audit --> DB
 ```
 
@@ -293,6 +297,12 @@ Comprehensive test cases (unit, integration, and API security tests) are planned
 Sample SQL exists at:
 
 - `src/main/resources/sql/data.sql`
+
+Important initialization requirement:
+
+- create an admin user in the database during initial setup
+- assign both roles: `ROLE_ADMIN` and `ROLE_USER`
+- grant all permissions required for administration and user management
 
 Current `dev` profile sets SQL init mode to `NEVER`, so seed inserts are not auto-applied unless configuration is changed or data is imported manually.
 
