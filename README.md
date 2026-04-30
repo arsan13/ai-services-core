@@ -33,13 +33,13 @@ Key dependency definitions: `pom.xml`.
 
 ```mermaid
 flowchart TD
-  Client[Client (Web / API)] --> API[REST API Layer]
+  Client[Client - Web/API] --> API[REST API Layer]
 
   API --> Security[Authentication & Authorization]
   API --> Services[Application Services]
 
   Services --> AI[AI Integration Layer]
-  AI --> Tools[Domain Tools (Fuel Services)]
+  AI --> Tools[Domain Tools - Fuel Services]
 
   Services --> Data[Data Access Layer]
   Data --> DB[(Database)]
