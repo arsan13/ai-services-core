@@ -11,7 +11,7 @@ springdoc:
     enabled: false
 
 app:
-  frontend-url: https://ai-services-console.vercel.app
+  frontend-url: https://ai-services-console.onrender.com
   security:
     public-endpoints:
       - /auth/**

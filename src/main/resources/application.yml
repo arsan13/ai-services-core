@@ -58,7 +58,7 @@ app:
   cors:
     allowed-origins:
       - http://localhost:4200
-      - https://ai-services-console.vercel.app
+      - https://ai-services-console.onrender.com
     allowed-methods:
       - GET
       - POST
