@@ -73,7 +73,7 @@ public class User implements UserDetails {
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<PermissionType> permissions = Set.of(PermissionType.USER_READ);
+    private Set<PermissionType> permissions = Set.of(PermissionType.USER_READ, PermissionType.CHAT_GENERIC_USE);
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

@@ -13,7 +13,10 @@ public enum PermissionType {
     USER_DELETE("user:delete"),
     USER_MANAGE("user:manage"),
 
-    TOKEN_USAGE_READ("token:usage:read");
+    TOKEN_USAGE_READ("token:usage:read"),
+
+    CHAT_AVIATION_USE("chat:aviation:use"),
+    CHAT_GENERIC_USE("chat:generic:use");
 
     private final String authority;
 

@@ -1,6 +1,6 @@
 package com.arsan.ai.provider.chat.aviation;
 
-import com.arsan.ai.config.AviationChatConfig;
+import com.arsan.ai.config.ai.AviationChatConfig;
 import com.arsan.ai.enums.ChatType;
 import com.arsan.ai.provider.chat.core.AbstractChatProvider;
 import org.springframework.ai.chat.client.ChatClient;

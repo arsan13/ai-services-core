@@ -1,6 +1,6 @@
 package com.arsan.ai.provider.chat.generic;
 
-import com.arsan.ai.config.GenericChatConfig;
+import com.arsan.ai.config.ai.GenericChatConfig;
 import com.arsan.ai.enums.ChatType;
 import com.arsan.ai.provider.chat.core.AbstractChatProvider;
 import org.springframework.ai.chat.client.ChatClient;

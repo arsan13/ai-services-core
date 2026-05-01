@@ -1,4 +1,4 @@
-package com.arsan.ai.config;
+package com.arsan.ai.config.ai;
 
 import com.arsan.ai.advisor.TokenUsageAdvisor;
 import com.arsan.ai.tool.FuelServiceTool;

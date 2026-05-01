@@ -24,7 +24,7 @@ public class AiChatServiceImpl implements AiChatService {
     @Override
     public List<ChatTypeResponse> getSupportedTypes() {
         return Arrays.stream(ChatType.values())
-                .map(type -> new ChatTypeResponse(type.getCode(), type.getDisplayName()))
+                .map(type -> new ChatTypeResponse(type.getCode(), type.getDisplayName(), type.getPermission()))
                 .toList();
     }
 

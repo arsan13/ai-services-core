@@ -1,4 +1,6 @@
 package com.arsan.ai.model.ai;
 
-public record ChatTypeResponse(String code, String displayName) {
+import com.arsan.ai.enums.PermissionType;
+
+public record ChatTypeResponse(String code, String displayName, PermissionType permission) {
 }

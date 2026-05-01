@@ -22,7 +22,10 @@ VALUES (1, 'USER_READ'),
        (1, 'ADMIN_WRITE'),
        (1, 'ADMIN_DELETE'),
        (1, 'TOKEN_USAGE_READ'),
-       (2, 'USER_READ');
+       (1, 'CHAT_AVIATION_USE'),
+       (1, 'CHAT_GENERIC_USE'),
+       (2, 'USER_READ'),
+       (2, 'CHAT_GENERIC_USE');
 
 
 INSERT INTO token_usage_audit (id, user_id, model, provider, prompt_tokens, completion_tokens, total_tokens, cost_in_usd, latency_sec, input_summary, output_summary, created_date)
