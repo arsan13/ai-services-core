@@ -1,6 +1,5 @@
 package com.arsan.ai.projection;
 
-import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.enums.RoleType;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ public interface UserResponse {
 
     List<RoleType> getRoles();
 
-    List<PermissionType> getPermissions();
+    List<String> getPermissions();
 
     LocalDateTime getCreatedDate();
 }

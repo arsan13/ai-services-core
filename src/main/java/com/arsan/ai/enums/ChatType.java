@@ -5,14 +5,14 @@ import lombok.Getter;
 @Getter
 public enum ChatType {
 
-    AVIATION("aviation", "Aviation Fuel Operations Chat", PermissionType.CHAT_AVIATION_USE),
-    GENERIC("generic", "Generic Chat", PermissionType.CHAT_GENERIC_USE);
+    AVIATION("aviation", "Aviation Fuel Operations Chat", PermissionType.CHAT_AVIATION_USE.getValue()),
+    GENERIC("generic", "Generic Chat", PermissionType.CHAT_GENERIC_USE.getValue());
 
     private final String code;
     private final String displayName;
-    private final PermissionType permission;
+    private final String permission;
 
-    ChatType(String code, String displayName, PermissionType permission) {
+    ChatType(String code, String displayName, String permission) {
         this.code = code;
         this.displayName = displayName;
         this.permission = permission;

@@ -14,18 +14,18 @@ VALUES (1, 'ROLE_USER'),
        (2, 'ROLE_USER');
 
 INSERT INTO user_permissions (user_id, permissions)
-VALUES (1, 'USER_READ'),
-       (1, 'USER_WRITE'),
-       (1, 'USER_DELETE'),
-       (1, 'USER_MANAGE'),
-       (1, 'ADMIN_READ'),
-       (1, 'ADMIN_WRITE'),
-       (1, 'ADMIN_DELETE'),
-       (1, 'TOKEN_USAGE_READ'),
-       (1, 'CHAT_AVIATION_USE'),
-       (1, 'CHAT_GENERIC_USE'),
-       (2, 'USER_READ'),
-       (2, 'CHAT_GENERIC_USE');
+VALUES (1, 'user:read'),
+       (1, 'user:write'),
+       (1, 'user:delete'),
+       (1, 'user:manage'),
+       (1, 'admin:read'),
+       (1, 'admin:write'),
+       (1, 'admin:delete'),
+       (1, 'token:usage:read'),
+       (1, 'chat:aviation:use'),
+       (1, 'chat:generic:use'),
+       (2, 'user:read'),
+       (2, 'chat:generic:use');
 
 
 INSERT INTO token_usage_audit (id, user_id, model, provider, prompt_tokens, completion_tokens, total_tokens, cost_in_usd, latency_sec, input_summary, output_summary, created_date)

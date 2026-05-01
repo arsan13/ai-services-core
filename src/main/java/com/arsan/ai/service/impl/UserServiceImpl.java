@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -55,29 +56,34 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    @Override
-    public List<PermissionType> availablePermissions() {
-        return List.of(PermissionType.values());
+    public List<String> availablePermissions() {
+        return Arrays.stream(PermissionType.values())
+                .map(PermissionType::getValue)
+                .toList();
     }
 
     @Transactional
-    public void grantPermission(Long id, List<PermissionType> permissions) {
+    public void grantPermission(Long id, List<String> permissions) {
+        PermissionType.validateAll(permissions);
+
         User user = userRepository.findById(id).orElseThrow(this::userNotFound);
 
         permissions.stream()
                 .filter(permission -> !user.getPermissions().contains(permission))
-                .forEach(permission -> user.getPermissions().add(permission));
+                .forEach(user.getPermissions()::add);
 
         userRepository.save(user);
     }
 
     @Transactional
-    public void revokePermission(Long id, List<PermissionType> permissions) {
+    public void revokePermission(Long id, List<String> permissions) {
+        PermissionType.validateAll(permissions);
+
         User user = userRepository.findById(id).orElseThrow(this::userNotFound);
 
         permissions.stream()
-                .filter(permission -> user.getPermissions().contains(permission))
-                .forEach(permission -> user.getPermissions().remove(permission));
+                .filter(user.getPermissions()::contains)
+                .forEach(user.getPermissions()::remove);
 
         userRepository.save(user);
     }

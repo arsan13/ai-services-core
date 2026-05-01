@@ -18,7 +18,7 @@ public class ChatPermissionEvaluator {
             return false;
         }
 
-        String requiredAuthority = chatType.getPermission().getAuthority();
+        String requiredAuthority = chatType.getPermission();
 
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
