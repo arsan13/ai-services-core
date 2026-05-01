@@ -1,6 +1,5 @@
 package com.arsan.ai.model.common;
 
-import com.arsan.ai.enums.PermissionType;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +15,5 @@ import java.util.List;
 public class PermissionRequest {
 
     @NotEmpty(message = "At least one permission is required")
-    private List<PermissionType> permissions;
+    private List<String> permissions;
 }

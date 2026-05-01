@@ -1,6 +1,5 @@
 package com.arsan.ai.controller.admin;
 
-import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.model.common.PermissionRequest;
 import com.arsan.ai.model.common.RoleActionRequest;
 import com.arsan.ai.projection.UserResponse;
@@ -62,7 +61,7 @@ public class UserController {
     }
 
     @GetMapping("permission/available")
-    public List<PermissionType> getAvailablePermissions() {
+    public List<String> getAvailablePermissions() {
         return userService.availablePermissions();
     }
 }

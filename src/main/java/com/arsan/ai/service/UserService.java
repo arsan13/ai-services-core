@@ -1,6 +1,5 @@
 package com.arsan.ai.service;
 
-import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.enums.RoleType;
 import com.arsan.ai.projection.UserResponse;
 
@@ -16,9 +15,9 @@ public interface UserService {
 
     void revokeRole(Long id, RoleType role);
 
-    void grantPermission(Long id, List<PermissionType> permissions);
+    void grantPermission(Long id, List<String> permissions);
 
-    void revokePermission(Long id, List<PermissionType> permissions);
+    void revokePermission(Long id, List<String> permissions);
 
-    List<PermissionType> availablePermissions();
+    List<String> availablePermissions();
 }

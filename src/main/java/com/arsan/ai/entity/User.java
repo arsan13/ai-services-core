@@ -72,8 +72,7 @@ public class User implements UserDetails {
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private Set<PermissionType> permissions = Set.of(PermissionType.USER_READ);
+    private Set<String> permissions = Set.of(PermissionType.USER_READ.getValue(), PermissionType.CHAT_GENERIC_USE.getValue());
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -99,9 +98,10 @@ public class User implements UserDetails {
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .toList());
 
-        authorities.addAll(this.permissions.stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getAuthority()))
-                .toList());
+        authorities.addAll(permissions.stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList()
+        );
 
         return authorities;
     }

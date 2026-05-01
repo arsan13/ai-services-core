@@ -1,7 +1,6 @@
 package com.arsan.ai.model.common;
 
 import com.arsan.ai.enums.AuthProviderType;
-import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +19,6 @@ public class UserProfile {
     private String fullName;
     private String username;
     private Set<RoleType> roles;
-    private Set<PermissionType> permissions;
+    private Set<String> permissions;
     private AuthProviderType providerType;
 }

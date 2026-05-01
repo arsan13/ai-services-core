@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -23,7 +24,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @ConditionalOnProperty(name = "app.security.enabled", havingValue = "true", matchIfMissing = true)
-//@EnableMethodSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -46,10 +47,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(publicPaths).permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/admin/token-usage/**").hasAuthority(PermissionType.TOKEN_USAGE_READ.getAuthority())
-                        .requestMatchers(HttpMethod.GET, "/admin/users/**").hasAuthority(PermissionType.ADMIN_READ.getAuthority())
-                        .requestMatchers(HttpMethod.GET, "/admin/users/permission/available").hasAuthority(PermissionType.ADMIN_READ.getAuthority())
-                        .requestMatchers(HttpMethod.PATCH, "/admin/users/**").hasAuthority(PermissionType.ADMIN_WRITE.getAuthority())
+                        .requestMatchers(HttpMethod.GET, "/admin/token-usage/**").hasAuthority(PermissionType.TOKEN_USAGE_READ.getValue())
+                        .requestMatchers(HttpMethod.GET, "/admin/users/**").hasAuthority(PermissionType.ADMIN_READ.getValue())
+                        .requestMatchers(HttpMethod.GET, "/admin/users/permission/available").hasAuthority(PermissionType.ADMIN_READ.getValue())
+                        .requestMatchers(HttpMethod.PATCH, "/admin/users/**").hasAuthority(PermissionType.ADMIN_WRITE.getValue())
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
