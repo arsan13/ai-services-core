@@ -89,6 +89,8 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
+    private LocalDateTime passwordResetDate;
+
 
     @Override
     public String getUsername() {

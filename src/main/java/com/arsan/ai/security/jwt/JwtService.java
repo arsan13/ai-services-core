@@ -70,6 +70,10 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public Date extractIssuedAt(String token) {
+        return extractClaim(token, Claims::getIssuedAt);
+    }
+
     public boolean isTokenValid(String token, User user) {
         final String email = extractEmail(token);
         return email.equals(user.getEmail()) && !isTokenExpired(token);
@@ -79,7 +83,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public boolean hasPurpose(String token, TokenPurpose expectedPurpose) {
+    public boolean hasValidPurpose(String token, TokenPurpose expectedPurpose) {
         String purpose = extractClaim(token, claims -> claims.get(TOKEN_PURPOSE, String.class));
         return expectedPurpose.name().equals(purpose);
     }

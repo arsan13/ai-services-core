@@ -5,6 +5,7 @@ import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
 import com.arsan.ai.model.auth.AvailabilityResponse;
 import com.arsan.ai.model.auth.RegisterRequest;
+import com.arsan.ai.model.auth.ResetPasswordRequest;
 import com.arsan.ai.service.AuthService;
 import com.arsan.ai.service.EmailVerificationService;
 import jakarta.validation.Valid;
@@ -50,5 +51,17 @@ public class AuthController {
     public String resendVerificationEmail() {
         emailVerificationService.resendVerificationEmail();
         return "Verification email resent. Please check your inbox!";
+    }
+
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@RequestParam @Email String email) {
+        authService.forgotPassword(email);
+        return "Password reset email sent. Please check your inbox!";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return "Password updated. Please login!";
     }
 }

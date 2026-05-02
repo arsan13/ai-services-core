@@ -10,15 +10,14 @@ import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.EmailService;
 import com.arsan.ai.service.EmailVerificationService;
 import com.arsan.ai.util.SecurityUtils;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.arsan.ai.constants.EmailConstants.EMAIL_VERIFY_TEMPLATE;
-import static com.arsan.ai.constants.EmailConstants.VERIFY_PATH;
-import static com.arsan.ai.constants.EmailConstants.VERIFY_SUBJECT;
+import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_PATH;
+import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_SUBJECT;
+import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_TEMPLATE;
 
 @Service
 @RequiredArgsConstructor
@@ -33,11 +32,10 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     @Override
     public void sendVerificationEmail(User user) {
         String token = jwtService.generateToken(user, TokenPurpose.EMAIL_VERIFICATION);
-        String link = appProperties.getFrontendUrl() + VERIFY_PATH + "?token=" + token;
+        String link = appProperties.getFrontendUrl() + VERIFY_EMAIL_PATH + "?token=" + token;
+        String body = VERIFY_EMAIL_TEMPLATE.formatted(user.getFullName(), link, securityProperties.getJwt().getEmailVerificationExpirationInMinutes());
 
-        String body = EMAIL_VERIFY_TEMPLATE.formatted(user.getFullName(), link, securityProperties.getJwt().getEmailVerificationExpirationInMinutes());
-
-        emailService.send(user.getEmail(), VERIFY_SUBJECT, body);
+        emailService.send(user.getEmail(), VERIFY_EMAIL_SUBJECT, body);
     }
 
     @Override
@@ -53,12 +51,12 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     public void verify(String token) {
-        if (!jwtService.hasPurpose(token, TokenPurpose.EMAIL_VERIFICATION)) {
-            throw new JwtException("Invalid token");
+        if (jwtService.hasValidPurpose(token, TokenPurpose.EMAIL_VERIFICATION)) {
+            throw new IllegalArgumentException("Invalid token purpose");
         }
 
         if (jwtService.isTokenExpired(token)) {
-            throw new JwtException("Token expired");
+            throw new IllegalArgumentException("Token expired");
         }
 
         String email = jwtService.extractEmail(token);

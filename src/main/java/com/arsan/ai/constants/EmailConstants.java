@@ -2,13 +2,13 @@ package com.arsan.ai.constants;
 
 public final class EmailConstants {
 
-    public static final String VERIFY_SUBJECT = "Verify your email";
-    public static final String RESET_SUBJECT = "Reset your password";
+    public static final String VERIFY_EMAIL_SUBJECT = "Verify your email";
+    public static final String RESET_PASSWORD_SUBJECT = "Reset your password";
 
-    public static final String VERIFY_PATH = "/verify-email";
-    public static final String RESET_PATH = "/reset-password";
+    public static final String VERIFY_EMAIL_PATH = "/verify-email";
+    public static final String RESET_PASSWORD_PATH = "/reset-password";
 
-    public static final String EMAIL_VERIFY_TEMPLATE = """
+    public static final String VERIFY_EMAIL_TEMPLATE = """
             Hi %s,
             
             Please click the link below to verify your email address:
@@ -23,7 +23,7 @@ public final class EmailConstants {
             The AI Services Core Team
             """;
 
-    public static final String EMAIL_RESET_TEMPLATE = """
+    public static final String RESET_PASSWORD_TEMPLATE = """
             Hi %s,
             
             Please click the link below to reset your password:

@@ -4,11 +4,11 @@
 -- DROP TABLE IF EXISTS app_user;
 
 INSERT INTO app_user (full_name, email, password, provider_type, provider_id, verified, verified_date, created_date,
-                      updated_date)
+                      updated_date, password_reset_date)
 VALUES ('Anbarsan P', 'arsan@gmail.com', '$2a$12$HMOMeKWbuPgRiMDPCEZtv.SkguASLdtezd8HoXI/xqB91tQsLIfNy', 'LOCAL', NULL,
-        true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), -- password: admin123
+        true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL), -- password: admin123
        ('John May', 'johnmay@gmail.com', '$2a$12$PuWTCiu.Bama.4X0ysVeTuerBD.0Y5JUQDm73gr6AE4jUSUuhV4ku', 'LOCAL', NULL,
-        false, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP); -- password: test123
+        false, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL); -- password: test123
 
 
 INSERT INTO user_roles (user_id, roles)
