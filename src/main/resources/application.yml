@@ -65,11 +65,9 @@ app:
     enabled: true
     jwt:
       secret: ${JWT_SECRET_KEY:}
-      expiration-in-hours: 2
-    verification:
-      email:
-        secret: ${VERIFICATION_SECRET_KEY:}
-        expiration-in-minutes: 30
+      access-expiration-in-minutes: 120
+      email-verification-expiration-in-minutes: 30
+      password-reset-expiration-in-minutes: 10
 
   cors:
     allowed-origins:

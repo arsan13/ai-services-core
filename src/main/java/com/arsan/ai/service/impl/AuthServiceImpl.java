@@ -1,6 +1,7 @@
 package com.arsan.ai.service.impl;
 
 import com.arsan.ai.entity.User;
+import com.arsan.ai.enums.TokenPurpose;
 import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
@@ -42,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = (User) authentication.getPrincipal();
-        String token = jwtService.generateAccessToken(user);
+        String token = jwtService.generateToken(user, TokenPurpose.ACCESS);
         return new AuthResponse(token, userMapper.toUserProfile(user));
     }
 
@@ -57,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
 
         user = userRepository.save(user);
         emailVerificationService.sendVerificationEmail(user);
-        String token = jwtService.generateAccessToken(user);
+        String token = jwtService.generateToken(user, TokenPurpose.ACCESS);
         return new AuthResponse(token, userMapper.toUserProfile(user));
     }
 
@@ -71,6 +72,6 @@ public class AuthServiceImpl implements AuthService {
     public String handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User) {
         OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(registrationId, oAuth2User);
         User user = oauthUserResolver.resolve(oAuthUserInfo);
-        return jwtService.generateAccessToken(user);
+        return jwtService.generateToken(user, TokenPurpose.ACCESS);
     }
 }

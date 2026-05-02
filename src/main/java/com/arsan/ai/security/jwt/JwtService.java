@@ -2,18 +2,18 @@ package com.arsan.ai.security.jwt;
 
 import com.arsan.ai.entity.User;
 import com.arsan.ai.enums.TokenPurpose;
-import com.arsan.ai.properties.EmailVerificationProperties;
 import com.arsan.ai.properties.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static com.arsan.ai.constants.SecurityConstants.CLAIM_AUTHORITIES;
 import static com.arsan.ai.constants.SecurityConstants.CLAIM_EMAIL;
@@ -22,76 +22,102 @@ import static com.arsan.ai.constants.SecurityConstants.CLAIM_USER_ID;
 import static com.arsan.ai.constants.SecurityConstants.TOKEN_PURPOSE;
 
 @Service
-@RequiredArgsConstructor
 public class JwtService {
 
     private final SecurityProperties securityProperties;
-    private final EmailVerificationProperties emailVerificationProperties;
-    private final JwtKeyProvider keyProvider;
-    private final JwtParser jwtParser;
+    private final Map<TokenPurpose, Long> tokenPurposeExpirationMap;
 
-    public String generateAccessToken(User user) {
-        long expiration = TimeUnit.HOURS.toMillis(securityProperties.getJwt().getExpirationInHours());
-
-        Map<String, Object> claims = Map.of(
-                CLAIM_USER_ID, user.getId(),
-                CLAIM_EMAIL, user.getEmail(),
-                CLAIM_PROVIDER, user.getProviderType().name(),
-                CLAIM_AUTHORITIES, user.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .toList(),
-                TOKEN_PURPOSE, TokenPurpose.ACCESS.name()
+    public JwtService(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
+        tokenPurposeExpirationMap = Map.of(
+                TokenPurpose.ACCESS, securityProperties.getJwt().getAccessExpirationInMinutes(),
+                TokenPurpose.EMAIL_VERIFICATION, securityProperties.getJwt().getEmailVerificationExpirationInMinutes(),
+                TokenPurpose.PASSWORD_RESET, securityProperties.getJwt().getPasswordResetExpirationInMinutes()
         );
-
-        return buildToken(user.getEmail(), claims, expiration, keyProvider.accessKey());
     }
 
-    public String generateVerificationToken(User user) {
-        long expiration = TimeUnit.MINUTES.toMillis(emailVerificationProperties.getExpirationInMinutes());
-
-        Map<String, Object> claims = Map.of(
+    public String generateToken(User user, TokenPurpose tokenPurpose) {
+        Map<String, Object> claims = new HashMap<>(Map.of(
                 CLAIM_USER_ID, user.getId(),
                 CLAIM_EMAIL, user.getEmail(),
-                TOKEN_PURPOSE, TokenPurpose.EMAIL_VERIFICATION.name()
-        );
+                TOKEN_PURPOSE, tokenPurpose.name()
+        ));
 
-        return buildToken(user.getEmail(), claims, expiration, keyProvider.verificationKey());
+        if (TokenPurpose.ACCESS.equals(tokenPurpose)) {
+            claims.put(CLAIM_PROVIDER, user.getProviderType());
+            claims.put(CLAIM_AUTHORITIES, user.getAuthorities());
+        }
+
+        return generateToken(claims, user, tokenPurposeExpirationMap.get(tokenPurpose));
     }
 
-    private String buildToken(String subject, Map<String, Object> claims, long expiration, SecretKey key) {
+    private String generateToken(Map<String, Object> extraClaims, User user, long expirationInMinutes) {
+        long expirationInMs = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(expirationInMinutes);
         return Jwts.builder()
-                .subject(subject)
-                .claims(claims)
+                .subject(user.getEmail())
+                .claims(extraClaims)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(key)
+                .expiration(new Date(expirationInMs))
+                .signWith(getSignKey())
                 .compact();
     }
 
-    public String extractEmailFromAccessToken(String token) {
-        return jwtParser.parseAccessToken(token).get(CLAIM_EMAIL, String.class);
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
 
-    public String extractEmailFromVerificationToken(String token) {
-        return jwtParser.parseVerificationToken(token).get(CLAIM_EMAIL, String.class);
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 
-    public boolean isAccessTokenValid(String token, User user) {
-        Claims claims = jwtParser.parseAccessToken(token);
-        return user.getEmail().equals(claims.getSubject()) && isExpired(claims);
+    public boolean isTokenValid(String token, User user) {
+        final String email = extractEmail(token);
+        return email.equals(user.getEmail()) && !isTokenExpired(token);
     }
 
-    public boolean hasPurpose(String token, TokenPurpose purpose) {
-        Claims claims = jwtParser.parseVerificationToken(token);
-        return TokenPurpose.EMAIL_VERIFICATION.name().equals(claims.get(purpose.name()));
+    public boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
     }
 
-    public boolean isVerificationTokenExpired(String token) {
-        Claims claims = jwtParser.parseVerificationToken(token);
-        return isExpired(claims);
+    public boolean hasPurpose(String token, TokenPurpose expectedPurpose) {
+        String purpose = extractClaim(token, claims -> claims.get(TOKEN_PURPOSE, String.class));
+        return expectedPurpose.name().equals(purpose);
     }
 
-    public boolean isExpired(Claims claims) {
-        return !claims.getExpiration().before(new Date());
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    private SecretKey getSignKey() {
+
+        /**
+         * PRODUCTION USAGE:
+         * Use a strong, cryptographically secure key stored as a Base64-encoded string.
+         * Decode it before creating the signing key:
+         * <p>
+         * return Keys.hmacShaKeyFor(
+         *     Decoders.BASE64.decode(securityProperties.getJwt().getSecret())
+         * );
+         * <p>
+         * To generate a secure key (run once and store safely in config):
+         * <p>
+         * SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+         * String base64Key = Encoders.BASE64.encode(key.getEncoded());
+         * System.out.println(base64Key);
+         * <p>
+         * Store the generated value in application.properties or a secure secrets manager.
+         */
+
+        // DEVELOPMENT ONLY: uses plain text secret (not secure for production)
+        return Keys.hmacShaKeyFor(securityProperties.getJwt().getSecret().getBytes());
     }
 }
