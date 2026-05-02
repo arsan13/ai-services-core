@@ -6,5 +6,8 @@ public interface EmailVerificationService {
 
     void sendVerificationEmail(User user);
 
+    void resendVerificationEmail();
+
     void verify(String token);
+
 }

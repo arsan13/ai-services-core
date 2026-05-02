@@ -9,6 +9,7 @@ import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.EmailService;
 import com.arsan.ai.service.EmailVerificationService;
+import com.arsan.ai.util.SecurityUtils;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,17 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         String body = EMAIL_VERIFY_TEMPLATE.formatted(user.getFullName(), link, securityProperties.getJwt().getEmailVerificationExpirationInMinutes());
 
         emailService.send(user.getEmail(), VERIFY_SUBJECT, body);
+    }
+
+    @Override
+    public void resendVerificationEmail() {
+        User user = SecurityUtils.getCurrentUser().orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.isVerified()) {
+            throw new IllegalStateException("Email already verified");
+        }
+
+        sendVerificationEmail(user);
     }
 
     @Override
