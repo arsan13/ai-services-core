@@ -12,7 +12,7 @@ public interface AuthService {
 
     AuthResponse register(RegisterRequest authRequest);
 
-    AvailabilityResponse isUsernameAvailable(String username);
+    AvailabilityResponse isEmailAvailable(String email);
 
     String handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User);
 }

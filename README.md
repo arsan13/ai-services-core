@@ -163,7 +163,7 @@ Base path: `/api`
 
 - `POST /api/auth/login`
 - `POST /api/auth/register`
-- `GET /api/auth/availability?username=...`
+- `GET /api/auth/availability?email=...`
 - `GET /api/auth/oauth2/providers`
 - `GET /api/auth/oauth2/{providerType}`
 

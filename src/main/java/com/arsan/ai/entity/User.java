@@ -37,7 +37,7 @@ import java.util.Set;
 @Table(
         name = "app_user",
         uniqueConstraints = {
-                @UniqueConstraint(name = User.USERNAME_UNIQUE_KEY_NAME, columnNames = "username")
+                @UniqueConstraint(name = User.EMAIL_UNIQUE_KEY_NAME, columnNames = "email")
         },
         indexes = {
                 @Index(name = "idx_user_provider_id_provider_type", columnList = "providerId, providerType")
@@ -51,7 +51,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
-    public static final String USERNAME_UNIQUE_KEY_NAME = "uk_user_username";
+    public static final String EMAIL_UNIQUE_KEY_NAME = "uk_user_email";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,7 +60,7 @@ public class User implements UserDetails {
     private String fullName;
 
     @Column(nullable = false)
-    private String username;
+    private String email;
 
     @ToString.Exclude
     private String password;
@@ -80,14 +80,19 @@ public class User implements UserDetails {
 
     private String providerId;
 
+    private boolean verified;
+    private LocalDateTime verifiedDate;
+
     @CreationTimestamp
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
-    public User(Long id) {
-        this.id = id;
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     @Override

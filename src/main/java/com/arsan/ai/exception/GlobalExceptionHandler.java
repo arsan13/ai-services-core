@@ -24,7 +24,7 @@ import java.util.Optional;
 public class GlobalExceptionHandler {
 
     private static final Map<String, String> constraintToField = Map.of(
-            User.USERNAME_UNIQUE_KEY_NAME, "username"
+            User.EMAIL_UNIQUE_KEY_NAME, "email"
     );
 
     @ExceptionHandler(AiServiceException.class)

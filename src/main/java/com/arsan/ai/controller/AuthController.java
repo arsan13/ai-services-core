@@ -10,6 +10,7 @@ import com.arsan.ai.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,8 +44,8 @@ public class AuthController {
     }
 
     @GetMapping("/availability")
-    public AvailabilityResponse check(@RequestParam String username) {
-        return authService.isUsernameAvailable(username);
+    public AvailabilityResponse check(@RequestParam @Email String email) {
+        return authService.isEmailAvailable(email);
     }
 
     @GetMapping("/oauth2/providers")

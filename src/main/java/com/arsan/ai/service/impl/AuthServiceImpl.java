@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(AuthRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
         User user = (User) authentication.getPrincipal();
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse register(RegisterRequest request) {
         User user = User.builder()
                 .fullName(request.getFullName())
-                .username(request.getUsername())
+                .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
@@ -59,8 +59,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AvailabilityResponse isUsernameAvailable(String username) {
-        return new AvailabilityResponse(!userRepository.existsByUsername(username));
+    public AvailabilityResponse isEmailAvailable(String email) {
+        return new AvailabilityResponse(!userRepository.existsByEmail(email));
     }
 
     @Override

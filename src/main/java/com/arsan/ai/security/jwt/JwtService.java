@@ -24,7 +24,7 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> claims = Map.of(
                 "userId", user.getId(),
-                "username", user.getUsername(),
+                "email", user.getEmail(),
                 "provider", user.getProviderType().name(),
                 "authorities", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
@@ -36,7 +36,7 @@ public class JwtService {
     public String generateToken(Map<String, Object> extraClaims, User user) {
         long expiration = TimeUnit.HOURS.toMillis(securityProperties.getJwt().getExpirationInHours());
         return Jwts.builder()
-                .subject(user.getUsername())
+                .subject(user.getEmail())
                 .claims(extraClaims)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
@@ -44,7 +44,7 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -53,8 +53,8 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, User user) {
-        final String username = extractUsername(token);
-        return username.equals(user.getUsername()) && !isTokenExpired(token);
+        final String email = extractEmail(token);
+        return email.equals(user.getEmail()) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired(String token) {
