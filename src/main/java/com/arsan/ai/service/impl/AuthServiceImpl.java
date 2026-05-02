@@ -12,6 +12,7 @@ import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.resolver.OAuthUserResolver;
 import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.AuthService;
+import com.arsan.ai.service.EmailVerificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final EmailVerificationService emailVerificationService;
     private final OAuthUserInfoProviderRegistry oAuthUserInfoProviderRegistry;
     private final OAuthUserResolver oauthUserResolver;
     private final UserMapper userMapper;
@@ -40,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = (User) authentication.getPrincipal();
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateAccessToken(user);
         return new AuthResponse(token, userMapper.toUserProfile(user));
     }
 
@@ -54,7 +56,8 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         user = userRepository.save(user);
-        String token = jwtService.generateToken(user);
+        emailVerificationService.sendVerificationEmail(user);
+        String token = jwtService.generateAccessToken(user);
         return new AuthResponse(token, userMapper.toUserProfile(user));
     }
 
@@ -68,6 +71,6 @@ public class AuthServiceImpl implements AuthService {
     public String handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User) {
         OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(registrationId, oAuth2User);
         User user = oauthUserResolver.resolve(oAuthUserInfo);
-        return jwtService.generateToken(user);
+        return jwtService.generateAccessToken(user);
     }
 }

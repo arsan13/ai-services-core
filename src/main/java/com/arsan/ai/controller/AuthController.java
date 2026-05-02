@@ -7,6 +7,7 @@ import com.arsan.ai.model.auth.AuthResponse;
 import com.arsan.ai.model.auth.AvailabilityResponse;
 import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.service.AuthService;
+import com.arsan.ai.service.EmailVerificationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ import java.util.Locale;
 public class AuthController {
 
     private final AuthService authService;
+    private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody @Valid AuthRequest request) {
@@ -46,6 +48,12 @@ public class AuthController {
     @GetMapping("/availability")
     public AvailabilityResponse check(@RequestParam @Email String email) {
         return authService.isEmailAvailable(email);
+    }
+
+    @GetMapping("/verify-email")
+    public String verifyEmail(@RequestParam String token) {
+        emailVerificationService.verify(token);
+        return "Email verified. Please login!";
     }
 
     @GetMapping("/oauth2/providers")

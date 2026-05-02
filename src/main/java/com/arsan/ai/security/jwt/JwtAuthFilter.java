@@ -52,12 +52,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUser(String token, HttpServletRequest request) {
-        String email = jwtService.extractEmail(token);
+        String email = jwtService.extractEmailFromAccessToken(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = userDetailsService.loadUserByUsername(email);
 
-            if (jwtService.isTokenValid(token, user)) {
+            if (jwtService.isAccessTokenValid(token, user)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);

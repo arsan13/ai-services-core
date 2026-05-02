@@ -1,7 +1,7 @@
 package com.arsan.ai.security;
 
+import com.arsan.ai.properties.AppProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -9,12 +9,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class OAuth2RedirectService {
 
-    @Value("${app.frontend-url}")
-    private String frontendUrl;
+    private final AppProperties appProperties;
 
     public String buildSuccessUrl(String token) {
         return UriComponentsBuilder
-                .fromUriString(frontendUrl)
+                .fromUriString(appProperties.getFrontendUrl())
                 .path("/oauth-success")
                 .queryParam("token", token)
                 .build()
@@ -23,7 +22,7 @@ public class OAuth2RedirectService {
 
     public String buildErrorUrl(String errorMsg) {
         return UriComponentsBuilder
-                .fromUriString(frontendUrl)
+                .fromUriString(appProperties.getFrontendUrl())
                 .path("/oauth-error")
                 .queryParam("message", errorMsg)
                 .build()
