@@ -7,6 +7,7 @@ import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
 import com.arsan.ai.model.auth.AvailabilityResponse;
+import com.arsan.ai.model.auth.ChangePasswordRequest;
 import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
 import com.arsan.ai.properties.AppProperties;
@@ -19,6 +20,7 @@ import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.AuthService;
 import com.arsan.ai.service.EmailService;
 import com.arsan.ai.service.EmailVerificationService;
+import com.arsan.ai.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -90,6 +92,20 @@ public class AuthServiceImpl implements AuthService {
         OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(registrationId, oAuth2User);
         User user = oauthUserResolver.resolve(oAuthUserInfo);
         return jwtService.generateToken(user, TokenPurpose.ACCESS);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+        User user = SecurityUtils.getCurrentUser().orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setPasswordResetDate(LocalDateTime.now());
+
+        userRepository.save(user);
     }
 
     @Override

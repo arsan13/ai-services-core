@@ -53,7 +53,7 @@ public class AuthController {
         return "Verification email resent. Please check your inbox!";
     }
 
-    @GetMapping("/forgot-password")
+    @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam @Email String email) {
         authService.forgotPassword(email);
         return "Password reset email sent. Please check your inbox!";

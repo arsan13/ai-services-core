@@ -3,6 +3,7 @@ package com.arsan.ai.service;
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
 import com.arsan.ai.model.auth.AvailabilityResponse;
+import com.arsan.ai.model.auth.ChangePasswordRequest;
 import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,6 +17,8 @@ public interface AuthService {
     AvailabilityResponse isEmailAvailable(String email);
 
     String handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User);
+
+    void changePassword(ChangePasswordRequest request);
 
     void forgotPassword(String email);
 
