@@ -39,8 +39,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     }
 
     @Override
-    public void resendVerificationEmail() {
-        User user = SecurityUtils.getCurrentUser().orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public void resendVerificationEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");

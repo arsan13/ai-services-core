@@ -47,9 +47,9 @@ public class AuthController {
         return "Email verified. Please login!";
     }
 
-    @GetMapping("/resend-verification-email")
-    public String resendVerificationEmail() {
-        emailVerificationService.resendVerificationEmail();
+    @GetMapping("/resend-verification")
+    public String resendVerificationEmail(@RequestParam @Email String email) {
+        emailVerificationService.resendVerificationEmail(email);
         return "Verification email resent. Please check your inbox!";
     }
 
