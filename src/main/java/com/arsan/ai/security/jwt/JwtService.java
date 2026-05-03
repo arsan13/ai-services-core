@@ -83,9 +83,9 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public boolean hasValidPurpose(String token, TokenPurpose expectedPurpose) {
+    public boolean hasInvalidPurpose(String token, TokenPurpose expectedPurpose) {
         String purpose = extractClaim(token, claims -> claims.get(TOKEN_PURPOSE, String.class));
-        return expectedPurpose.name().equals(purpose);
+        return !expectedPurpose.name().equals(purpose);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

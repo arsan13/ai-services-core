@@ -9,7 +9,6 @@ import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.EmailService;
 import com.arsan.ai.service.EmailVerificationService;
-import com.arsan.ai.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +50,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     public void verify(String token) {
-        if (jwtService.hasValidPurpose(token, TokenPurpose.EMAIL_VERIFICATION)) {
+        if (jwtService.hasInvalidPurpose(token, TokenPurpose.EMAIL_VERIFICATION)) {
             throw new IllegalArgumentException("Invalid token purpose");
         }
 

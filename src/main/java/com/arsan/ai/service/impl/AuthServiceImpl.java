@@ -104,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void resetPassword(ResetPasswordRequest request) {
-        if (jwtService.hasValidPurpose(request.getToken(), TokenPurpose.PASSWORD_RESET)) {
+        if (jwtService.hasInvalidPurpose(request.getToken(), TokenPurpose.PASSWORD_RESET)) {
             throw new IllegalArgumentException("Invalid token purpose");
         }
 
