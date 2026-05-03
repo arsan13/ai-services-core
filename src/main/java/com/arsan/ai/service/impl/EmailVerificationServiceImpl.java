@@ -50,13 +50,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     public void verify(String token) {
-        if (jwtService.hasInvalidPurpose(token, TokenPurpose.EMAIL_VERIFICATION)) {
-            throw new IllegalArgumentException("Invalid token purpose");
-        }
-
-        if (jwtService.isTokenExpired(token)) {
-            throw new IllegalArgumentException("Token expired");
-        }
+        jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
 
         String email = jwtService.extractEmail(token);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));

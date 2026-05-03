@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 
 import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_PATH;
 import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_SUBJECT;
@@ -104,25 +105,23 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void resetPassword(ResetPasswordRequest request) {
-        if (jwtService.hasInvalidPurpose(request.getToken(), TokenPurpose.PASSWORD_RESET)) {
-            throw new IllegalArgumentException("Invalid token purpose");
-        }
-
-        if (jwtService.isTokenExpired(request.getToken())) {
-            throw new IllegalArgumentException("Token expired");
-        }
+        jwtService.validateToken(request.getToken(), TokenPurpose.PASSWORD_RESET);
 
         String email = jwtService.extractEmail(request.getToken());
         User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Instant issuedAt = jwtService.extractIssuedAt(request.getToken()).toInstant();
-        Instant resetAt = user.getPasswordResetDate().atZone(ZoneId.systemDefault()).toInstant();
-        if (resetAt != null && issuedAt.isBefore(resetAt)) {
-            throw new IllegalArgumentException("Token already used");
-        }
+        validateTokenReuse(request, user);
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordResetDate(LocalDateTime.now());
         userRepository.save(user);
+    }
+
+    private void validateTokenReuse(ResetPasswordRequest request, User user) {
+        Instant issuedAt = jwtService.extractIssuedAt(request.getToken()).toInstant();
+        Instant resetAt = Optional.ofNullable(user.getPasswordResetDate()).map(dt -> dt.atZone(ZoneId.systemDefault()).toInstant()).orElse(null);
+        if (resetAt != null && issuedAt.isBefore(resetAt)) {
+            throw new IllegalArgumentException("Token already used");
+        }
     }
 }

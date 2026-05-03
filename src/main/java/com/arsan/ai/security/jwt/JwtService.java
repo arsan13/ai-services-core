@@ -88,6 +88,16 @@ public class JwtService {
         return !expectedPurpose.name().equals(purpose);
     }
 
+    public void validateToken(String token, TokenPurpose expectedPurpose) {
+        if (hasInvalidPurpose(token, expectedPurpose)) {
+            throw new IllegalArgumentException("Invalid token purpose");
+        }
+
+        if (isTokenExpired(token)) {
+            throw new IllegalArgumentException("Token expired");
+        }
+    }
+
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
