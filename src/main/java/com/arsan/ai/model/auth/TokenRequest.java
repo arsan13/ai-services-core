@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-public class ResetPasswordRequest extends TokenRequest {
+@Setter
+public class TokenRequest {
 
-    @NotBlank
-    private String newPassword;
+    @NotBlank(message = "Token must not be blank")
+    private String token;
 }

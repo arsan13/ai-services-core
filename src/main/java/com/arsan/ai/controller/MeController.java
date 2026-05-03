@@ -30,8 +30,7 @@ public class MeController {
     }
 
     @PostMapping("/change-password")
-    public String changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+    public void changePassword(@RequestBody @Valid ChangePasswordRequest request) {
         authService.changePassword(request);
-        return "Password updated. Please login!";
     }
 }

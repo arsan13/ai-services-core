@@ -4,8 +4,10 @@ package com.arsan.ai.controller;
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
 import com.arsan.ai.model.auth.AvailabilityResponse;
+import com.arsan.ai.model.auth.EmailRequest;
 import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
+import com.arsan.ai.model.auth.TokenRequest;
 import com.arsan.ai.service.AuthService;
 import com.arsan.ai.service.EmailVerificationService;
 import jakarta.validation.Valid;
@@ -41,27 +43,23 @@ public class AuthController {
         return authService.isEmailAvailable(email);
     }
 
-    @GetMapping("/verify-email")
-    public String verifyEmail(@RequestParam String token) {
-        emailVerificationService.verify(token);
-        return "Email verified. Please login!";
+    @PostMapping("/verify-email")
+    public void verifyEmail(@RequestBody @Valid TokenRequest request) {
+        emailVerificationService.verify(request.getToken());
     }
 
-    @GetMapping("/resend-verification")
-    public String resendVerificationEmail(@RequestParam @Email String email) {
-        emailVerificationService.resendVerificationEmail(email);
-        return "Verification email resent. Please check your inbox!";
+    @PostMapping("/resend-verification")
+    public void resendVerificationEmail(@RequestBody @Valid EmailRequest request) {
+        emailVerificationService.resendVerificationEmail(request.getEmail());
     }
 
     @PostMapping("/forgot-password")
-    public String forgotPassword(@RequestParam @Email String email) {
-        authService.forgotPassword(email);
-        return "Password reset email sent. Please check your inbox!";
+    public void forgotPassword(@RequestBody @Valid EmailRequest request) {
+        authService.forgotPassword(request.getEmail());
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+    public void resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
         authService.resetPassword(request);
-        return "Password updated. Please login!";
     }
 }
