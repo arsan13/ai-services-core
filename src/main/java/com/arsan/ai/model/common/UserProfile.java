@@ -21,4 +21,5 @@ public class UserProfile {
     private Set<RoleType> roles;
     private Set<String> permissions;
     private AuthProviderType providerType;
+    private boolean verified;
 }

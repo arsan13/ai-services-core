@@ -16,5 +16,7 @@ public interface UserResponse {
 
     List<String> getPermissions();
 
+    boolean isVerified();
+
     LocalDateTime getCreatedDate();
 }
