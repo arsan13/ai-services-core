@@ -1,6 +1,6 @@
 package com.arsan.ai.service.impl;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
 import com.arsan.ai.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.properties.AppProperties;
@@ -29,7 +29,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final EmailService emailService;
 
     @Override
-    public void sendVerificationEmail(User user) {
+    public void sendVerificationEmail(AppUser user) {
         String token = jwtService.generateToken(user, TokenPurpose.EMAIL_VERIFICATION);
         String link = appProperties.getFrontendUrl() + VERIFY_EMAIL_PATH + "?token=" + token;
         String body = VERIFY_EMAIL_TEMPLATE.formatted(user.getFullName(), link, securityProperties.getJwt().getEmailVerificationExpirationInMinutes());
@@ -39,7 +39,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     public void resendVerificationEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        AppUser user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");
@@ -53,7 +53,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
 
         String email = jwtService.extractEmail(token);
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        AppUser user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");

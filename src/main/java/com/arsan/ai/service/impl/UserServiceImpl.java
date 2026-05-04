@@ -1,6 +1,6 @@
 package com.arsan.ai.service.impl;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.enums.RoleType;
 import com.arsan.ai.projection.UserResponse;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void grantRole(Long id, RoleType role) {
-        User user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
 
         if (user.getRoles().contains(role)) {
             throw new IllegalArgumentException("User already has this role");
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void revokeRole(Long id, RoleType role) {
-        User user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
 
         if (!user.getRoles().contains(role)) {
             throw new IllegalArgumentException("User does not have this role");
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     public void grantPermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        User user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
 
         permissions.stream()
                 .filter(permission -> !user.getPermissions().contains(permission))
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     public void revokePermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        User user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
 
         permissions.stream()
                 .filter(user.getPermissions()::contains)

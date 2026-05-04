@@ -44,7 +44,7 @@ public class TokenUsageAudit {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private AppUser user;
 
     private String model;
     private String provider;

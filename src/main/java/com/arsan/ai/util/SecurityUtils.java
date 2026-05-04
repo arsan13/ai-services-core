@@ -1,6 +1,6 @@
 package com.arsan.ai.util;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,16 +14,16 @@ public final class SecurityUtils {
     }
 
     public static Optional<Long> getCurrentUserId() {
-        return getCurrentUser().map(User::getId);
+        return getCurrentUser().map(AppUser::getId);
     }
 
-    public static Optional<User> getCurrentUser() {
+    public static Optional<AppUser> getCurrentUser() {
         return Optional.ofNullable(getAuthentication())
                 .filter(Authentication::isAuthenticated)
                 .filter(auth -> !(auth instanceof AnonymousAuthenticationToken))
                 .map(Authentication::getPrincipal)
-                .filter(User.class::isInstance)
-                .map(User.class::cast);
+                .filter(AppUser.class::isInstance)
+                .map(AppUser.class::cast);
     }
 
     private static Authentication getAuthentication() {

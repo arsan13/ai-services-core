@@ -1,6 +1,6 @@
 package com.arsan.ai.service.impl;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
 import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.AuthRequest;
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        User user = (User) authentication.getPrincipal();
+        AppUser user = (AppUser) authentication.getPrincipal();
         String token = jwtService.generateToken(user, TokenPurpose.ACCESS);
         return new AuthResponse(token, userMapper.toUserProfile(user));
     }
@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        User user = User.builder()
+        AppUser user = AppUser.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -92,13 +92,13 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public String handleOAuth2LoginRequest(String registrationId, OAuth2User oAuth2User) {
         OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(registrationId, oAuth2User);
-        User user = oauthUserResolver.resolve(oAuthUserInfo);
+        AppUser user = oauthUserResolver.resolve(oAuthUserInfo);
         return jwtService.generateToken(user, TokenPurpose.ACCESS);
     }
 
     @Override
     public void changePassword(ChangePasswordRequest request) {
-        User user = SecurityUtils.getCurrentUser().orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = SecurityUtils.getCurrentUser().orElseThrow(ExceptionUtils::userNotFound);
 
         if (user.getPassword() == null) {
             throw new IllegalStateException("Password change not allowed for this account");
@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void forgotPassword(String email) {
-        Optional<User> userOpt = userRepository.findByEmail(email);
+        Optional<AppUser> userOpt = userRepository.findByEmail(email);
 
         if (userOpt.isEmpty()) {
             log.warn("Forgot Password requested for non-existent user: {}", email);
@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService {
         jwtService.validateToken(request.getToken(), TokenPurpose.PASSWORD_RESET);
 
         String email = jwtService.extractEmail(request.getToken());
-        User user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
         validateTokenReuse(request, user);
 
@@ -150,7 +150,7 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
 
-    private void validateTokenReuse(ResetPasswordRequest request, User user) {
+    private void validateTokenReuse(ResetPasswordRequest request, AppUser user) {
         Instant issuedAt = jwtService.extractIssuedAt(request.getToken()).toInstant();
         Instant resetAt = Optional.ofNullable(user.getPasswordResetDate()).map(dt -> dt.atZone(ZoneId.systemDefault()).toInstant()).orElse(null);
         if (resetAt != null && issuedAt.isBefore(resetAt)) {

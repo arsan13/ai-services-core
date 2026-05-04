@@ -1,7 +1,7 @@
 package com.arsan.ai.service.impl;
 
 import com.arsan.ai.entity.TokenUsageAudit;
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.model.common.DateRange;
 import com.arsan.ai.projection.TokenUsageAuditView;
 import com.arsan.ai.projection.UserTokenUsage;
@@ -60,7 +60,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     @Override
     public Long getTotalTokensByUser(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
         DateRange range = DateRange.resolve(startDate, endDate);
-        User user = userRepository.getReferenceById(userId);
+        AppUser user = userRepository.getReferenceById(userId);
         return auditRepository.sumTotalTokensByUserAndCreatedDateBetween(user, range.start(), range.end());
     }
 
@@ -73,7 +73,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     @Override
     @Async("auditTaskExecutor")
     @Transactional
-    public void recordUsage(User user, ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
+    public void recordUsage(AppUser user, ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
         try {
             TokenUsageAudit audit = new TokenUsageAudit();
             audit.setUser(user);

@@ -37,7 +37,7 @@ import java.util.Set;
 @Table(
         name = "app_user",
         uniqueConstraints = {
-                @UniqueConstraint(name = User.EMAIL_UNIQUE_KEY_NAME, columnNames = "email")
+                @UniqueConstraint(name = AppUser.EMAIL_UNIQUE_KEY_NAME, columnNames = "email")
         },
         indexes = {
                 @Index(name = "idx_user_provider_id_provider_type", columnList = "providerId, providerType")
@@ -49,7 +49,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class User implements UserDetails {
+public class AppUser implements UserDetails {
 
     public static final String EMAIL_UNIQUE_KEY_NAME = "uk_user_email";
 

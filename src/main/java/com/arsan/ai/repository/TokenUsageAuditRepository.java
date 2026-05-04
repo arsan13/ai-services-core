@@ -1,7 +1,7 @@
 package com.arsan.ai.repository;
 
 import com.arsan.ai.entity.TokenUsageAudit;
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.projection.TokenUsageAuditView;
 import com.arsan.ai.projection.UserTokenUsage;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +37,7 @@ public interface TokenUsageAuditRepository extends JpaRepository<TokenUsageAudit
                   AND t.createdDate BETWEEN :start AND :end
             """)
     Long sumTotalTokensByUserAndCreatedDateBetween(
-            @Param("user") User user,
+            @Param("user") AppUser user,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );

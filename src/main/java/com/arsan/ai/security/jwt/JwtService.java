@@ -1,6 +1,6 @@
 package com.arsan.ai.security.jwt;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
 import com.arsan.ai.properties.SecurityProperties;
 import io.jsonwebtoken.Claims;
@@ -36,7 +36,7 @@ public class JwtService {
         );
     }
 
-    public String generateToken(User user, TokenPurpose tokenPurpose) {
+    public String generateToken(AppUser user, TokenPurpose tokenPurpose) {
         Map<String, Object> claims = new HashMap<>(Map.of(
                 CLAIM_USER_ID, user.getId(),
                 CLAIM_EMAIL, user.getEmail(),
@@ -51,7 +51,7 @@ public class JwtService {
         return generateToken(claims, user, tokenPurposeExpirationMap.get(tokenPurpose));
     }
 
-    private String generateToken(Map<String, Object> extraClaims, User user, long expirationInMinutes) {
+    private String generateToken(Map<String, Object> extraClaims, AppUser user, long expirationInMinutes) {
         long expirationInMs = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(expirationInMinutes);
         return Jwts.builder()
                 .subject(user.getEmail())
@@ -74,7 +74,7 @@ public class JwtService {
         return extractClaim(token, Claims::getIssuedAt);
     }
 
-    public boolean isTokenValid(String token, User user) {
+    public boolean isTokenValid(String token, AppUser user) {
         final String email = extractEmail(token);
         return email.equals(user.getEmail()) && !isTokenExpired(token);
     }
