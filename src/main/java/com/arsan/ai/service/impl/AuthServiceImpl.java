@@ -1,8 +1,8 @@
 package com.arsan.ai.service.impl;
 
 import com.arsan.ai.entity.User;
+import com.arsan.ai.enums.AuthProviderType;
 import com.arsan.ai.enums.TokenPurpose;
-import com.arsan.ai.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
@@ -20,6 +20,7 @@ import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.AuthService;
 import com.arsan.ai.service.EmailService;
 import com.arsan.ai.service.EmailVerificationService;
+import com.arsan.ai.util.ExceptionUtils;
 import com.arsan.ai.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +74,7 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .providerType(AuthProviderType.LOCAL_MERGE)
                 .build();
 
         user = userRepository.save(user);
@@ -96,7 +98,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void changePassword(ChangePasswordRequest request) {
-        User user = SecurityUtils.getCurrentUser().orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = SecurityUtils.getCurrentUser().orElseThrow(ExceptionUtils::userNotFound);
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Current password is incorrect");
@@ -110,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void forgotPassword(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
         String token = jwtService.generateToken(user, TokenPurpose.PASSWORD_RESET);
 
         String emailLink = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
@@ -124,7 +126,7 @@ public class AuthServiceImpl implements AuthService {
         jwtService.validateToken(request.getToken(), TokenPurpose.PASSWORD_RESET);
 
         String email = jwtService.extractEmail(request.getToken());
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
         validateTokenReuse(request, user);
 
