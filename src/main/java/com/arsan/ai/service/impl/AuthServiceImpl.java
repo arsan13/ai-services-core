@@ -1,7 +1,6 @@
 package com.arsan.ai.service.impl;
 
 import com.arsan.ai.entity.User;
-import com.arsan.ai.enums.AuthProviderType;
 import com.arsan.ai.enums.TokenPurpose;
 import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.AuthRequest;
