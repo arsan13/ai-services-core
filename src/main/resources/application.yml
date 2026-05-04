@@ -64,12 +64,12 @@ app:
   bootstrap:
     admin:
       enabled: true
-      email: ${ADMIN_EMAIL}
-      password: ${ADMIN_PASSWORD}
+      email: ${ADMIN_EMAIL:}
+      password: ${ADMIN_PASSWORD:}
   security:
     enabled: true
     jwt:
-      secret: ${JWT_SECRET_KEY}
+      secret: ${JWT_SECRET_KEY:}
       access-expiration-in-minutes: 120
       email-verification-expiration-in-minutes: 30
       password-reset-expiration-in-minutes: 10

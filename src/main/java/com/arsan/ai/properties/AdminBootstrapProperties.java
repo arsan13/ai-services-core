@@ -11,12 +11,12 @@ import org.springframework.validation.annotation.Validated;
 
 @Getter
 @Setter
+@Validated
 @Component
 @ConfigurationProperties(prefix = "app.bootstrap.admin")
-@Validated
 public class AdminBootstrapProperties {
 
-    private boolean enabled;
+    private boolean enabled = true;
 
     @NotBlank
     private String email;
