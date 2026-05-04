@@ -18,7 +18,7 @@ public class AviationChatConfig {
     public static final String AVIATION_CHAT_MEMORY_BEAN = "aviationChatMemory";
     public static final String AVIATION_CHAT_CLIENT_BEAN = "aviationChatClient";
 
-    @Value("classpath:/prompts/system-prompt.st")
+    @Value("classpath:/prompts/aviation-prompt.st")
     private Resource systemPrompt;
 
     @Bean(name = AVIATION_CHAT_MEMORY_BEAN)
