@@ -5,10 +5,10 @@
 
 INSERT INTO app_user (full_name, email, password, provider_type, provider_id, verified, verified_date, created_date,
                       updated_date, password_reset_date)
-VALUES ('Anbarsan P', 'arsan@gmail.com', '$2a$12$HMOMeKWbuPgRiMDPCEZtv.SkguASLdtezd8HoXI/xqB91tQsLIfNy', 'LOCAL', NULL,
-        true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL), -- password: admin123
-       ('John May', 'johnmay@gmail.com', '$2a$12$PuWTCiu.Bama.4X0ysVeTuerBD.0Y5JUQDm73gr6AE4jUSUuhV4ku', 'LOCAL', NULL,
-        false, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL); -- password: test123
+VALUES ('Anbarsan P', 'arsan@gmail.com', '$2a$12$Q/cJc/t2/cm88j/QiTpwb.sIFui8tiMBRCLV46RfjC.qDRipK5wpG', 'LOCAL', NULL,
+        true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL), -- password: Admin123
+       ('John May', 'johnmay@gmail.com', '$2a$12$4m3W9Se8oeXPKfTHtZYkeONhiTEJx.0mOlSubiEm6f17zHpgOSIK2', 'LOCAL', NULL,
+        false, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL); -- password: Test123
 
 
 INSERT INTO user_roles (user_id, roles)

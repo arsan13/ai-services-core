@@ -24,6 +24,7 @@ import com.arsan.ai.util.ExceptionUtils;
 import com.arsan.ai.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,7 @@ import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_TEMPLATE;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -74,7 +76,6 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(request.getFullName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .providerType(AuthProviderType.LOCAL_MERGE)
                 .build();
 
         user = userRepository.save(user);
@@ -100,6 +101,12 @@ public class AuthServiceImpl implements AuthService {
     public void changePassword(ChangePasswordRequest request) {
         User user = SecurityUtils.getCurrentUser().orElseThrow(ExceptionUtils::userNotFound);
 
+        if (user.getPassword() == null) {
+            throw new IllegalStateException("Password change not allowed for this account");
+        }
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("New password must be different");
+        }
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Current password is incorrect");
         }
@@ -112,13 +119,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void forgotPassword(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
-        String token = jwtService.generateToken(user, TokenPurpose.PASSWORD_RESET);
+        Optional<User> userOpt = userRepository.findByEmail(email);
 
+        if (userOpt.isEmpty()) {
+            log.warn("Forgot Password requested for non-existent user: {}", email);
+            return;
+        }
+        if (userOpt.get().getPassword() == null) {
+            log.warn("Forgot Password requested for OAuth2 user: {}", email);
+            return;
+        }
+
+        String token = jwtService.generateToken(userOpt.get(), TokenPurpose.PASSWORD_RESET);
         String emailLink = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
-        String body = RESET_PASSWORD_TEMPLATE.formatted(user.getFullName(), emailLink, securityProperties.getJwt().getPasswordResetExpirationInMinutes());
+        String body = RESET_PASSWORD_TEMPLATE.formatted(userOpt.get().getFullName(), emailLink, securityProperties.getJwt().getPasswordResetExpirationInMinutes());
 
-        emailService.send(user.getEmail(), RESET_PASSWORD_SUBJECT, body);
+        emailService.send(userOpt.get().getEmail(), RESET_PASSWORD_SUBJECT, body);
     }
 
     @Override

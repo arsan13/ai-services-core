@@ -1,6 +1,6 @@
 package com.arsan.ai.model.auth;
 
-import jakarta.validation.constraints.NotBlank;
+import com.arsan.ai.annotation.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,6 @@ import lombok.ToString;
 @AllArgsConstructor
 public class AuthRequest extends EmailRequest {
 
-    @NotBlank(message = "Password must not be blank")
+    @ValidPassword
     private String password;
 }

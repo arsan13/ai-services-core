@@ -1,5 +1,6 @@
 package com.arsan.ai.model.auth;
 
+import com.arsan.ai.annotation.ValidPassword;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,5 +9,7 @@ import lombok.Setter;
 public class ChangePasswordRequest {
 
     private String currentPassword;
+
+    @ValidPassword
     private String newPassword;
 }
