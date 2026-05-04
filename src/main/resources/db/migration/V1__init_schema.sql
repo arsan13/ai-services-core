@@ -32,34 +32,34 @@ CREATE INDEX idx_user_provider_id_provider_type
 -- =========================
 -- USER ROLES (ElementCollection)
 -- =========================
-CREATE TABLE user_roles
+CREATE TABLE app_user_roles
 (
-    user_id BIGINT      NOT NULL,
+    app_user_id BIGINT NOT NULL,
     roles   VARCHAR(50) NOT NULL,
 
     CONSTRAINT fk_user_roles_user
-        FOREIGN KEY (user_id)
+        FOREIGN KEY (app_user_id)
             REFERENCES app_user (id)
             ON DELETE CASCADE,
 
-    CONSTRAINT uk_user_roles UNIQUE (user_id, roles)
+    CONSTRAINT uk_user_roles UNIQUE (app_user_id, roles)
 );
 
 
 -- =========================
 -- USER PERMISSIONS (ElementCollection)
 -- =========================
-CREATE TABLE user_permissions
+CREATE TABLE app_user_permissions
 (
-    user_id     BIGINT       NOT NULL,
+    app_user_id BIGINT NOT NULL,
     permissions VARCHAR(100) NOT NULL,
 
     CONSTRAINT fk_user_permissions_user
-        FOREIGN KEY (user_id)
+        FOREIGN KEY (app_user_id)
             REFERENCES app_user (id)
             ON DELETE CASCADE,
 
-    CONSTRAINT uk_user_permissions UNIQUE (user_id, permissions)
+    CONSTRAINT uk_user_permissions UNIQUE (app_user_id, permissions)
 );
 
 

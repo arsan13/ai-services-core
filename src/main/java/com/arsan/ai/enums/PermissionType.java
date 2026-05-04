@@ -5,6 +5,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 public enum PermissionType {
@@ -28,6 +30,10 @@ public enum PermissionType {
     CHAT_GENERIC_USE("chat:generic:use");
 
     private final String value;
+
+    public static final Set<String> VALUES = Arrays.stream(values())
+            .map(PermissionType::getValue)
+            .collect(Collectors.toUnmodifiableSet());
 
     PermissionType(String value) {
         this.value = value;
