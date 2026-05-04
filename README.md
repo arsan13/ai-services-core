@@ -5,213 +5,266 @@
 ![Maven](https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven&logoColor=white)
 ![Spring AI](https://img.shields.io/badge/Spring%20AI-1.1.4-6DB33F?logo=spring&logoColor=white)
 
-Backend platform for secure AI chat workflows with JWT and OAuth2 authentication, permission-based authorization, multi-mode chat execution, token usage auditing, and admin/observability endpoints.
+Enterprise-ready backend service for secure AI chat workflows with local and social authentication, email verification, password recovery flows, role/permission-based authorization, token usage audit reporting, and Flyway-based schema management.
 
-## 1) Project Overview
+## Table of Contents
 
-This project is a Spring Boot 3 service designed for:
+1. [Overview](#overview)
+2. [Capabilities](#capabilities)
+3. [Architecture](#architecture)
+4. [Technology Stack](#technology-stack)
+5. [Authentication and Security](#authentication-and-security)
+6. [AI Runtime](#ai-runtime)
+7. [API Reference](#api-reference)
+8. [Data and Migrations](#data-and-migrations)
+9. [Configuration](#configuration)
+10. [Observability](#observability)
+11. [Production Hardening Checklist](#production-hardening-checklist)
+12. [Known Gaps and Roadmap](#known-gaps-and-roadmap)
 
-- local and social authentication (username/password, Google, GitHub)
-- multi-mode AI chat with per-mode permissions
-- aviation fuel discrepancy workflows backed by AI tools
-- token usage auditing and admin reporting
-- profile-based runtime setup for local development and production deployment
+## Overview
 
-The current implementation exposes two chat modes:
+This service is a Spring Boot 3 application that exposes AI chat and identity APIs under `/api`.
 
-- `generic`: a standard conversational chat client
-- `aviation`: a domain-constrained chat client that uses the aviation system prompt and registered fuel tools
+It supports:
 
-Each chat mode has its own conversation memory and access control.
+- Local auth (`email + password`) and OAuth2 (Google, GitHub)
+- Email verification and verification re-send
+- Forgot/reset password and authenticated change-password flow
+- Permission-gated chat modes (`generic`, `aviation`)
+- Admin endpoints for user/permission management and AI token usage analytics
+- Profile-based runtime (`dev` with H2, `prod` with PostgreSQL)
+- Database schema management via Flyway
 
-## 2) Technology Stack
+## Capabilities
 
-- Java 21
-- Spring Boot 3.5.13
-- Spring Security (JWT + OAuth2 client + method security)
-- Spring Data JPA + Hibernate
-- Spring AI 1.1.4
-- PostgreSQL (production)
-- H2 file database (development)
-- SpringDoc OpenAPI / Swagger UI
-- Spring Boot Actuator
-- Maven + Docker multi-stage build
+### Identity and Access
 
-## 3) High-Level Architecture
+- JWT access tokens with purpose-based claims
+- Email verification token flow
+- Password reset token flow with token reuse protection
+- Account linking behavior for OAuth2 users based on provider/email resolution
+- Role and permission model (`ROLE_USER`, `ROLE_ADMIN`, granular permissions)
+
+### AI Chat
+
+- Multi-provider architecture with chat-type registry
+- Per-chat-type memory windows and isolated conversations
+- Aviation mode with domain tool-calling support
+- Token usage auditing (prompt/completion/total tokens, model, latency, cost)
+
+### Operations
+
+- Global API response wrapper for consistent contracts
+- Centralized exception mapping
+- Actuator endpoints for runtime health and diagnostics
+- Docker multi-stage build
+
+## Architecture
 
 ```mermaid
 flowchart TD
-  Client[Client - Web/API] --> API[REST API Layer]
+  Client[Web or API Client] --> API[REST API /api]
 
-  API --> Security[Authentication and Authorization]
-  API --> Services[Application Services]
+  API --> Security[Spring Security Layer]
+  Security --> Auth[Local Auth + OAuth2 + JWT]
+  Auth --> Verify[Email Verification Flow]
+  Auth --> Reset[Forgot and Reset Password Flow]
+  Auth --> Change[Authenticated Change Password]
+  Auth --> Mail[SMTP Email Service]
 
-  Services --> AI[AI Integration Layer]
-  AI --> Generic[Generic Chat Client]
-  AI --> Aviation[Aviation Chat Client]
-  Aviation --> Tools[Fuel Service Tools]
+  API --> Services[Business Services]
+  Services --> Chat[AI Chat Providers]
+  Chat --> Generic[Generic Chat Client]
+  Chat --> Aviation[Aviation Chat Client]
+  Aviation --> Tools[FuelServiceTool]
 
-  Services --> Data[Data Access Layer]
-  Data --> DB[(Database)]
+  Services --> Audit[TokenUsageAdvisor]
+  Audit --> DB[(Database)]
 
-  AI --> Audit[Token Usage Audit]
-  Audit --> DB
+  Services --> Flyway[Flyway Migration Engine]
+  Flyway --> DB
+
+  Services --> Repos[JPA Repositories]
+  Repos --> DB
 ```
 
 ### Package Responsibilities
 
-- `controller`: REST endpoints for auth, current user, chat, and admin APIs
-- `config` and `config/ai`: security, CORS, application beans, and per-chat-type AI wiring
-- `service` and `service/impl`: business logic and chat orchestration
-- `security`: JWT filter, OAuth handlers, redirect flow, and permission evaluation
-- `provider` and `resolver`: OAuth provider-specific user extraction and account resolution
-- `advisor`: Spring AI advisor for token usage tracking
-- `tool`: AI-callable fuel domain tools
-- `entity`, `repository`, `projection`: persistence layer
-- `advice` and `exception`: response wrapping and exception mapping
-- `properties`: configuration binding
+- `controller`: API endpoints for auth, me, chat, and admin use cases
+- `security`: JWT filter, OAuth2 handlers, redirect URL builder, permission evaluator
+- `service`: application business logic (auth, chat, audit, user management)
+- `config`: security, CORS, async executors, AI clients, bootstrap wiring
+- `provider` and `resolver`: chat provider registry and OAuth identity resolution
+- `advisor`: AI usage auditing advisor
+- `entity`, `repository`, `projection`: persistence model and read projections
+- `advice` and `exception`: response wrapping and consistent error handling
 
-## 4) Authentication and Authorization
+## Technology Stack
+
+- Java 21
+- Spring Boot 3.5.13
+- Spring Security (JWT + OAuth2 Client + method security)
+- Spring Data JPA + Hibernate
+- Spring AI 1.1.4
+- Flyway
+- H2 (dev profile)
+- PostgreSQL (prod profile)
+- SpringDoc OpenAPI / Swagger UI (dev profile)
+- Spring Boot Actuator
+- Maven
+- Docker
+
+## Authentication and Security
 
 ### Authentication Modes
 
-- `POST /api/auth/login`
-- `POST /api/auth/register`
-- `GET /api/auth/oauth2/{providerType}` for Google and GitHub login redirects
+- Local login and registration
+- OAuth2 social login (`google`, `github`)
 
-### JWT Model
+### JWT Purposes
 
-JWT contains:
+Tokens carry a `purpose` claim and are validated by purpose:
 
-- `userId`
-- `username`
-- `provider`
-- `authorities`
+- `ACCESS`
+- `EMAIL_VERIFICATION`
+- `PASSWORD_RESET`
 
-Token expiration is configured with `app.security.jwt.expiration-in-hours` and defaults to `2`.
+Configured expirations (minutes):
 
-### Authorization Model
+- `access-expiration-in-minutes` (default 120)
+- `email-verification-expiration-in-minutes` (default 30)
+- `password-reset-expiration-in-minutes` (default 10)
 
-The secured runtime is enabled by default with `app.security.enabled=true`. A permissive filter chain is available for local or test scenarios by setting `app.security.enabled=false`.
+### Verification and Password Flows
 
-Current permission model includes:
+- **Register** creates user, sends verification email, and returns access token
+- **Verify email** marks user as verified and stores `verifiedDate`
+- **Resend verification** supports non-verified users
+- **Forgot password** sends reset email for local accounts
+- **Reset password** validates token purpose/expiry and blocks token reuse if already reset
+- **Change password** requires authenticated user and validates current/new password rules
 
-- admin permissions: `admin:read`, `admin:write`, `admin:delete`
-- user permissions: `user:read`, `user:write`, `user:delete`, `user:manage`
-- token audit permission: `token:usage:read`
-- chat permissions: `chat:generic:use`, `chat:aviation:use`
+### Authorization
 
-Examples enforced in configuration and controller method security:
+Security is enabled by default (`app.security.enabled=true`).
 
-- `GET /api/admin/token-usage/**` requires `token:usage:read`
-- `GET /api/admin/users/**` requires `admin:read`
-- `PATCH /api/admin/users/**` requires `admin:write`
-- `POST /api/ai/chat/{chatType}` requires access to the requested chat type via `chatPermissionEvaluator`
+Protected endpoints use:
 
-## 5) AI and Tool Calling
+- Request matcher rules for admin APIs
+- Method-level check for chat permission per `chatType`
 
-### Chat Runtime
+Permissions currently include:
 
-The application wires two independent `ChatClient` beans:
+- Admin: `admin:read`, `admin:write`, `admin:delete`
+- User: `user:read`, `user:write`, `user:delete`, `user:manage`
+- Audit: `token:usage:read`
+- Chat: `chat:generic:use`, `chat:aviation:use`
 
-- generic chat client
-  - uses message window memory
-  - uses `TokenUsageAdvisor`
-  - does not register domain tools
-- aviation chat client
-  - loads the system prompt from `src/main/resources/prompts/system-prompt.st`
-  - uses message window memory
-  - uses `TokenUsageAdvisor`
-  - registers `FuelServiceTool`
+### CORS
 
-### Model Provider
+CORS origins are externalized (`app.cors.allowed-origins`) and currently include local and deployed frontend origins.
 
-The default configuration uses an OpenAI-compatible provider through Spring AI:
+## AI Runtime
 
-- base URL: `https://api.pawan.krd`
-- model: `openai/gpt-oss-20b`
-- API key: `OPENAI_API_KEY`
-
-These values come from `src/main/resources/application.yml` and can be overridden through normal Spring configuration.
-
-### Conversation Memory
-
-- repository: in-memory (`InMemoryChatMemoryRepository`)
-- window size: `10` messages per chat type
-- conversation lifecycle: maintained per authenticated user and can be cleared explicitly through the chat API
-
-### Aviation Domain Tools
-
-`FuelServiceTool` exposes the following AI-callable functions:
-
-- `getBlockInFuel`
-- `getFirstFuelSlip`
-- `getInRangeRemainingFuel`
-- `getAircraftLocation`
-- `isWrongAircraft`
-- `isMissingUpliftFuelSlip`
-- `isMissingApuRunFuelSlip`
-- `getAcarsFuelDetails`
-
-Current tool implementations return mocked data. They are suitable for integration scaffolding, not production decisioning.
-
-## 6) API Surface
-
-Base path: `/api`
-
-### Auth Endpoints
-
-- `POST /api/auth/login`
-- `POST /api/auth/register`
-- `GET /api/auth/availability?email=...`
-- `GET /api/auth/oauth2/providers`
-- `GET /api/auth/oauth2/{providerType}`
-
-### User Endpoint
-
-- `GET /api/me`
-
-### AI Chat Endpoints
-
-- `GET /api/ai/chat/types`
-- `POST /api/ai/chat/{chatType}`
-- `DELETE /api/ai/chat/{chatType}/conversation`
-
-Supported chat types currently returned by the service:
+### Chat Types
 
 - `generic`
 - `aviation`
 
-Example request:
+### Chat Client Wiring
+
+- Generic chat client:
+  - Message window memory (max 10)
+  - Token usage advisor enabled
+- Aviation chat client:
+  - System prompt from `src/main/resources/prompts/system-prompt.st`
+  - Message window memory (max 10)
+  - Token usage advisor enabled
+  - `FuelServiceTool` registered for tool calls
+
+### Conversation Scope
+
+Conversation ID is resolved per authenticated user ID and can be cleared by chat type via API.
+
+### Usage Auditing
+
+Every AI call attempts asynchronous persistence of:
+
+- User
+- Model/provider
+- Prompt/completion/total token counts
+- Estimated cost
+- Latency
+- Input/output summaries
+
+## API Reference
+
+Base path: `/api`
+
+### Auth
+
+- `POST /auth/login`
+- `POST /auth/register`
+- `GET /auth/availability?email=...`
+- `POST /auth/verify-email`
+- `POST /auth/resend-verification`
+- `POST /auth/forgot-password`
+- `POST /auth/reset-password`
+
+### OAuth2
+
+- `GET /oauth2/providers`
+- `GET /oauth2/{providerType}`
+
+OAuth2 success/failure redirects go to frontend paths:
+
+- `/oauth-success?token=...`
+- `/oauth-error?message=...`
+
+### Current User
+
+- `GET /me`
+- `POST /me/change-password`
+
+### AI Chat
+
+- `GET /ai/chat/types`
+- `POST /ai/chat/{chatType}`
+- `DELETE /ai/chat/{chatType}/conversation`
+
+Example request body:
 
 ```json
 {
-  "message": "Hi, Tell me a joke!"
+  "message": "Summarize the latest fuel discrepancy report."
 }
 ```
 
-### Admin User Management
+### Admin: Users
 
-- `GET /api/admin/users`
-- `GET /api/admin/users/{id}`
-- `PATCH /api/admin/users/role/grant/{id}`
-- `PATCH /api/admin/users/role/revoke/{id}`
-- `PATCH /api/admin/users/permission/grant/{id}`
-- `PATCH /api/admin/users/permission/revoke/{id}`
-- `GET /api/admin/users/permission/available`
+- `GET /admin/users`
+- `GET /admin/users/{id}`
+- `PATCH /admin/users/role/grant/{id}`
+- `PATCH /admin/users/role/revoke/{id}`
+- `PATCH /admin/users/permission/grant/{id}`
+- `PATCH /admin/users/permission/revoke/{id}`
+- `GET /admin/users/permission/available`
 
-### Admin Token Usage Audit
+### Admin: Token Usage
 
-- `GET /api/admin/token-usage?page=0&size=20`
-- `GET /api/admin/token-usage/user/{userId}`
-- `GET /api/admin/token-usage/date-range?startDate=...&endDate=...`
-- `GET /api/admin/token-usage/total-tokens?startDate=...&endDate=...`
-- `GET /api/admin/token-usage/total-tokens/user/{userId}?startDate=...&endDate=...`
-- `GET /api/admin/token-usage/summary?startDate=...&endDate=...`
+- `GET /admin/token-usage?page=0&size=20`
+- `GET /admin/token-usage/user/{userId}`
+- `GET /admin/token-usage/date-range?startDate=...&endDate=...`
+- `GET /admin/token-usage/total-tokens?startDate=...&endDate=...`
+- `GET /admin/token-usage/total-tokens/user/{userId}?startDate=...&endDate=...`
+- `GET /admin/token-usage/summary?startDate=...&endDate=...`
 
-## 7) Response and Error Contract
+Date query parameters use ISO datetime format.
 
-Controller responses are wrapped under the configured global response wrapper for the application controller package:
+### API Response Contract
+
+Responses are wrapped in:
 
 ```json
 {
@@ -222,174 +275,109 @@ Controller responses are wrapped under the configured global response wrapper fo
 }
 ```
 
-Exception handling maps validation failures, authentication and authorization errors, JWT issues, AI provider failures, and generic server failures to a consistent API error payload.
+Exceptions are normalized through global exception handling for validation, auth, authorization, JWT, AI provider, persistence, and fallback server errors.
 
-## 8) Data Layer
+## Data and Migrations
 
-### Core Entities
+### Core Tables
 
-- `User`: identity, credentials, provider data, roles, permissions, timestamps
-- `TokenUsageAudit`: provider/model metadata, token counts, cost estimate, latency, and request summaries
+- `app_user`
+- `app_user_roles`
+- `app_user_permissions`
+- `token_usage_audit`
 
-### Database Profiles
+### Flyway
 
-- `dev`: H2 file database
-- `prod`: PostgreSQL
+- Flyway is enabled in both `dev` and `prod`
+- Migration scripts are under `src/main/resources/db/migration`
+- Current schema baseline: `V1__init_schema.sql`
 
-## 9) Configuration Profiles
+### Dev Seed Data Note
 
-Main config files:
+Dev seed data is wired for development testing.
 
-- `src/main/resources/application.yml`
-- `src/main/resources/application-dev.yml`
-- `src/main/resources/application-prod.yml`
+- Seed script location: `src/main/resources/db/dev/V2__seed_data.sql`
+- Active dev Flyway locations: `classpath:db/migration,classpath:db/dev`
+- Intended usage: local/dev test bootstrap only
 
-### Required Environment Variables
+## Configuration
+
+### Profiles
+
+- `dev`
+  - H2 file database
+  - `ddl-auto=validate`
+  - Flyway enabled, migration locations set to `classpath:db/migration,classpath:db/dev`
+  - H2 console enabled at `/api/h2-console`
+  - Swagger/OpenAPI enabled
+- `prod`
+  - PostgreSQL datasource from environment variables
+  - `ddl-auto=validate`
+  - Flyway enabled
+  - Swagger/OpenAPI disabled
+
+### Environment Variables
+
+Required for core runtime:
 
 - `OPENAI_API_KEY`
 - `JWT_SECRET_KEY`
+- `MAIL_USERNAME`
+- `MAIL_PASSWORD`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
 
-Production database variables:
+Required for production datasource:
 
 - `DATABASE_URL`
 - `DATABASE_USERNAME`
 - `DATABASE_PASSWORD`
 
-Optional runtime variables:
+Optional / operational:
 
-- `PORT` default `8080`
+- `PORT` (default `8080`)
 
-### Profile Notes
+Mandatory for bootstrap admin creation:
 
-- `dev`
-  - uses H2 at `jdbc:h2:file:~/testdb`
-  - enables H2 console at `/api/h2-console`
-  - exposes Swagger UI and API docs through public endpoints
-- `prod`
-  - uses PostgreSQL
-  - disables Swagger UI and OpenAPI docs
-  - configures the production frontend origin
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
 
-## 10) Observability and Operations
+### Bootstrap Admin
 
-Actuator endpoints exposed by configuration:
+When `app.bootstrap.admin.enabled=true`, both `ADMIN_EMAIL` and `ADMIN_PASSWORD` are required to create the admin user at startup (if the user does not already exist).
 
-- `/api/actuator/health`
-- `/api/actuator/info`
-- `/api/actuator/metrics`
-- `/api/actuator/env`
-- `/api/actuator/loggers`
-- `/api/actuator/threaddump`
+## Observability
 
-Swagger/OpenAPI endpoints in environments where they are enabled:
+Actuator endpoints exposed via `/api/actuator` include:
+
+- `health`
+- `info`
+- `metrics`
+- `env`
+- `loggers`
+- `threaddump`
+
+Swagger/OpenAPI in dev:
 
 - `/api/v3/api-docs`
 - `/api/swagger-ui.html`
 
-## 11) Testing
+## Production Hardening Checklist
 
-The repository includes basic Spring Boot and model-level tests, but overall coverage is still light. The highest-value remaining gaps are chat authorization, token audit flows, OAuth success/failure handling, and controller-level integration tests.
+- Use a strong managed JWT secret (prefer Base64-encoded key material)
+- Restrict CORS origins to trusted frontend domains only
+- Consider refresh-token strategy and token revocation/blacklisting
+- Add rate limiting for auth and chat endpoints
+- Replace in-memory chat memory for horizontal scale
+- Reduce exposed actuator endpoints in internet-facing environments
+- Enforce SMTP credentials and sender reputation controls
+- Add API integration and security regression test coverage
 
-## 12) Security Notes for Production
+## Known Gaps and Roadmap
 
-- use a strong JWT secret managed outside the repository
-- tighten CORS policy as needed; allowed headers currently include `*`
-- add token revocation or refresh-token flows if your client model requires them
-- add request throttling for auth and chat endpoints
-- replace in-memory chat memory if horizontal scaling or durable history is required
-
-Here’s an updated version of your **README section (cleanly integrating Flyway schema + dev seed data changes)**. I’ve only added/adjusted the relevant parts so you don’t lose focus or duplicate existing content.
-
----
-
-## 13) Database Migrations (Flyway)
-
-The project now uses **Flyway** for database schema versioning and controlled environment initialization.
-
-### Migration Strategy
-
-* All schema changes are managed via Flyway SQL migrations.
-* Migrations are executed automatically at application startup.
-* Versioned scripts ensure deterministic database state across environments.
-
-### Migration Location
-
-```
-src/main/resources/db/migration
-```
-
-Typical structure:
-
-```
-V1__init_schema.sql
-V2__seed_data.sql
-```
-
-### Initial Schema
-
-The initial migration (`V1__init_schema.sql`) defines:
-
-* Core `User` table (authentication + authorization model)
-* `TokenUsageAudit` table (AI usage tracking)
-* Required indexes and constraints for performance and integrity
-
-### Dev Seed Data
-
-Development environments include seed data via:
-
-```
-src/main/resources/db/dev/V2__seed_data.sql
-```
-
-This seed data is used to:
-
-* Bootstrap initial admin/user accounts for local development
-* Provide baseline roles and permissions for testing
-* Enable immediate usage of chat and admin APIs without manual setup
-
-### Environment Behavior
-
-#### Dev Profile
-
-* Flyway **enabled**
-* Schema + seed data applied automatically
-* H2 file database used
-* Fast local bootstrap for development and testing
-
-#### Prod Profile
-
-* Flyway **enabled**
-* Only schema migrations applied
-* **Seed data is not executed**
-* PostgreSQL used with strict validation mode
-
-### Configuration Notes
-
-Flyway is controlled via standard Spring Boot configuration:
-
-```yaml
-spring:
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-```
-
-Dev-only seed data is separated to avoid accidental production initialization.
-
----
-
-## 14) Roadmap Recommendations
-
-- replace mocked fuel tools with real upstream integrations
-- persist chat memory to a database or distributed cache
-- expand integration tests around security, admin flows, and chat permissions
-- add end-to-end coverage for OAuth redirect and callback paths
-- add additional chat modes only when backed by concrete permissions and runtime wiring
-
-## 15) License and Ownership
-
-No explicit license is currently declared in project metadata. Add a license file and complete the POM metadata before distributing the project externally.
+- Aviation tool methods currently return mocked data
+- Introduce a user access-request module where users can request feature permissions and admins can review/approve or reject those requests
+- Test coverage does not yet include full auth/chat/admin integration paths
+- License metadata in `pom.xml` is still placeholder and should be finalized
