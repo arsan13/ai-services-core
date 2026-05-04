@@ -24,15 +24,15 @@ import static com.arsan.ai.constants.SecurityConstants.TOKEN_PURPOSE;
 @Service
 public class JwtService {
 
-    private final SecurityProperties securityProperties;
+    private final SecurityProperties.Jwt jwtProperties;
     private final Map<TokenPurpose, Long> tokenPurposeExpirationMap;
 
     public JwtService(SecurityProperties securityProperties) {
-        this.securityProperties = securityProperties;
+        this.jwtProperties = securityProperties.getJwt();
         tokenPurposeExpirationMap = Map.of(
-                TokenPurpose.ACCESS, securityProperties.getJwt().getAccessExpirationInMinutes(),
-                TokenPurpose.EMAIL_VERIFICATION, securityProperties.getJwt().getEmailVerificationExpirationInMinutes(),
-                TokenPurpose.PASSWORD_RESET, securityProperties.getJwt().getPasswordResetExpirationInMinutes()
+                TokenPurpose.ACCESS, jwtProperties.getAccessExpirationInMinutes(),
+                TokenPurpose.EMAIL_VERIFICATION, jwtProperties.getEmailVerificationExpirationInMinutes(),
+                TokenPurpose.PASSWORD_RESET, jwtProperties.getPasswordResetExpirationInMinutes()
         );
     }
 
@@ -119,7 +119,7 @@ public class JwtService {
          * Decode it before creating the signing key:
          * <p>
          * return Keys.hmacShaKeyFor(
-         *     Decoders.BASE64.decode(securityProperties.getJwt().getSecret())
+         *     Decoders.BASE64.decode(jwtProperties.getSecret())
          * );
          * <p>
          * To generate a secure key (run once and store safely in config):
@@ -132,6 +132,6 @@ public class JwtService {
          */
 
         // DEVELOPMENT ONLY: uses plain text secret (not secure for production)
-        return Keys.hmacShaKeyFor(securityProperties.getJwt().getSecret().getBytes());
+        return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
     }
 }
