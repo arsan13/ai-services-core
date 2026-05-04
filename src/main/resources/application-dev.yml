@@ -7,14 +7,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
-    defer-datasource-initialization: true
 
-  sql:
-    init:
-      mode: NEVER
-      data-locations: 'classpath:sql/data.sql'
+  flyway:
+    locations: classpath:db/migration,classpath:db/dev
 
   h2:
     console:

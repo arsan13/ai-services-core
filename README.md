@@ -233,8 +233,8 @@ Exception handling maps validation failures, authentication and authorization er
 
 ### Database Profiles
 
-- `dev`: H2 file database with `ddl-auto=update`
-- `prod`: PostgreSQL with `ddl-auto=validate`
+- `dev`: H2 file database
+- `prod`: PostgreSQL
 
 ## 9) Configuration Profiles
 
@@ -268,7 +268,6 @@ Optional runtime variables:
 - `dev`
   - uses H2 at `jdbc:h2:file:~/testdb`
   - enables H2 console at `/api/h2-console`
-  - leaves SQL seed init disabled with `spring.sql.init.mode=NEVER`
   - exposes Swagger UI and API docs through public endpoints
 - `prod`
   - uses PostgreSQL
@@ -303,11 +302,85 @@ The repository includes basic Spring Boot and model-level tests, but overall cov
 - add request throttling for auth and chat endpoints
 - replace in-memory chat memory if horizontal scaling or durable history is required
 
-## 13) Seed Data
+Here’s an updated version of your **README section (cleanly integrating Flyway schema + dev seed data changes)**. I’ve only added/adjusted the relevant parts so you don’t lose focus or duplicate existing content.
 
-Sample SQL exists in `src/main/resources/sql/data.sql`.
+---
 
-Current `dev` profile does not auto-run that script because `spring.sql.init.mode=NEVER`. If you need seed data locally, import it manually or change the init mode for your environment.
+## 13) Database Migrations (Flyway)
+
+The project now uses **Flyway** for database schema versioning and controlled environment initialization.
+
+### Migration Strategy
+
+* All schema changes are managed via Flyway SQL migrations.
+* Migrations are executed automatically at application startup.
+* Versioned scripts ensure deterministic database state across environments.
+
+### Migration Location
+
+```
+src/main/resources/db/migration
+```
+
+Typical structure:
+
+```
+V1__init_schema.sql
+V2__seed_data.sql
+```
+
+### Initial Schema
+
+The initial migration (`V1__init_schema.sql`) defines:
+
+* Core `User` table (authentication + authorization model)
+* `TokenUsageAudit` table (AI usage tracking)
+* Required indexes and constraints for performance and integrity
+
+### Dev Seed Data
+
+Development environments include seed data via:
+
+```
+src/main/resources/db/dev/V2__seed_data.sql
+```
+
+This seed data is used to:
+
+* Bootstrap initial admin/user accounts for local development
+* Provide baseline roles and permissions for testing
+* Enable immediate usage of chat and admin APIs without manual setup
+
+### Environment Behavior
+
+#### Dev Profile
+
+* Flyway **enabled**
+* Schema + seed data applied automatically
+* H2 file database used
+* Fast local bootstrap for development and testing
+
+#### Prod Profile
+
+* Flyway **enabled**
+* Only schema migrations applied
+* **Seed data is not executed**
+* PostgreSQL used with strict validation mode
+
+### Configuration Notes
+
+Flyway is controlled via standard Spring Boot configuration:
+
+```yaml
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+```
+
+Dev-only seed data is separated to avoid accidental production initialization.
+
+---
 
 ## 14) Roadmap Recommendations
 
