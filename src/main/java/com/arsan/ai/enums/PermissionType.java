@@ -25,8 +25,7 @@ public enum PermissionType {
 
     // Chat
     CHAT_AVIATION_USE("chat:aviation:use"),
-    CHAT_GENERIC_USE("chat:generic:use"),
-    CHAT_LEGAL_USE("chat:legal:use");
+    CHAT_GENERIC_USE("chat:generic:use");
 
     private final String value;
 
