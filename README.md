@@ -1,5 +1,10 @@
 # AI Services Core
 
+![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.13-6DB33F?logo=springboot&logoColor=white)
+![Maven](https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven&logoColor=white)
+![Spring AI](https://img.shields.io/badge/Spring%20AI-1.1.4-6DB33F?logo=spring&logoColor=white)
+
 Backend platform for secure AI chat workflows with JWT and OAuth2 authentication, permission-based authorization, multi-mode chat execution, token usage auditing, and admin/observability endpoints.
 
 ## 1) Project Overview
@@ -158,7 +163,7 @@ Base path: `/api`
 
 - `POST /api/auth/login`
 - `POST /api/auth/register`
-- `GET /api/auth/availability?username=...`
+- `GET /api/auth/availability?email=...`
 - `GET /api/auth/oauth2/providers`
 - `GET /api/auth/oauth2/{providerType}`
 

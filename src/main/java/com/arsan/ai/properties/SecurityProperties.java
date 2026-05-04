@@ -22,6 +22,8 @@ public class SecurityProperties {
     @Getter
     public static class Jwt {
         private String secret;
-        private long expirationInHours;
+        private long accessExpirationInMinutes;
+        private long emailVerificationExpirationInMinutes;
+        private long passwordResetExpirationInMinutes;
     }
 }

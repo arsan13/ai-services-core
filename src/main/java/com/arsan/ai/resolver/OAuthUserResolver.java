@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class OAuthUserResolver {
@@ -39,21 +41,23 @@ public class OAuthUserResolver {
 
     private User findByEmail(String email) {
         if (email == null || email.isBlank()) return null;
-        return userRepository.findByUsername(email).orElse(null);
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     private User createUser(OAuthUserInfo info) {
         User user = new User();
 
-        String username = info.getEmail() != null ? info.getEmail() : info.getName();
-        if (userRepository.existsByUsername(username)) {
-            username = info.getProviderType().name().toLowerCase() + "_" + info.getProviderId();
+        String email = info.getEmail() != null ? info.getEmail() : info.getName();
+        if (userRepository.existsByEmail(email)) {
+            email = info.getProviderType().name().toLowerCase() + "_" + info.getProviderId();
         }
 
-        user.setUsername(username);
+        user.setEmail(email);
         user.setFullName(info.getName());
         user.setProviderType(info.getProviderType());
         user.setProviderId(info.getProviderId());
+        user.setVerified(true);
+        user.setVerifiedDate(LocalDateTime.now());
 
         return userRepository.save(user);
     }

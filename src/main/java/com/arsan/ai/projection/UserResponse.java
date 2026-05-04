@@ -10,11 +10,13 @@ public interface UserResponse {
 
     String getFullName();
 
-    String getUsername();
+    String getEmail();
 
     List<RoleType> getRoles();
 
     List<String> getPermissions();
+
+    boolean isVerified();
 
     LocalDateTime getCreatedDate();
 }
