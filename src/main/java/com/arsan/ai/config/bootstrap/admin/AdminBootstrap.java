@@ -39,7 +39,7 @@ public class AdminBootstrap implements CommandLineRunner {
                 .email(properties.getEmail())
                 .password(passwordEncoder.encode(properties.getPassword()))
                 .roles(EnumSet.allOf(RoleType.class))
-                .permissions(PermissionType.VALUES)
+                .permissions(PermissionType.ALL_VALUES)
                 .build();
 
         userRepository.save(admin);

@@ -31,7 +31,7 @@ public enum PermissionType {
 
     private final String value;
 
-    public static final Set<String> VALUES = Arrays.stream(values())
+    public static final Set<String> ALL_VALUES = Arrays.stream(values())
             .map(PermissionType::getValue)
             .collect(Collectors.toUnmodifiableSet());
 
