@@ -40,7 +40,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.getRoles().add(role);
-        userRepository.save(user);
     }
 
     @Override
@@ -53,7 +52,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.getRoles().remove(role);
-        userRepository.save(user);
     }
 
     public List<String> availablePermissions() {
@@ -71,8 +69,6 @@ public class UserServiceImpl implements UserService {
         permissions.stream()
                 .filter(permission -> !user.getPermissions().contains(permission))
                 .forEach(user.getPermissions()::add);
-
-        userRepository.save(user);
     }
 
     @Transactional
@@ -84,7 +80,5 @@ public class UserServiceImpl implements UserService {
         permissions.stream()
                 .filter(user.getPermissions()::contains)
                 .forEach(user.getPermissions()::remove);
-
-        userRepository.save(user);
     }
 }
