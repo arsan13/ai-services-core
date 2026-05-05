@@ -3,6 +3,7 @@ package com.arsan.ai.entity;
 import com.arsan.ai.enums.AuthProviderType;
 import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.enums.RoleType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -67,12 +69,21 @@ public class AppUser implements UserDetails {
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "app_user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private Set<RoleType> roles = Set.of(RoleType.ROLE_USER);
+    private Set<RoleType> roles = new HashSet<>(Set.of(RoleType.ROLE_USER));
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> permissions = Set.of(PermissionType.USER_READ.getValue(), PermissionType.CHAT_GENERIC_USE.getValue());
+    @CollectionTable(name = "app_user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private Set<String> permissions = new HashSet<>(
+            Set.of(
+                    PermissionType.USER_READ.getValue(),
+                    PermissionType.CHAT_GENERIC_USE.getValue()
+            )
+    );
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

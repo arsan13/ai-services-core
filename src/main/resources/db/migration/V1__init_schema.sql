@@ -24,6 +24,11 @@ CREATE TABLE app_user
 ALTER TABLE app_user
     ADD CONSTRAINT uk_user_email UNIQUE (email);
 
+-- Check Constraint for provider_type
+ALTER TABLE app_user
+    ADD CONSTRAINT chk_app_user_provider_type
+        CHECK (provider_type IN ('LOCAL', 'GOOGLE', 'GITHUB'));
+
 -- Index for OAuth/provider lookup
 CREATE INDEX idx_user_provider_id_provider_type
     ON app_user (provider_id, provider_type);
@@ -34,15 +39,19 @@ CREATE INDEX idx_user_provider_id_provider_type
 -- =========================
 CREATE TABLE app_user_roles
 (
-    app_user_id BIGINT NOT NULL,
-    roles   VARCHAR(50) NOT NULL,
+    user_id BIGINT NOT NULL,
+    role    VARCHAR(50) NOT NULL,
 
     CONSTRAINT fk_user_roles_user
-        FOREIGN KEY (app_user_id)
+        FOREIGN KEY (user_id)
             REFERENCES app_user (id)
             ON DELETE CASCADE,
 
-    CONSTRAINT uk_user_roles UNIQUE (app_user_id, roles)
+    CONSTRAINT uk_user_roles
+        UNIQUE (user_id, role),
+
+    CONSTRAINT chk_user_roles
+        CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN'))
 );
 
 
@@ -51,15 +60,15 @@ CREATE TABLE app_user_roles
 -- =========================
 CREATE TABLE app_user_permissions
 (
-    app_user_id BIGINT NOT NULL,
-    permissions VARCHAR(100) NOT NULL,
+    user_id    BIGINT       NOT NULL,
+    permission VARCHAR(100) NOT NULL,
 
     CONSTRAINT fk_user_permissions_user
-        FOREIGN KEY (app_user_id)
+        FOREIGN KEY (user_id)
             REFERENCES app_user (id)
             ON DELETE CASCADE,
 
-    CONSTRAINT uk_user_permissions UNIQUE (app_user_id, permissions)
+    CONSTRAINT uk_user_permissions UNIQUE (user_id, permission)
 );
 
 
