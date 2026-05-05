@@ -9,6 +9,7 @@ import com.arsan.ai.service.UserService;
 import com.arsan.ai.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void grantRole(Long id, RoleType role) {
-        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         if (user.getRoles().contains(role)) {
             throw new IllegalArgumentException("User already has this role");
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void revokeRole(Long id, RoleType role) {
-        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         if (!user.getRoles().contains(role)) {
             throw new IllegalArgumentException("User does not have this role");
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserService {
     public void grantPermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         permissions.stream()
                 .filter(permission -> !user.getPermissions().contains(permission))
@@ -75,10 +76,14 @@ public class UserServiceImpl implements UserService {
     public void revokePermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         permissions.stream()
                 .filter(user.getPermissions()::contains)
                 .forEach(user.getPermissions()::remove);
+    }
+
+    private @NonNull AppUser getUserOrThrow(Long id) {
+        return userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
     }
 }
