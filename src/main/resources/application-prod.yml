@@ -1,14 +1,17 @@
 spring:
   datasource:
-    url: ${DATABASE_URL:}
+    url: ${DATABASE_URL}
     driver-class-name: org.postgresql.Driver
-    username: ${DATABASE_USERNAME:}
-    password: ${DATABASE_PASSWORD:}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
 
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: false
+
+  flyway:
+    enabled: true
 
 springdoc:
   api-docs:

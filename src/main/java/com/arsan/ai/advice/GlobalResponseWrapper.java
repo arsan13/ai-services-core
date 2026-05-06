@@ -2,6 +2,7 @@ package com.arsan.ai.advice;
 
 import com.arsan.ai.model.common.ApiResponse;
 import com.arsan.ai.properties.ResponseWrapperProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -18,8 +19,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
 
     private static final String SUCCESS_MESSAGE = "Success";
-    private final ResponseWrapperProperties properties;
 
+    private final ResponseWrapperProperties properties;
+    private final ObjectMapper objectMapper;
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -46,8 +48,11 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
         if (body instanceof ResponseEntity<?> responseEntity) {
             return wrapResponseEntity(responseEntity);
         }
+        if (body instanceof String) {
+            return wrapString((String) body, response);
+        }
 
-        return wrapBody(body);
+        return buildSuccessResponse(body);
     }
 
     private boolean shouldSkip(ServerHttpRequest request) {
@@ -69,26 +74,30 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
         return fullPath;
     }
 
-    private ResponseEntity<?> wrapResponseEntity(ResponseEntity<?> responseEntity) {
-        Object body = responseEntity.getBody();
-
-        if (body instanceof ApiResponse<?>) {
-            return responseEntity;
-        }
-
-        ApiResponse<Object> wrappedBody = buildSuccessResponse(body);
+    private <T> ResponseEntity<ApiResponse<T>> wrapResponseEntity(ResponseEntity<T> responseEntity) {
+        ApiResponse<T> wrapped = buildSuccessResponse(responseEntity.getBody());
 
         return ResponseEntity
                 .status(responseEntity.getStatusCode())
                 .headers(responseEntity.getHeaders())
-                .body(wrappedBody);
+                .body(wrapped);
     }
 
-    private ApiResponse<Object> wrapBody(Object body) {
-        return buildSuccessResponse(body);
+    private String wrapString(String body, ServerHttpResponse response) {
+        ApiResponse<String> wrapped = buildSuccessResponse(body);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        return convertToJson(wrapped);
     }
 
-    private ApiResponse<Object> buildSuccessResponse(Object body) {
+    private <T> ApiResponse<T> buildSuccessResponse(T body) {
         return ApiResponse.success(body, SUCCESS_MESSAGE);
+    }
+
+    private String convertToJson(Object obj) {
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting response to JSON", e);
+        }
     }
 }

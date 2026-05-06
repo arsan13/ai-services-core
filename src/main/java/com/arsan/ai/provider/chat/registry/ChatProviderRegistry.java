@@ -2,7 +2,6 @@ package com.arsan.ai.provider.chat.registry;
 
 import com.arsan.ai.enums.ChatType;
 import com.arsan.ai.provider.chat.core.ChatProvider;
-import com.arsan.ai.provider.chat.generic.GenericChatProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

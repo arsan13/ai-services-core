@@ -3,6 +3,7 @@ package com.arsan.ai.entity;
 import com.arsan.ai.enums.AuthProviderType;
 import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.enums.RoleType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -37,7 +39,7 @@ import java.util.Set;
 @Table(
         name = "app_user",
         uniqueConstraints = {
-                @UniqueConstraint(name = User.USERNAME_UNIQUE_KEY_NAME, columnNames = "username")
+                @UniqueConstraint(name = AppUser.EMAIL_UNIQUE_KEY_NAME, columnNames = "email")
         },
         indexes = {
                 @Index(name = "idx_user_provider_id_provider_type", columnList = "providerId, providerType")
@@ -49,9 +51,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class User implements UserDetails {
+public class AppUser implements UserDetails {
 
-    public static final String USERNAME_UNIQUE_KEY_NAME = "uk_user_username";
+    public static final String EMAIL_UNIQUE_KEY_NAME = "uk_user_email";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,19 +62,23 @@ public class User implements UserDetails {
     private String fullName;
 
     @Column(nullable = false)
-    private String username;
+    private String email;
 
     @ToString.Exclude
     private String password;
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "app_user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private Set<RoleType> roles = Set.of(RoleType.ROLE_USER);
+    private Set<RoleType> roles = new HashSet<>(Set.of(RoleType.ROLE_USER));
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> permissions = Set.of(PermissionType.USER_READ.getValue(), PermissionType.CHAT_GENERIC_USE.getValue());
+    @CollectionTable(name = "app_user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private Set<String> permissions = new HashSet<>(Set.of(PermissionType.USER_READ.getValue()));
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -80,14 +86,21 @@ public class User implements UserDetails {
 
     private String providerId;
 
+    private boolean verified;
+    private LocalDateTime verifiedDate;
+
     @CreationTimestamp
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
-    public User(Long id) {
-        this.id = id;
+    private LocalDateTime passwordResetDate;
+
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     @Override
@@ -104,5 +117,15 @@ public class User implements UserDetails {
         );
 
         return authorities;
+    }
+
+    public void markAsVerified() {
+        if (this.verified) {
+            throw new IllegalStateException("Email already verified");
+        }
+
+        this.permissions.addAll(PermissionType.VERIFIED_USERS_VALUES);
+        this.verified = true;
+        this.verifiedDate = LocalDateTime.now();
     }
 }

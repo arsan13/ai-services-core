@@ -1,6 +1,6 @@
 package com.arsan.ai.mapper;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.model.common.UserProfile;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,7 +14,7 @@ public class UserMapper {
 
     private final ModelMapper modelMapper;
 
-    public UserProfile toUserProfile(User user) {
+    public UserProfile toUserProfile(AppUser user) {
         UserProfile userProfile = modelMapper.map(user, UserProfile.class);
         userProfile.setRoles(Set.copyOf(user.getRoles()));
         userProfile.setPermissions(Set.copyOf(user.getPermissions()));

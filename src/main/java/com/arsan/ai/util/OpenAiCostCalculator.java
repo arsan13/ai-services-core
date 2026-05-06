@@ -4,10 +4,6 @@ import java.util.Map;
 
 public final class OpenAiCostCalculator {
 
-    private OpenAiCostCalculator() {
-        throw new UnsupportedOperationException("Utility class");
-    }
-
     // USD per 1K tokens
     private static final Map<String, ModelPricing> PRICING = Map.of(
             "gpt-4o", new ModelPricing(0.005, 0.015),
@@ -15,6 +11,10 @@ public final class OpenAiCostCalculator {
             "gpt-4-turbo", new ModelPricing(0.01, 0.03),
             "gpt-3.5-turbo", new ModelPricing(0.0005, 0.0015)
     );
+
+    private OpenAiCostCalculator() {
+        throw new UnsupportedOperationException("Utility class");
+    }
 
     public static double calculateCost(String model, int promptTokens, int completionTokens) {
 

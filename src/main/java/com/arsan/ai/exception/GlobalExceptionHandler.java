@@ -1,6 +1,6 @@
 package com.arsan.ai.exception;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.exception.custom.AiServiceException;
 import com.arsan.ai.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.model.common.ApiResponse;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class GlobalExceptionHandler {
 
     private static final Map<String, String> constraintToField = Map.of(
-            User.USERNAME_UNIQUE_KEY_NAME, "username"
+            AppUser.EMAIL_UNIQUE_KEY_NAME, "email"
     );
 
     @ExceptionHandler(AiServiceException.class)

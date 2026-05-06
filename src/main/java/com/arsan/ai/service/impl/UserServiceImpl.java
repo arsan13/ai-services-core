@@ -1,14 +1,15 @@
 package com.arsan.ai.service.impl;
 
-import com.arsan.ai.entity.User;
+import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.PermissionType;
 import com.arsan.ai.enums.RoleType;
-import com.arsan.ai.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.projection.UserResponse;
 import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.service.UserService;
+import com.arsan.ai.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -27,33 +28,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        return userRepository.findById(id, UserResponse.class).orElseThrow(this::userNotFound);
+        return userRepository.findById(id, UserResponse.class).orElseThrow(ExceptionUtils::userNotFound);
     }
 
     @Override
     @Transactional
     public void grantRole(Long id, RoleType role) {
-        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         if (user.getRoles().contains(role)) {
             throw new IllegalArgumentException("User already has this role");
         }
 
         user.getRoles().add(role);
-        userRepository.save(user);
     }
 
     @Override
     @Transactional
     public void revokeRole(Long id, RoleType role) {
-        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         if (!user.getRoles().contains(role)) {
             throw new IllegalArgumentException("User does not have this role");
         }
 
         user.getRoles().remove(role);
-        userRepository.save(user);
     }
 
     public List<String> availablePermissions() {
@@ -66,29 +65,25 @@ public class UserServiceImpl implements UserService {
     public void grantPermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         permissions.stream()
                 .filter(permission -> !user.getPermissions().contains(permission))
                 .forEach(user.getPermissions()::add);
-
-        userRepository.save(user);
     }
 
     @Transactional
     public void revokePermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        User user = userRepository.findById(id).orElseThrow(this::userNotFound);
+        AppUser user = getUserOrThrow(id);
 
         permissions.stream()
                 .filter(user.getPermissions()::contains)
                 .forEach(user.getPermissions()::remove);
-
-        userRepository.save(user);
     }
 
-    private ResourceNotFoundException userNotFound() {
-        return new ResourceNotFoundException("User not found");
+    private @NonNull AppUser getUserOrThrow(Long id) {
+        return userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
     }
 }

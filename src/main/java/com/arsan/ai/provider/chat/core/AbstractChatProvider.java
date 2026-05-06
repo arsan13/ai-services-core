@@ -1,6 +1,5 @@
 package com.arsan.ai.provider.chat.core;
 
-import com.arsan.ai.enums.ChatType;
 import com.arsan.ai.exception.custom.AiServiceException;
 import com.arsan.ai.model.ai.ChatResponse;
 import com.arsan.ai.util.AiUtils;
