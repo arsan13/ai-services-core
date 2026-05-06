@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -22,4 +23,5 @@ public class UserProfile {
     private Set<String> permissions;
     private AuthProviderType providerType;
     private boolean verified;
+    private LocalDateTime passwordResetDate;
 }

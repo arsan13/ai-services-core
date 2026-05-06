@@ -78,12 +78,7 @@ public class AppUser implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "app_user_permissions", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "permission")
-    private Set<String> permissions = new HashSet<>(
-            Set.of(
-                    PermissionType.USER_READ.getValue(),
-                    PermissionType.CHAT_GENERIC_USE.getValue()
-            )
-    );
+    private Set<String> permissions = new HashSet<>(Set.of(PermissionType.USER_READ.getValue()));
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -122,5 +117,15 @@ public class AppUser implements UserDetails {
         );
 
         return authorities;
+    }
+
+    public void markAsVerified() {
+        if (this.verified) {
+            throw new IllegalStateException("Email already verified");
+        }
+
+        this.permissions.addAll(PermissionType.VERIFIED_USERS_VALUES);
+        this.verified = true;
+        this.verifiedDate = LocalDateTime.now();
     }
 }

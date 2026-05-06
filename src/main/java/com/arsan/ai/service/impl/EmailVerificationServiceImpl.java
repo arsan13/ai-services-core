@@ -2,17 +2,15 @@ package com.arsan.ai.service.impl;
 
 import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
-import com.arsan.ai.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.properties.AppProperties;
 import com.arsan.ai.properties.SecurityProperties;
 import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.EmailService;
 import com.arsan.ai.service.EmailVerificationService;
+import com.arsan.ai.util.ExceptionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_PATH;
 import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_SUBJECT;
@@ -39,7 +37,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     public void resendVerificationEmail(String email) {
-        AppUser user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");
@@ -53,14 +51,9 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
 
         String email = jwtService.extractEmail(token);
-        AppUser user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
-        if (user.isVerified()) {
-            throw new IllegalStateException("Email already verified");
-        }
-
-        user.setVerified(true);
-        user.setVerifiedDate(LocalDateTime.now());
+        user.markAsVerified();
         userRepository.save(user);
     }
 }

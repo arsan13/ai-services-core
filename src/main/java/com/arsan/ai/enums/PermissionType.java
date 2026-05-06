@@ -4,6 +4,8 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,31 +33,36 @@ public enum PermissionType {
 
     private final String value;
 
-    public static final Set<String> ALL_VALUES = Arrays.stream(values())
-            .map(PermissionType::getValue)
-            .collect(Collectors.toUnmodifiableSet());
+    private static final Map<String, PermissionType> BY_VALUE = Arrays.stream(values())
+            .collect(Collectors.toUnmodifiableMap(PermissionType::getValue, p -> p));
+
+    public static final Set<String> VERIFIED_USERS_VALUES = Set.of(CHAT_GENERIC_USE.getValue());
+    public static final Set<String> ALL_VALUES = Collections.unmodifiableSet(BY_VALUE.keySet());
 
     PermissionType(String value) {
         this.value = value;
     }
 
     public static Optional<PermissionType> fromValue(String value) {
-        return Arrays.stream(values())
-                .filter(p -> p.value.equals(value))
-                .findFirst();
+        return Optional.ofNullable(BY_VALUE.get(value));
+    }
+
+    public static boolean isValid(String value) {
+        return BY_VALUE.containsKey(value);
     }
 
     public static void validate(String value) {
-        if (!isValid(value)) {
+        if (value == null || !BY_VALUE.containsKey(value)) {
             throw new IllegalArgumentException("Invalid permission: " + value);
         }
     }
 
     public static void validateAll(Collection<String> values) {
-        values.forEach(PermissionType::validate);
-    }
-
-    public static boolean isValid(String value) {
-        return fromValue(value).isPresent();
+        if (values == null) {
+            throw new IllegalArgumentException("Permissions collection cannot be null");
+        }
+        for (String value : values) {
+            validate(value);
+        }
     }
 }

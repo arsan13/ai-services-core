@@ -19,4 +19,8 @@ public interface UserResponse {
     boolean isVerified();
 
     LocalDateTime getCreatedDate();
+
+    LocalDateTime getUpdatedDate();
+
+    LocalDateTime getPasswordResetDate();
 }

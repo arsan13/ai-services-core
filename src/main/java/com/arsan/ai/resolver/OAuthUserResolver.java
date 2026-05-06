@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class OAuthUserResolver {
@@ -56,8 +54,7 @@ public class OAuthUserResolver {
         user.setFullName(info.getName());
         user.setProviderType(info.getProviderType());
         user.setProviderId(info.getProviderId());
-        user.setVerified(true);
-        user.setVerifiedDate(LocalDateTime.now());
+        user.markAsVerified();
 
         return userRepository.save(user);
     }

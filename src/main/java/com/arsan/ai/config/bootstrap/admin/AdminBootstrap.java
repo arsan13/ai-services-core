@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 
 @Component
@@ -40,6 +41,8 @@ public class AdminBootstrap implements CommandLineRunner {
                 .password(passwordEncoder.encode(properties.getPassword()))
                 .roles(EnumSet.allOf(RoleType.class))
                 .permissions(PermissionType.ALL_VALUES)
+                .verified(true)
+                .verifiedDate(LocalDateTime.now())
                 .build();
 
         userRepository.save(admin);
