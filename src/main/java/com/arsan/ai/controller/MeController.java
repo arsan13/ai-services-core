@@ -4,7 +4,7 @@ import com.arsan.ai.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.ChangePasswordRequest;
 import com.arsan.ai.model.common.UserProfile;
-import com.arsan.ai.service.AuthService;
+import com.arsan.ai.service.PasswordService;
 import com.arsan.ai.util.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MeController {
 
-    private final AuthService authService;
+    private final PasswordService passwordService;
     private final UserMapper userMapper;
 
     @GetMapping
@@ -31,6 +31,6 @@ public class MeController {
 
     @PostMapping("/change-password")
     public void changePassword(@RequestBody @Valid ChangePasswordRequest request) {
-        authService.changePassword(request);
+        passwordService.changePassword(request);
     }
 }
