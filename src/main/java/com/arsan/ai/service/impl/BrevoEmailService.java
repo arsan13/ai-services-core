@@ -54,7 +54,7 @@ public class BrevoEmailService implements EmailService {
         }
 
         payload.put(SUBJECT, request.getSubject());
-        payload.put(HTML_CONTENT, request.getBody());
+        payload.put(HTML_CONTENT, request.getHtmlBody());
 
         webClient.post()
                 .uri(properties.getBrevo().getUrl())

@@ -20,6 +20,7 @@ import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.AuthService;
 import com.arsan.ai.service.EmailService;
 import com.arsan.ai.service.EmailVerificationService;
+import com.arsan.ai.util.EmailTemplateUtil;
 import com.arsan.ai.util.ExceptionUtils;
 import com.arsan.ai.util.SecurityUtils;
 import jakarta.transaction.Transactional;
@@ -32,15 +33,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_PATH;
 import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_SUBJECT;
-import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_TEMPLATE;
 
 @Service
 @RequiredArgsConstructor
@@ -72,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse register(RegisterRequest request) throws IOException {
         AppUser user = AppUser.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
@@ -119,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void forgotPassword(String email) {
+    public void forgotPassword(String email) throws IOException {
         Optional<AppUser> userOpt = userRepository.findByEmail(email);
 
         if (userOpt.isEmpty()) {
@@ -133,7 +135,15 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtService.generateToken(userOpt.get(), TokenPurpose.PASSWORD_RESET);
         String emailLink = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
-        String body = RESET_PASSWORD_TEMPLATE.formatted(userOpt.get().getFullName(), emailLink, securityProperties.getJwt().getPasswordResetExpirationInMinutes());
+//        String body = RESET_PASSWORD_TEMPLATE.formatted(userOpt.get().getFullName(), emailLink, securityProperties.getJwt().getPasswordResetExpirationInMinutes());
+
+        String template = EmailTemplateUtil.loadTemplate("reset-password.html");
+        Map<String, String> model = Map.of(
+                "name", userOpt.get().getFullName(),
+                "link", emailLink,
+                "expiryMinutes", String.valueOf(securityProperties.getJwt().getPasswordResetExpirationInMinutes())
+        );
+        String body = EmailTemplateUtil.replacePlaceholders(template, model);
 
         EmailRequest emailRequest = new EmailRequest(List.of(userOpt.get().getEmail()), RESET_PASSWORD_SUBJECT, body);
         emailService.send(emailRequest);

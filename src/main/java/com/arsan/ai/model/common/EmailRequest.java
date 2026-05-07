@@ -14,14 +14,14 @@ import java.util.List;
 public class EmailRequest {
     private List<String> to;
     private String subject;
-    private String body;
+    private String htmlBody;
 
     private List<String> cc;
     private List<String> bcc;
 
-    public EmailRequest(List<String> to, String subject, String body) {
+    public EmailRequest(List<String> to, String subject, String htmlBody) {
         this.to = to;
         this.subject = subject;
-        this.body = body;
+        this.htmlBody = htmlBody;
     }
 }
