@@ -9,6 +9,7 @@ import com.arsan.ai.model.auth.AvailabilityResponse;
 import com.arsan.ai.model.auth.ChangePasswordRequest;
 import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
+import com.arsan.ai.model.common.EmailRequest;
 import com.arsan.ai.properties.AppProperties;
 import com.arsan.ai.properties.SecurityProperties;
 import com.arsan.ai.provider.oauth2.core.OAuthUserInfo;
@@ -133,7 +134,8 @@ public class AuthServiceImpl implements AuthService {
         String emailLink = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
         String body = RESET_PASSWORD_TEMPLATE.formatted(userOpt.get().getFullName(), emailLink, securityProperties.getJwt().getPasswordResetExpirationInMinutes());
 
-        emailService.send(userOpt.get().getEmail(), RESET_PASSWORD_SUBJECT, body);
+        EmailRequest emailRequest = new EmailRequest(userOpt.get().getEmail(), RESET_PASSWORD_SUBJECT, body);
+        emailService.send(emailRequest);
     }
 
     @Override

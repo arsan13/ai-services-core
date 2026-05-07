@@ -1,5 +1,6 @@
 package com.arsan.ai.service.impl;
 
+import com.arsan.ai.model.common.EmailRequest;
 import com.arsan.ai.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,18 +16,18 @@ public class SmtpEmailService implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Async
+    @Async("emailTaskExecutor")
     @Override
-    public void send(String to, String subject, String body) {
+    public void send(EmailRequest request) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
+            message.setTo(request.getTo());
+            message.setSubject(request.getSubject());
+            message.setText(request.getBody());
 
             mailSender.send(message);
         } catch (Exception e) {
-            log.error("Failed to send email to {}", to, e);
+            log.error("Failed to send email to {}", request.getTo(), e);
         }
     }
 }

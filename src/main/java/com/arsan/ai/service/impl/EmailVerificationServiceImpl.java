@@ -2,6 +2,7 @@ package com.arsan.ai.service.impl;
 
 import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
+import com.arsan.ai.model.common.EmailRequest;
 import com.arsan.ai.properties.AppProperties;
 import com.arsan.ai.properties.SecurityProperties;
 import com.arsan.ai.repository.UserRepository;
@@ -32,7 +33,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         String link = appProperties.getFrontendUrl() + VERIFY_EMAIL_PATH + "?token=" + token;
         String body = VERIFY_EMAIL_TEMPLATE.formatted(user.getFullName(), link, securityProperties.getJwt().getEmailVerificationExpirationInMinutes());
 
-        emailService.send(user.getEmail(), VERIFY_EMAIL_SUBJECT, body);
+        EmailRequest emailRequest = new EmailRequest(user.getEmail(), VERIFY_EMAIL_SUBJECT, body);
+        emailService.send(emailRequest);
     }
 
     @Override
