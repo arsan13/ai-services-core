@@ -8,7 +8,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class RegisterRequest extends EmailRequest {
+public class RegisterRequest extends EmailAuthRequest {
 
     @NotBlank(message = "Name cannot be blank")
     private String fullName;

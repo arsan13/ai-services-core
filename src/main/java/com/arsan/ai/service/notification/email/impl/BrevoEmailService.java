@@ -1,8 +1,8 @@
-package com.arsan.ai.service.impl;
+package com.arsan.ai.service.notification.email.impl;
 
 import com.arsan.ai.model.common.EmailRequest;
 import com.arsan.ai.properties.EmailProperties;
-import com.arsan.ai.service.EmailService;
+import com.arsan.ai.service.notification.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

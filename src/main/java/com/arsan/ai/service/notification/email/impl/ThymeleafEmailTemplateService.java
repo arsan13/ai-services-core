@@ -1,6 +1,6 @@
-package com.arsan.ai.service.impl;
+package com.arsan.ai.service.notification.email.impl;
 
-import com.arsan.ai.service.EmailTemplateService;
+import com.arsan.ai.service.notification.email.EmailTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;

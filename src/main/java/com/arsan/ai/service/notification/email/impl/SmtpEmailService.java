@@ -1,7 +1,7 @@
-package com.arsan.ai.service.impl;
+package com.arsan.ai.service.notification.email.impl;
 
 import com.arsan.ai.model.common.EmailRequest;
-import com.arsan.ai.service.EmailService;
+import com.arsan.ai.service.notification.email.EmailService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

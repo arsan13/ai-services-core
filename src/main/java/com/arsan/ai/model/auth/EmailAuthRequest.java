@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EmailRequest {
+public class EmailAuthRequest {
 
     @NotBlank(message = "Email must not be blank")
     @Email(message = "Invalid email format")

@@ -1,4 +1,4 @@
-package com.arsan.ai.service;
+package com.arsan.ai.service.ai;
 
 import com.arsan.ai.enums.ChatType;
 import com.arsan.ai.exception.custom.AiServiceException;

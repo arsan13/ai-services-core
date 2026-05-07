@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthRequest extends EmailRequest {
+public class AuthRequest extends EmailAuthRequest {
 
     @ValidPassword
     private String password;

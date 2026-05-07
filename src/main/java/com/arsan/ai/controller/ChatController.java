@@ -5,7 +5,7 @@ import com.arsan.ai.exception.custom.AiServiceException;
 import com.arsan.ai.model.ai.ChatRequest;
 import com.arsan.ai.model.ai.ChatResponse;
 import com.arsan.ai.model.ai.ChatTypeResponse;
-import com.arsan.ai.service.AiChatService;
+import com.arsan.ai.service.ai.AiChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

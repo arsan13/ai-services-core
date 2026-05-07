@@ -1,4 +1,4 @@
-package com.arsan.ai.service.impl;
+package com.arsan.ai.service.audit.impl;
 
 import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.entity.TokenUsageAudit;
@@ -7,7 +7,7 @@ import com.arsan.ai.projection.TokenUsageAuditView;
 import com.arsan.ai.projection.UserTokenUsage;
 import com.arsan.ai.repository.TokenUsageAuditRepository;
 import com.arsan.ai.repository.UserRepository;
-import com.arsan.ai.service.TokenUsageAuditService;
+import com.arsan.ai.service.audit.TokenUsageAuditService;
 import com.arsan.ai.util.OpenAiCostCalculator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

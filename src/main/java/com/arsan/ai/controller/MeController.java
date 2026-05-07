@@ -4,7 +4,7 @@ import com.arsan.ai.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.ChangePasswordRequest;
 import com.arsan.ai.model.common.UserProfile;
-import com.arsan.ai.service.PasswordService;
+import com.arsan.ai.service.auth.PasswordService;
 import com.arsan.ai.util.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.arsan.ai.advisor;
 
 import com.arsan.ai.entity.AppUser;
-import com.arsan.ai.service.TokenUsageAuditService;
+import com.arsan.ai.service.audit.TokenUsageAuditService;
 import com.arsan.ai.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

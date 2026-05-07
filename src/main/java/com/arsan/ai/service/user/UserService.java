@@ -1,4 +1,4 @@
-package com.arsan.ai.service;
+package com.arsan.ai.service.user;
 
 import com.arsan.ai.enums.RoleType;
 import com.arsan.ai.projection.UserResponse;

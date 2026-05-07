@@ -1,4 +1,4 @@
-package com.arsan.ai.service;
+package com.arsan.ai.service.auth;
 
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;

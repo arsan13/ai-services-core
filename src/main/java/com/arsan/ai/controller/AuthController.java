@@ -4,13 +4,13 @@ package com.arsan.ai.controller;
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
 import com.arsan.ai.model.auth.AvailabilityResponse;
-import com.arsan.ai.model.auth.EmailRequest;
+import com.arsan.ai.model.auth.EmailAuthRequest;
 import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
 import com.arsan.ai.model.auth.TokenRequest;
-import com.arsan.ai.service.AuthService;
-import com.arsan.ai.service.EmailVerificationService;
-import com.arsan.ai.service.PasswordService;
+import com.arsan.ai.service.auth.AuthService;
+import com.arsan.ai.service.auth.EmailVerificationService;
+import com.arsan.ai.service.auth.PasswordService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +53,12 @@ public class AuthController {
     }
 
     @PostMapping("/resend-verification")
-    public void resendVerificationEmail(@RequestBody @Valid EmailRequest request) throws IOException {
+    public void resendVerificationEmail(@RequestBody @Valid EmailAuthRequest request) throws IOException {
         emailVerificationService.resendVerificationEmail(request.getEmail());
     }
 
     @PostMapping("/forgot-password")
-    public void forgotPassword(@RequestBody @Valid EmailRequest request) throws IOException {
+    public void forgotPassword(@RequestBody @Valid EmailAuthRequest request) throws IOException {
         passwordService.forgotPassword(request.getEmail());
     }
 

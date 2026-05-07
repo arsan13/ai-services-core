@@ -1,4 +1,4 @@
-package com.arsan.ai.service.impl;
+package com.arsan.ai.service.auth.impl;
 
 import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
@@ -9,8 +9,8 @@ import com.arsan.ai.model.auth.AvailabilityResponse;
 import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.security.jwt.JwtService;
-import com.arsan.ai.service.AuthService;
-import com.arsan.ai.service.EmailVerificationService;
+import com.arsan.ai.service.auth.AuthService;
+import com.arsan.ai.service.auth.EmailVerificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

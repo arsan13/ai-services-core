@@ -1,4 +1,4 @@
-package com.arsan.ai.service;
+package com.arsan.ai.service.audit;
 
 import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.projection.TokenUsageAuditView;

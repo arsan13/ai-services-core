@@ -1,4 +1,4 @@
-package com.arsan.ai.service;
+package com.arsan.ai.service.notification.email;
 
 import java.util.Map;
 

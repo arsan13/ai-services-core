@@ -2,7 +2,7 @@ package com.arsan.ai.controller.admin;
 
 import com.arsan.ai.projection.TokenUsageAuditView;
 import com.arsan.ai.projection.UserTokenUsage;
-import com.arsan.ai.service.TokenUsageAuditService;
+import com.arsan.ai.service.audit.TokenUsageAuditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
