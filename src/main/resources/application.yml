@@ -90,7 +90,7 @@ app:
   email:
     provider: brevo # Options: smtp, brevo
     brevo:
-      url: https://api.brevo.com/v3/emailCampaigns
+      url: https://api.brevo.com/v3/smtp/email
       api-key: ${BREVO_API_KEY}
       sender-email: ${BREVO_SENDER_EMAIL}
       sender-name: "AI Services Team"
