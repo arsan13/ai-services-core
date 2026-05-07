@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="header(appName)">
+
+    <tr>
+        <td
+                style="
+                    background-color: #111827;
+                    padding: 24px;
+                    text-align: center;
+                "
+        >
+            <h1
+                    style="
+                        color: #ffffff;
+                        margin: 0;
+                        font-size: 24px;
+                    "
+                    th:text="${appName}"
+            >
+                My App
+            </h1>
+        </td>
+    </tr>
+
+</th:block>
+
+</html>

@@ -19,8 +19,8 @@ import com.arsan.ai.resolver.OAuthUserResolver;
 import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.AuthService;
 import com.arsan.ai.service.EmailService;
+import com.arsan.ai.service.EmailTemplateService;
 import com.arsan.ai.service.EmailVerificationService;
-import com.arsan.ai.util.EmailTemplateUtil;
 import com.arsan.ai.util.ExceptionUtils;
 import com.arsan.ai.util.SecurityUtils;
 import jakarta.transaction.Transactional;
@@ -33,7 +33,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -43,6 +42,7 @@ import java.util.Optional;
 
 import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_PATH;
 import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_SUBJECT;
+import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_TEMPLATE;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +57,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final EmailVerificationService emailVerificationService;
     private final EmailService emailService;
+    private final EmailTemplateService emailTemplateService;
     private final OAuthUserInfoProviderRegistry oAuthUserInfoProviderRegistry;
     private final OAuthUserResolver oauthUserResolver;
     private final UserMapper userMapper;
@@ -74,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthResponse register(RegisterRequest request) throws IOException {
+    public AuthResponse register(RegisterRequest request) {
         AppUser user = AppUser.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
@@ -121,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void forgotPassword(String email) throws IOException {
+    public void forgotPassword(String email) {
         Optional<AppUser> userOpt = userRepository.findByEmail(email);
 
         if (userOpt.isEmpty()) {
@@ -134,16 +135,14 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String token = jwtService.generateToken(userOpt.get(), TokenPurpose.PASSWORD_RESET);
-        String emailLink = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
-//        String body = RESET_PASSWORD_TEMPLATE.formatted(userOpt.get().getFullName(), emailLink, securityProperties.getJwt().getPasswordResetExpirationInMinutes());
+        String link = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
 
-        String template = EmailTemplateUtil.loadTemplate("reset-password.html");
-        Map<String, String> model = Map.of(
+        Map<String, Object> model = Map.of(
                 "name", userOpt.get().getFullName(),
-                "link", emailLink,
-                "expiryMinutes", String.valueOf(securityProperties.getJwt().getPasswordResetExpirationInMinutes())
+                "link", link,
+                "expiryMinutes", securityProperties.getJwt().getPasswordResetExpirationInMinutes()
         );
-        String body = EmailTemplateUtil.replacePlaceholders(template, model);
+        String body = emailTemplateService.render(RESET_PASSWORD_TEMPLATE, model);
 
         EmailRequest emailRequest = new EmailRequest(List.of(userOpt.get().getEmail()), RESET_PASSWORD_SUBJECT, body);
         emailService.send(emailRequest);

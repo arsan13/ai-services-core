@@ -8,35 +8,8 @@ public final class EmailConstants {
     public static final String VERIFY_EMAIL_PATH = "/verify-email";
     public static final String RESET_PASSWORD_PATH = "/reset-password";
 
-    public static final String VERIFY_EMAIL_TEMPLATE = """
-            Hi %s,
-            
-            Please click the link below to verify your email address:
-            
-            %s
-            
-            This link will expire in %d minutes.
-            
-            If you did not create an account, please ignore this email.
-            
-            Best regards,
-            The AI Services Core Team
-            """;
-
-    public static final String RESET_PASSWORD_TEMPLATE = """
-            Hi %s,
-            
-            Please click the link below to reset your password:
-            
-            %s
-            
-            This link will expire in %d minutes.
-            
-            If you did not request a password reset, please ignore this email.
-            
-            Best regards,
-            The AI Services Core Team
-            """;
+    public static final String VERIFY_EMAIL_TEMPLATE = "verify-email";
+    public static final String RESET_PASSWORD_TEMPLATE = "reset-password";
 
     private EmailConstants() {
         throw new IllegalStateException("Constants class");

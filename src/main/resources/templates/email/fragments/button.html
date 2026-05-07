@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="button(text, url)">
+
+    <div class="button-wrapper">
+
+        <a
+                class="button"
+                target="_blank"
+                th:href="${url}"
+                th:text="${text}"
+        >
+            Action
+        </a>
+
+    </div>
+
+</th:block>
+
+</html>

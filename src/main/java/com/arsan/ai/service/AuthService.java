@@ -8,13 +8,11 @@ import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.io.IOException;
-
 public interface AuthService {
 
     AuthResponse login(AuthRequest authRequest);
 
-    AuthResponse register(RegisterRequest authRequest) throws IOException;
+    AuthResponse register(RegisterRequest authRequest);
 
     AvailabilityResponse isEmailAvailable(String email);
 
@@ -22,7 +20,7 @@ public interface AuthService {
 
     void changePassword(ChangePasswordRequest request);
 
-    void forgotPassword(String email) throws IOException;
+    void forgotPassword(String email);
 
     void resetPassword(ResetPasswordRequest resetPasswordRequest);
 }
