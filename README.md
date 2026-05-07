@@ -108,49 +108,37 @@ Domain-driven package organization with clear separation of concerns:
 ```
 com/arsan/ai/
 ├── core/                          # Framework & Infrastructure
-│   ├── config/                    # Spring configuration beans
+│   ├── config/                    # Spring beans configuration
 │   ├── security/
-│   │   ├── config/               # Spring Security configuration
 │   │   ├── filter/               # JWT authentication filter
-│   │   ├── handler/              # Authentication entry points & error handlers
-│   │   ├── service/
-│   │   │   ├── JwtService       # Token generation & validation
-│   │   │   └── PermissionEvaluator
-│   │   └── constants/           # Security constants (expirations, headers)
-│   ├── exception/                # Global exception handling
-│   ├── advice/                   # Global exception advice
+│   │   ├── handler/              # Error handlers
+│   │   ├── service/              # JWT & security services
+│   │   ├── evaluator/            # Permission evaluator
+│   │   └── constants/            # Security constants
+│   ├── exception/                # Exception handling
+│   ├── advice/                   # Global advice
 │   ├── annotation/               # Custom annotations
 │   └── properties/               # Configuration properties
 ├── shared/                        # Shared Domain Layer
-│   ├── entity/
-│   │   └── AppUser              # Core user entity
-│   ├── repository/
-│   │   └── UserRepository       # User data access
-│   ├── mapper/
-│   │   └── UserMapper           # Entity-DTO mappings
-│   ├── model/
-│   │   ├── ApiResponse          # Global response wrapper
-│   │   └── DateRange            # Shared value objects
-│   ├── enums/
-│   │   └── PermissionType       # Shared permission types
-│   ├── util/                     # Cross-cutting utilities
+│   ├── entity/                  # Shared entities
+│   ├── repository/              # Shared repositories
+│   ├── mapper/                  # Entity-DTO mappers
+│   ├── model/                   # Shared DTOs & value objects
+│   ├── enums/                   # Shared enums
+│   ├── util/                    # Cross-cutting utilities
 │   └── constants/               # Shared constants
 ├── auth/                         # Authentication Domain
 │   ├── controller/              # /api/auth endpoints
 │   ├── service/                 # Authentication logic
 │   ├── provider/                # OAuth2 providers
 │   ├── model/                   # Auth DTOs & requests
-│   ├── enums/
-│   │   ├── TokenPurpose
-│   │   ├── RoleType
-│   │   └── AuthProviderType
+│   ├── enums/                   # Auth-specific enums
 │   ├── events/                  # Auth domain events
 │   ├── listener/                # Event listeners
 │   ├── constants/               # Auth constants
 │   └── resolver/                # OAuth identity resolvers
-├── profile/                       # User Profile & Preference Domain
-│   ├── controller/              # /api/me endpoints
-│   │   └── ProfileController   # GET/PUT /api/me, POST /api/me/change-password
+├── profile/                       # User Profile Domain
+│   ├── controller/              # Profile endpoints
 │   └── model/                   # Profile DTOs
 ├── chat/                         # AI Chat Domain
 │   ├── controller/              # /api/ai/chat endpoints
@@ -158,32 +146,19 @@ com/arsan/ai/
 │   ├── provider/                # Chat provider implementations
 │   ├── advisor/                 # Usage auditing advisor
 │   ├── model/                   # Chat DTOs
-│   ├── enums/
-│   │   └── ChatType
+│   ├── enums/                   # Chat-specific enums
 │   ├── tool/                    # Tool calling (FuelServiceTool, etc.)
 │   └── util/                    # Chat utilities
 ├── admin/                        # Admin Management Domain
-│   ├── controller/
-│   │   ├── UserController      # User management endpoints
-│   │   └── TokenUsageAuditController # Usage analytics endpoints
-│   ├── service/
-│   │   ├── impl/               # Service implementations
-│   │   ├── UserService         # User management logic
-│   │   └── TokenUsageAuditService # Token usage analysis
-│   ├── entity/
-│   │   └── TokenUsageAudit
-│   ├── repository/
-│   │   └── TokenUsageAuditRepository
-│   ├── projection/              # Database projections for read optimization
-│   │   ├── UserResponse
-│   │   ├── TokenUsageAuditView
-│   │   └── UserTokenUsage
+│   ├── controller/              # Admin endpoints
+│   ├── service/                 # Admin business logic
+│   ├── entity/                  # Admin entities
+│   ├── repository/              # Admin repositories
+│   ├── projection/              # Database read projections
 │   └── model/                   # Admin DTOs
 ├── notification/                 # Notification Domain
-│   └── email/
-│       ├── impl/                # Service implementations
-│       ├── EmailService         # Email service interface
-│       ├── EmailTemplateService # Email template service
+│   └── email/                   # Email service
+│       ├── impl/                # Implementations
 │       ├── model/               # Email DTOs
 │       └── constants/           # Email constants
 └── SpringAiApplication.java     # Main application class
