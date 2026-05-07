@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block
+        th:replace="~{email/fragments/head :: head('Verify Email')}"
+/>
+
+<body>
+
+<table class="container" role="presentation" width="100%">
+    <tr>
+        <td>
+
+            <table class="email-card" role="presentation" width="100%">
+
+                <th:block
+                        th:replace="
+                            ~{email/fragments/header :: header(${appName})}
+                        "
+                />
+
+                <tr>
+                    <td class="content">
+
+                        <h2>Verify your email</h2>
+
+                        <p>
+                            Hello
+                            <strong th:text="${name}">User</strong>,
+                        </p>
+
+                        <p>
+                            Thank you for registering.
+                            Please verify your email address
+                            to activate your account.
+                        </p>
+
+                        <th:block
+                                th:replace="
+                                    ~{email/fragments/button
+                                    :: button(
+                                        'Verify Email',
+                                        ${link}
+                                    )}
+                                "
+                        />
+
+                        <p>
+                            This verification link will expire in
+                            <strong th:text="${expiryMinutes}">
+                                15
+                            </strong>
+                            minutes.
+                        </p>
+
+                        <p>
+                            If the button above does not work,
+                            copy and paste the following URL
+                            into your browser:
+                        </p>
+
+                        <div class="link-box">
+                            <span th:text="${link}">
+                                verification-link
+                            </span>
+                        </div>
+
+                        <p>
+                            If you did not create this account,
+                            you can safely ignore this email.
+                        </p>
+
+                    </td>
+                </tr>
+
+                <th:block
+                        th:replace="
+                            ~{email/fragments/footer
+                            :: footer(${appName})}
+                        "
+                />
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

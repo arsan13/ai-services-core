@@ -1,7 +1,12 @@
 package com.arsan.ai.security.handler;
 
+import com.arsan.ai.entity.AppUser;
+import com.arsan.ai.enums.TokenPurpose;
+import com.arsan.ai.provider.oauth2.core.OAuthUserInfo;
+import com.arsan.ai.provider.oauth2.registry.OAuthUserInfoProviderRegistry;
+import com.arsan.ai.resolver.OAuthUserResolver;
 import com.arsan.ai.security.OAuth2RedirectService;
-import com.arsan.ai.service.AuthService;
+import com.arsan.ai.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +24,9 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final AuthService authService;
+    private final OAuthUserInfoProviderRegistry oAuthUserInfoProviderRegistry;
+    private final OAuthUserResolver oauthUserResolver;
+    private final JwtService jwtService;
     private final OAuth2RedirectService redirectService;
 
     @Override
@@ -28,7 +35,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-            String jwt = authService.handleOAuth2LoginRequest(token.getAuthorizedClientRegistrationId(), oAuth2User);
+            OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(token.getAuthorizedClientRegistrationId(), oAuth2User);
+            AppUser user = oauthUserResolver.resolve(oAuthUserInfo);
+            String jwt = jwtService.generateToken(user, TokenPurpose.ACCESS);
 
             String redirectUrl = redirectService.buildSuccessUrl(jwt);
             response.sendRedirect(redirectUrl);

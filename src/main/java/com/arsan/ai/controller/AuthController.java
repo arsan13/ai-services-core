@@ -10,6 +10,7 @@ import com.arsan.ai.model.auth.ResetPasswordRequest;
 import com.arsan.ai.model.auth.TokenRequest;
 import com.arsan.ai.service.AuthService;
 import com.arsan.ai.service.EmailVerificationService;
+import com.arsan.ai.service.PasswordService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.io.IOException;
 public class AuthController {
 
     private final AuthService authService;
+    private final PasswordService passwordService;
     private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/login")
@@ -57,11 +59,11 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public void forgotPassword(@RequestBody @Valid EmailRequest request) throws IOException {
-        authService.forgotPassword(request.getEmail());
+        passwordService.forgotPassword(request.getEmail());
     }
 
     @PostMapping("/reset-password")
     public void resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
-        authService.resetPassword(request);
+        passwordService.resetPassword(request);
     }
 }
