@@ -9,7 +9,6 @@ import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
 import com.arsan.ai.model.auth.TokenRequest;
 import com.arsan.ai.service.auth.AuthService;
-import com.arsan.ai.service.auth.EmailVerificationService;
 import com.arsan.ai.service.auth.PasswordService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -30,7 +29,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final PasswordService passwordService;
-    private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody @Valid AuthRequest request) {
@@ -49,12 +47,12 @@ public class AuthController {
 
     @PostMapping("/verify-email")
     public void verifyEmail(@RequestBody @Valid TokenRequest request) {
-        emailVerificationService.verify(request.getToken());
+        authService.verifyUser(request.getToken());
     }
 
     @PostMapping("/resend-verification")
     public void resendVerificationEmail(@RequestBody @Valid EmailAuthRequest request) throws IOException {
-        emailVerificationService.resendVerificationEmail(request.getEmail());
+        authService.resendVerificationEmail(request.getEmail());
     }
 
     @PostMapping("/forgot-password")

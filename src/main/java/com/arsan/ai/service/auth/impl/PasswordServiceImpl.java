@@ -2,16 +2,17 @@ package com.arsan.ai.service.auth.impl;
 
 import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
+import com.arsan.ai.events.PasswordResetRequestedEvent;
 import com.arsan.ai.model.auth.ChangePasswordRequest;
 import com.arsan.ai.model.auth.ResetPasswordRequest;
 import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.auth.PasswordService;
-import com.arsan.ai.service.notification.email.EmailNotificationService;
 import com.arsan.ai.util.ExceptionUtils;
 import com.arsan.ai.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class PasswordServiceImpl implements PasswordService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final EmailNotificationService emailNotificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public void changePassword(ChangePasswordRequest request) {
@@ -52,7 +53,7 @@ public class PasswordServiceImpl implements PasswordService {
 
     @Override
     public void forgotPassword(String email) {
-        userRepository.findByEmail(email).ifPresent(emailNotificationService::sendPasswordResetEmail);
+        userRepository.findByEmail(email).map(PasswordResetRequestedEvent::new).ifPresent(eventPublisher::publishEvent);
     }
 
     @Override

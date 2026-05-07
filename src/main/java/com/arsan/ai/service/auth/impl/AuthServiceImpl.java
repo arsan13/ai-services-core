@@ -2,6 +2,7 @@ package com.arsan.ai.service.auth.impl;
 
 import com.arsan.ai.entity.AppUser;
 import com.arsan.ai.enums.TokenPurpose;
+import com.arsan.ai.events.EmailVerificationRequestedEvent;
 import com.arsan.ai.mapper.UserMapper;
 import com.arsan.ai.model.auth.AuthRequest;
 import com.arsan.ai.model.auth.AuthResponse;
@@ -10,10 +11,11 @@ import com.arsan.ai.model.auth.RegisterRequest;
 import com.arsan.ai.repository.UserRepository;
 import com.arsan.ai.security.jwt.JwtService;
 import com.arsan.ai.service.auth.AuthService;
-import com.arsan.ai.service.auth.EmailVerificationService;
+import com.arsan.ai.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,9 +29,9 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final EmailVerificationService emailVerificationService;
     private final UserMapper userMapper;
 
     @Override
@@ -53,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         user = userRepository.save(user);
-        emailVerificationService.sendVerificationEmail(user);
+        sendVerificationEmail(user);
         String token = jwtService.generateToken(user, TokenPurpose.ACCESS);
         return new AuthResponse(token, userMapper.toUserProfile(user));
     }
@@ -61,5 +63,31 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AvailabilityResponse isEmailAvailable(String email) {
         return new AvailabilityResponse(!userRepository.existsByEmail(email));
+    }
+
+    @Override
+    public void resendVerificationEmail(String email) {
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+
+        if (user.isVerified()) {
+            throw new IllegalStateException("Email already verified");
+        }
+
+        sendVerificationEmail(user);
+    }
+
+    @Override
+    public void verifyUser(String token) {
+        jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
+
+        String email = jwtService.extractEmail(token);
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+
+        user.markAsVerified();
+        userRepository.save(user);
+    }
+
+    private void sendVerificationEmail(AppUser user) {
+        eventPublisher.publishEvent(new EmailVerificationRequestedEvent(user));
     }
 }

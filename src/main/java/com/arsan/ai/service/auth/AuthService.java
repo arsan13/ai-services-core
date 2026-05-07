@@ -12,4 +12,8 @@ public interface AuthService {
     AuthResponse register(RegisterRequest authRequest);
 
     AvailabilityResponse isEmailAvailable(String email);
+
+    void resendVerificationEmail(String email);
+
+    void verifyUser(String token);
 }
