@@ -1,0 +1,67 @@
+package com.arsan.ai.auth.controller;
+
+
+import com.arsan.ai.auth.model.AuthRequest;
+import com.arsan.ai.auth.model.AuthResponse;
+import com.arsan.ai.auth.model.AvailabilityResponse;
+import com.arsan.ai.auth.model.EmailAuthRequest;
+import com.arsan.ai.auth.model.RegisterRequest;
+import com.arsan.ai.auth.model.ResetPasswordRequest;
+import com.arsan.ai.auth.model.TokenRequest;
+import com.arsan.ai.auth.service.AuthService;
+import com.arsan.ai.auth.service.PasswordService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+    private final PasswordService passwordService;
+
+    @PostMapping("/login")
+    public AuthResponse login(@RequestBody @Valid AuthRequest request) {
+        return authService.login(request);
+    }
+
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody @Valid RegisterRequest request) throws IOException {
+        return authService.register(request);
+    }
+
+    @GetMapping("/availability")
+    public AvailabilityResponse check(@RequestParam @Email String email) {
+        return authService.isEmailAvailable(email);
+    }
+
+    @PostMapping("/verify-email")
+    public void verifyEmail(@RequestBody @Valid TokenRequest request) {
+        authService.verifyUser(request.getToken());
+    }
+
+    @PostMapping("/resend-verification")
+    public void resendVerificationEmail(@RequestBody @Valid EmailAuthRequest request) throws IOException {
+        authService.resendVerificationEmail(request.getEmail());
+    }
+
+    @PostMapping("/forgot-password")
+    public void forgotPassword(@RequestBody @Valid EmailAuthRequest request) throws IOException {
+        passwordService.forgotPassword(request.getEmail());
+    }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        passwordService.resetPassword(request);
+    }
+}
