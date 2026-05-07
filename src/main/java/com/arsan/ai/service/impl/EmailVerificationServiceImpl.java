@@ -13,6 +13,8 @@ import com.arsan.ai.util.ExceptionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_PATH;
 import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_SUBJECT;
 import static com.arsan.ai.constants.EmailConstants.VERIFY_EMAIL_TEMPLATE;
@@ -33,7 +35,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         String link = appProperties.getFrontendUrl() + VERIFY_EMAIL_PATH + "?token=" + token;
         String body = VERIFY_EMAIL_TEMPLATE.formatted(user.getFullName(), link, securityProperties.getJwt().getEmailVerificationExpirationInMinutes());
 
-        EmailRequest emailRequest = new EmailRequest(user.getEmail(), VERIFY_EMAIL_SUBJECT, body);
+        EmailRequest emailRequest = new EmailRequest(List.of(user.getEmail()), VERIFY_EMAIL_SUBJECT, body);
         emailService.send(emailRequest);
     }
 

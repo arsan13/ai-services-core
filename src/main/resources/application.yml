@@ -66,6 +66,7 @@ app:
       enabled: true
       email: ${ADMIN_EMAIL:}
       password: ${ADMIN_PASSWORD:}
+
   security:
     enabled: true
     jwt:
@@ -85,6 +86,14 @@ app:
       - DELETE
       - PATCH
       - OPTIONS
+
+  email:
+    provider: brevo # Options: smtp, brevo
+    brevo:
+      url: https://api.brevo.com/v3/emailCampaigns
+      api-key: ${BREVO_API_KEY}
+      sender-email: ${BREVO_SENDER_EMAIL}
+      sender-name: "AI Services Team"
 
   api:
     response:

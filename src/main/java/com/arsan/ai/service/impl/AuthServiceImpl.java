@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 import static com.arsan.ai.constants.EmailConstants.RESET_PASSWORD_PATH;
@@ -134,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
         String emailLink = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
         String body = RESET_PASSWORD_TEMPLATE.formatted(userOpt.get().getFullName(), emailLink, securityProperties.getJwt().getPasswordResetExpirationInMinutes());
 
-        EmailRequest emailRequest = new EmailRequest(userOpt.get().getEmail(), RESET_PASSWORD_SUBJECT, body);
+        EmailRequest emailRequest = new EmailRequest(List.of(userOpt.get().getEmail()), RESET_PASSWORD_SUBJECT, body);
         emailService.send(emailRequest);
     }
 
