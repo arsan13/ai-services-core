@@ -79,7 +79,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
             audit.setUser(user);
 
             audit.setProvider("openai");
-            audit.setLatencySec(TimeUnit.MILLISECONDS.toSeconds(latencyMs));
+            audit.setLatencySec((double) TimeUnit.MILLISECONDS.toSeconds(latencyMs));
             audit.setInputSummary(chatClientRequest.prompt().getUserMessage().getText());
 
             ChatResponse chatResponse = chatClientResponse.chatResponse();

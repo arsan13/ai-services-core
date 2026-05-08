@@ -389,14 +389,7 @@ Exceptions are normalized through global exception handling for validation, auth
 - Flyway is enabled in both `dev` and `prod`
 - Migration scripts are under `src/main/resources/db/migration`
 - Current schema baseline: `V1__init_schema.sql`
-
-### Dev Seed Data Note
-
-Dev seed data is wired for development testing.
-
-- Seed script location: `src/main/resources/db/dev/V2__seed_data.sql`
-- Active dev Flyway locations: `classpath:db/migration,classpath:db/dev`
-- Intended usage: local/dev test bootstrap only
+- Seed data script exists, but its is not wired for data insertion.
 
 ## Configuration
 

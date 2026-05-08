@@ -50,13 +50,14 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AppUser implements UserDetails {
 
     public static final String EMAIL_UNIQUE_KEY_NAME = "uk_user_email";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String fullName;
@@ -87,16 +88,17 @@ public class AppUser implements UserDetails {
     private String providerId;
 
     private boolean verified;
+
     private LocalDateTime verifiedDate;
 
     @CreationTimestamp
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
     private LocalDateTime passwordResetDate;
-
 
     @Override
     public String getUsername() {
@@ -117,15 +119,5 @@ public class AppUser implements UserDetails {
         );
 
         return authorities;
-    }
-
-    public void markAsVerified() {
-        if (this.verified) {
-            throw new IllegalStateException("Email already verified");
-        }
-
-        this.permissions.addAll(PermissionType.VERIFIED_USERS_VALUES);
-        this.verified = true;
-        this.verifiedDate = LocalDateTime.now();
     }
 }

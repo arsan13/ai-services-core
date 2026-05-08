@@ -4,6 +4,7 @@ import com.arsan.ai.auth.model.AuthRequest;
 import com.arsan.ai.auth.model.AuthResponse;
 import com.arsan.ai.auth.model.AvailabilityResponse;
 import com.arsan.ai.auth.model.RegisterRequest;
+import com.arsan.ai.shared.entity.AppUser;
 
 public interface AuthService {
 
@@ -16,4 +17,6 @@ public interface AuthService {
     void resendVerificationEmail(String email);
 
     void verifyUser(String token);
+
+    void markUserAsVerified(AppUser  user);
 }
