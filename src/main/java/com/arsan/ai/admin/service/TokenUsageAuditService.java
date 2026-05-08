@@ -1,8 +1,8 @@
 package com.arsan.ai.admin.service;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.admin.projection.TokenUsageAuditView;
 import com.arsan.ai.admin.projection.UserTokenUsage;
+import com.arsan.ai.shared.entity.AppUser;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 

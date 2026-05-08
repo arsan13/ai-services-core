@@ -1,7 +1,7 @@
 package com.arsan.ai.shared.repository;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.auth.enums.AuthProviderType;
+import com.arsan.ai.shared.entity.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

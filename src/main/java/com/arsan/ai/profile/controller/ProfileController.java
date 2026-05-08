@@ -1,8 +1,8 @@
 package com.arsan.ai.profile.controller;
 
-import com.arsan.ai.profile.service.ProfileService;
 import com.arsan.ai.profile.model.ChangePasswordRequest;
 import com.arsan.ai.profile.model.UserProfile;
+import com.arsan.ai.profile.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

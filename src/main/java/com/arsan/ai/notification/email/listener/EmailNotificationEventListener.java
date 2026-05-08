@@ -1,15 +1,15 @@
 package com.arsan.ai.notification.email.listener;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.auth.enums.TokenPurpose;
 import com.arsan.ai.auth.events.EmailVerificationRequestedEvent;
 import com.arsan.ai.auth.events.PasswordResetRequestedEvent;
-import com.arsan.ai.notification.email.model.EmailRequest;
 import com.arsan.ai.core.properties.AppProperties;
 import com.arsan.ai.core.properties.SecurityProperties;
 import com.arsan.ai.core.security.service.JwtService;
 import com.arsan.ai.notification.email.EmailService;
 import com.arsan.ai.notification.email.EmailTemplateService;
+import com.arsan.ai.notification.email.model.EmailRequest;
+import com.arsan.ai.shared.entity.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

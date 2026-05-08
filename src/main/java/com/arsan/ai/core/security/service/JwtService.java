@@ -1,8 +1,8 @@
 package com.arsan.ai.core.security.service;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.auth.enums.TokenPurpose;
 import com.arsan.ai.core.properties.SecurityProperties;
+import com.arsan.ai.shared.entity.AppUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

@@ -1,16 +1,16 @@
 package com.arsan.ai.auth.service.impl;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.auth.enums.TokenPurpose;
 import com.arsan.ai.auth.events.EmailVerificationRequestedEvent;
-import com.arsan.ai.shared.mapper.UserMapper;
 import com.arsan.ai.auth.model.AuthRequest;
 import com.arsan.ai.auth.model.AuthResponse;
 import com.arsan.ai.auth.model.AvailabilityResponse;
 import com.arsan.ai.auth.model.RegisterRequest;
-import com.arsan.ai.shared.repository.UserRepository;
-import com.arsan.ai.core.security.service.JwtService;
 import com.arsan.ai.auth.service.AuthService;
+import com.arsan.ai.core.security.service.JwtService;
+import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.shared.mapper.UserMapper;
+import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

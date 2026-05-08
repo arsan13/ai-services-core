@@ -1,7 +1,7 @@
 package com.arsan.ai.chat.advisor;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.admin.service.TokenUsageAuditService;
+import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

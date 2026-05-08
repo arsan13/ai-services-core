@@ -1,11 +1,11 @@
 package com.arsan.ai.admin.service.impl;
 
+import com.arsan.ai.admin.projection.UserResponse;
+import com.arsan.ai.admin.service.UserService;
+import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.enums.PermissionType;
-import com.arsan.ai.auth.enums.RoleType;
-import com.arsan.ai.admin.projection.UserResponse;
 import com.arsan.ai.shared.repository.UserRepository;
-import com.arsan.ai.admin.service.UserService;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -36,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public AuthResponse register(@RequestBody @Valid RegisterRequest request) throws IOException {
+    public AuthResponse register(@RequestBody @Valid RegisterRequest request) {
         return authService.register(request);
     }
 
@@ -51,12 +49,12 @@ public class AuthController {
     }
 
     @PostMapping("/resend-verification")
-    public void resendVerificationEmail(@RequestBody @Valid EmailAuthRequest request) throws IOException {
+    public void resendVerificationEmail(@RequestBody @Valid EmailAuthRequest request) {
         authService.resendVerificationEmail(request.getEmail());
     }
 
     @PostMapping("/forgot-password")
-    public void forgotPassword(@RequestBody @Valid EmailAuthRequest request) throws IOException {
+    public void forgotPassword(@RequestBody @Valid EmailAuthRequest request) {
         passwordService.forgotPassword(request.getEmail());
     }
 

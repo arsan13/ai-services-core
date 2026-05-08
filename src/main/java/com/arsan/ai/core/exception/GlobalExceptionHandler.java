@@ -1,8 +1,8 @@
 package com.arsan.ai.core.exception;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.core.exception.custom.AiServiceException;
 import com.arsan.ai.core.exception.custom.ResourceNotFoundException;
+import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.model.ApiResponse;
 import io.jsonwebtoken.JwtException;
 import org.springframework.dao.DataIntegrityViolationException;

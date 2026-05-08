@@ -1,7 +1,7 @@
 package com.arsan.ai.auth.resolver;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.auth.provider.core.OAuthUserInfo;
+import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;

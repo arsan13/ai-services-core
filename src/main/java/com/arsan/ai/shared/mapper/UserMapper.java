@@ -1,7 +1,7 @@
 package com.arsan.ai.shared.mapper;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.profile.model.UserProfile;
+import com.arsan.ai.shared.entity.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

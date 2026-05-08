@@ -1,8 +1,8 @@
 package com.arsan.ai.chat.provider.core;
 
-import com.arsan.ai.core.exception.custom.AiServiceException;
 import com.arsan.ai.chat.model.ChatResponse;
 import com.arsan.ai.chat.util.ChatUtils;
+import com.arsan.ai.core.exception.custom.AiServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;

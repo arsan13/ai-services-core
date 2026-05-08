@@ -1,9 +1,9 @@
 package com.arsan.ai.admin.controller;
 
-import com.arsan.ai.auth.model.PermissionRequest;
-import com.arsan.ai.auth.model.RoleActionRequest;
 import com.arsan.ai.admin.projection.UserResponse;
 import com.arsan.ai.admin.service.UserService;
+import com.arsan.ai.auth.model.PermissionRequest;
+import com.arsan.ai.auth.model.RoleActionRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

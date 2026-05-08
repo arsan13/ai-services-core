@@ -1,10 +1,10 @@
 package com.arsan.ai.core.config;
 
-import com.arsan.ai.shared.enums.PermissionType;
 import com.arsan.ai.core.properties.SecurityProperties;
+import com.arsan.ai.core.security.filter.JwtAuthFilter;
 import com.arsan.ai.core.security.handler.OAuth2FailureHandler;
 import com.arsan.ai.core.security.handler.OAuth2SuccessHandler;
-import com.arsan.ai.core.security.filter.JwtAuthFilter;
+import com.arsan.ai.shared.enums.PermissionType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,5 @@
 package com.arsan.ai.profile.service.impl;
 
-import com.arsan.ai.core.exception.custom.ResourceNotFoundException;
-import com.arsan.ai.core.security.service.JwtService;
 import com.arsan.ai.profile.model.ChangePasswordRequest;
 import com.arsan.ai.profile.model.UserProfile;
 import com.arsan.ai.profile.service.ProfileService;
@@ -11,7 +9,6 @@ import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

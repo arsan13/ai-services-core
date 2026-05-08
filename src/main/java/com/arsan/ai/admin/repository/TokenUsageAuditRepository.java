@@ -1,9 +1,9 @@
 package com.arsan.ai.admin.repository;
 
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.admin.entity.TokenUsageAudit;
 import com.arsan.ai.admin.projection.TokenUsageAuditView;
 import com.arsan.ai.admin.projection.UserTokenUsage;
+import com.arsan.ai.shared.entity.AppUser;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

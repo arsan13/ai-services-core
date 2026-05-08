@@ -1,9 +1,9 @@
 package com.arsan.ai.core.config.bootstrap.admin;
 
-import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.enums.PermissionType;
 import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.core.properties.AdminBootstrapProperties;
+import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.shared.enums.PermissionType;
 import com.arsan.ai.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

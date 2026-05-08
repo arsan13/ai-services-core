@@ -1,7 +1,7 @@
 package com.arsan.ai.core.advice;
 
-import com.arsan.ai.shared.model.ApiResponse;
 import com.arsan.ai.core.properties.ResponseWrapperProperties;
+import com.arsan.ai.shared.model.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -97,7 +97,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            throw new RuntimeException("Error converting response to JSON", e);
+            throw new IllegalArgumentException("Error converting response to JSON", e);
         }
     }
 }

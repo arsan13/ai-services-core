@@ -31,13 +31,11 @@ public enum PermissionType {
     CHAT_AVIATION_USE("chat:aviation:use"),
     CHAT_GENERIC_USE("chat:generic:use");
 
-    private final String value;
-
+    public static final Set<String> VERIFIED_USERS_VALUES = Set.of(CHAT_GENERIC_USE.getValue());
     private static final Map<String, PermissionType> BY_VALUE = Arrays.stream(values())
             .collect(Collectors.toUnmodifiableMap(PermissionType::getValue, p -> p));
-
-    public static final Set<String> VERIFIED_USERS_VALUES = Set.of(CHAT_GENERIC_USE.getValue());
     public static final Set<String> ALL_VALUES = Collections.unmodifiableSet(BY_VALUE.keySet());
+    private final String value;
 
     PermissionType(String value) {
         this.value = value;

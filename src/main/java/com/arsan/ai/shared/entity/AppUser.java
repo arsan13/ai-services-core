@@ -1,8 +1,8 @@
 package com.arsan.ai.shared.entity;
 
 import com.arsan.ai.auth.enums.AuthProviderType;
-import com.arsan.ai.shared.enums.PermissionType;
 import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.shared.enums.PermissionType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;

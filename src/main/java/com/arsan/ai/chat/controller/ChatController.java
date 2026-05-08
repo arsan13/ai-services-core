@@ -1,11 +1,11 @@
 package com.arsan.ai.chat.controller;
 
 import com.arsan.ai.chat.enums.ChatType;
-import com.arsan.ai.core.exception.custom.AiServiceException;
 import com.arsan.ai.chat.model.ChatRequest;
 import com.arsan.ai.chat.model.ChatResponse;
 import com.arsan.ai.chat.model.ChatTypeResponse;
 import com.arsan.ai.chat.service.AiChatService;
+import com.arsan.ai.core.exception.custom.AiServiceException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

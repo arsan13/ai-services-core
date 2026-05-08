@@ -1,7 +1,7 @@
 package com.arsan.ai.admin.service;
 
-import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.admin.projection.UserResponse;
+import com.arsan.ai.auth.enums.RoleType;
 
 import java.util.List;
 
