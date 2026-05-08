@@ -2,7 +2,7 @@ package com.arsan.ai.shared.entity;
 
 import com.arsan.ai.auth.enums.AuthProviderType;
 import com.arsan.ai.auth.enums.RoleType;
-import com.arsan.ai.shared.enums.PermissionType;
+import com.arsan.ai.shared.util.PermissionUtils;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -34,6 +34,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(
@@ -77,9 +79,15 @@ public class AppUser implements UserDetails {
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "app_user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "app_user_extra_permissions", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "permission")
-    private Set<String> permissions = new HashSet<>(Set.of(PermissionType.USER_READ.getValue()));
+    private Set<String> extraPermissions = new HashSet<>();
+
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "app_user_revoked_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private Set<String> revokedPermissions = new HashSet<>();
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -107,17 +115,11 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new HashSet<>();
-
-        authorities.addAll(this.roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .toList());
-
-        authorities.addAll(permissions.stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList()
-        );
-
-        return authorities;
+        return Stream
+                .concat(
+                        this.roles.stream().map(role -> new SimpleGrantedAuthority(role.name())),
+                        PermissionUtils.resolvePermissions(this).stream().map(SimpleGrantedAuthority::new)
+                )
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

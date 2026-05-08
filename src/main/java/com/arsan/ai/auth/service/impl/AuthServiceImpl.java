@@ -9,7 +9,6 @@ import com.arsan.ai.auth.model.RegisterRequest;
 import com.arsan.ai.auth.service.AuthService;
 import com.arsan.ai.core.security.service.JwtService;
 import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.enums.PermissionType;
 import com.arsan.ai.shared.mapper.UserMapper;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
@@ -24,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
+import static com.arsan.ai.auth.enums.PermissionType.CHAT_GENERIC_USE;
 
 @Service
 @RequiredArgsConstructor
@@ -96,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalStateException("Email already verified");
         }
 
-        user.getPermissions().addAll(PermissionType.VERIFIED_USERS_VALUES);
+        user.getExtraPermissions().add(CHAT_GENERIC_USE.getValue());
         user.setVerified(true);
         user.setVerifiedDate(LocalDateTime.now());
     }

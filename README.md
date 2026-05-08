@@ -144,7 +144,6 @@ com/arsan/ai/
 │   ├── repository/              # Shared repositories
 │   ├── mapper/                  # Entity-DTO mappers
 │   ├── model/                   # Shared DTOs & value objects
-│   ├── enums/                   # Shared enums
 │   └── util/                    # Cross-cutting utilities
 ├── auth/                         # Authentication Domain
 │   ├── controller/              # /api/auth endpoints

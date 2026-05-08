@@ -2,9 +2,9 @@ package com.arsan.ai.admin.service.impl;
 
 import com.arsan.ai.admin.projection.UserResponse;
 import com.arsan.ai.admin.service.UserService;
+import com.arsan.ai.auth.enums.PermissionType;
 import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.enums.PermissionType;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
@@ -13,6 +13,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -65,23 +66,30 @@ public class UserServiceImpl implements UserService {
     public void grantPermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        AppUser user = getUserOrThrow(id);
+        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
 
         permissions.stream()
-                .filter(permission -> !user.getPermissions().contains(permission))
-                .forEach(user.getPermissions()::add);
+                .filter(p -> !user.getExtraPermissions().contains(p))
+                .forEach(user.getExtraPermissions()::add);
+
+        // If previously revoked, remove from revoked list
+        user.getRevokedPermissions().removeAll(new HashSet<>(permissions));
     }
 
     @Transactional
     public void revokePermission(Long id, List<String> permissions) {
         PermissionType.validateAll(permissions);
 
-        AppUser user = getUserOrThrow(id);
+        AppUser user = userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
 
         permissions.stream()
-                .filter(user.getPermissions()::contains)
-                .forEach(user.getPermissions()::remove);
+                .filter(p -> !user.getRevokedPermissions().contains(p))
+                .forEach(user.getRevokedPermissions()::add);
+
+        // If previously granted as extra, remove it
+        user.getExtraPermissions().removeAll(new HashSet<>(permissions));
     }
+
 
     private @NonNull AppUser getUserOrThrow(Long id) {
         return userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);

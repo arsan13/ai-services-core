@@ -14,7 +14,9 @@ public interface UserResponse {
 
     List<RoleType> getRoles();
 
-    List<String> getPermissions();
+    List<String> getExtraPermissions();
+
+    List<String> getRevokedPermissions();
 
     boolean isVerified();
 
