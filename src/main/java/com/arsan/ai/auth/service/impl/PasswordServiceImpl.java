@@ -31,7 +31,13 @@ public class PasswordServiceImpl implements PasswordService {
 
     @Override
     public void forgotPassword(String email) {
-        userRepository.findByEmail(email).map(PasswordResetRequestedEvent::new).ifPresent(eventPublisher::publishEvent);
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+
+        if (user.getPassword() == null) {
+            throw new IllegalStateException("Password reset is not available for OAuth2 accounts. Please sign in using " + user.getProviderType());
+        }
+
+        eventPublisher.publishEvent(new PasswordResetRequestedEvent(user));
     }
 
     @Override
