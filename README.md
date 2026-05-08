@@ -73,70 +73,52 @@ It supports:
 
 ```mermaid
 flowchart TD
-  Client[Web or API Client]
+  Client["Web or API Client"]
   
-  subgraph API["REST API Layer (/api)"]
-    AuthCtrl[/auth/*]
-    ChatCtrl[/ai/chat/*]
-    ProfileCtrl[/me/*]
-    AdminCtrl[/admin/*]
-    OAuth2[/oauth2/*]
-  end
+  API["REST API Layer<br/>auth, chat, profile, admin, oauth2"]
+  Security["Spring Security<br/>JWT Filter + Permission Evaluator"]
   
-  subgraph Security["Security & Filters"]
-    JWTFilter["JWT Authentication Filter"]
-    PermEval["Permission Evaluator"]
-  end
+  AuthSvc["Auth Service<br/>Local + OAuth2"]
+  ChatSvc["Chat Service<br/>Generic, Aviation"]
+  ProfileSvc["Profile Service"]
+  AdminSvc["Admin Service"]
+  EmailSvc["Email Service<br/>Brevo Integration"]
   
-  subgraph Domains["Domain Services"]
-    AuthSvc["Auth Service<br/>(Local + OAuth2)"]
-    ChatSvc["Chat Service<br/>(Generic, Aviation)"]
-    ProfileSvc["Profile Service"]
-    AdminSvc["Admin Service"]
-    NotifSvc["Notification Service<br/>(Email via Brevo)"]
-  end
+  ChatProviders["Chat Providers<br/>Generic, Aviation with Tools"]
+  TokenAudit["Token Usage Advisor<br/>Async Audit"]
   
-  subgraph Tools["Tool & Advisor Layer"]
-    FuelTool["FuelServiceTool"]
-    TokenAdvisor["TokenUsageAdvisor<br/>(Async Audit)"]
-  end
+  Repos["JPA Repositories"]
+  Migrations["Flyway Migrations"]
   
-  subgraph Repos["Data Access Layer"]
-    JPARepos["JPA Repositories"]
-  end
+  OAuth["OAuth2 Providers<br/>Google, GitHub"]
+  AIModels["AI Models<br/>via Spring AI"]
   
-  subgraph Config["Configuration & Infrastructure"]
-    Flyway["Flyway Migrations"]
-    AIConfig["AI Client Config<br/>(Spring AI)"]
-    AsyncExec["Async Executors"]
-  end
-  
-  subgraph External["External Services"]
-    OAuth["OAuth2 Providers<br/>(Google, GitHub)"]
-    Brevo["Brevo Email Service"]
-    AIProvider["AI Models<br/>(OpenAI, etc)"]
-  end
-  
-  DB[(Database<br/>H2/PostgreSQL)]
+  DB["Database<br/>H2 / PostgreSQL"]
   
   Client --> API
   API --> Security
-  Security --> Domains
+  Security --> AuthSvc
+  Security --> ChatSvc
+  Security --> ProfileSvc
+  Security --> AdminSvc
   
   AuthSvc --> OAuth
-  AuthSvc --> NotifSvc
-  ChatSvc --> Tools
-  ChatSvc --> AIProvider
-  FuelTool --> AIProvider
-  TokenAdvisor --> Repos
+  AuthSvc --> EmailSvc
   
-  Domains --> Repos
-  Domains --> Config
-  NotifSvc --> Brevo
+  ChatSvc --> ChatProviders
+  ChatProviders --> AIModels
+  ChatSvc --> TokenAudit
   
-  JPARepos --> DB
-  Flyway --> DB
-  AIConfig --> AIProvider
+  EmailSvc -.-> Brevo["Brevo Email<br/>Service"]
+  
+  AuthSvc --> Repos
+  ChatSvc --> Repos
+  ProfileSvc --> Repos
+  AdminSvc --> Repos
+  TokenAudit --> Repos
+  
+  Repos --> DB
+  Migrations --> DB
 ```
 
 ## Package Structure
