@@ -73,32 +73,52 @@ It supports:
 
 ```mermaid
 flowchart TD
-  Client[Web or API Client] --> API[REST API /api]
-
-  API --> Security[Spring Security Layer]
-  Security --> Auth[Local Auth + OAuth2 + JWT]
-  Auth --> Verify[Email Verification Flow]
-  Auth --> Reset[Forgot and Reset Password Flow]
-  Auth --> Change[Authenticated Change Password]
-  Auth --> Mail[Email Notification Service]
-
-  API --> Services[Domain Services]
-  Services --> Chat[AI Chat Services]
-  Chat --> Generic[Generic Chat Provider]
-  Chat --> Aviation[Aviation Chat Provider]
-  Aviation --> Tools[FuelServiceTool]
-
-  Services --> UserMgmt[User Profile & Preference Service]
-  Services --> AdminMgmt[Admin User & Role Service]
+  Client["Web or API Client"]
   
-  Services --> Audit[TokenUsageAdvisor]
-  Audit --> DB[(Database)]
-
-  Services --> Flyway[Flyway Migration Engine]
-  Flyway --> DB
-
-  Services --> Repos[JPA Repositories]
+  API["REST API Layer<br/>auth, chat, profile, admin, oauth2"]
+  Security["Spring Security<br/>JWT Filter + Permission Evaluator"]
+  
+  AuthSvc["Auth Service<br/>Local + OAuth2"]
+  ChatSvc["Chat Service<br/>Generic, Aviation"]
+  ProfileSvc["Profile Service"]
+  AdminSvc["Admin Service"]
+  EmailSvc["Email Service<br/>Brevo Integration"]
+  
+  ChatProviders["Chat Providers<br/>Generic, Aviation with Tools"]
+  TokenAudit["Token Usage Advisor<br/>Async Audit"]
+  
+  Repos["JPA Repositories"]
+  Migrations["Flyway Migrations"]
+  
+  OAuth["OAuth2 Providers<br/>Google, GitHub"]
+  AIModels["AI Models<br/>via Spring AI"]
+  
+  DB["Database<br/>H2 / PostgreSQL"]
+  
+  Client --> API
+  API --> Security
+  Security --> AuthSvc
+  Security --> ChatSvc
+  Security --> ProfileSvc
+  Security --> AdminSvc
+  
+  AuthSvc --> OAuth
+  AuthSvc --> EmailSvc
+  
+  ChatSvc --> ChatProviders
+  ChatProviders --> AIModels
+  ChatSvc --> TokenAudit
+  
+  EmailSvc -.-> Brevo["Brevo Email<br/>Service"]
+  
+  AuthSvc --> Repos
+  ChatSvc --> Repos
+  ProfileSvc --> Repos
+  AdminSvc --> Repos
+  TokenAudit --> Repos
+  
   Repos --> DB
+  Migrations --> DB
 ```
 
 ## Package Structure
@@ -125,26 +145,24 @@ com/arsan/ai/
 │   ├── mapper/                  # Entity-DTO mappers
 │   ├── model/                   # Shared DTOs & value objects
 │   ├── enums/                   # Shared enums
-│   ├── util/                    # Cross-cutting utilities
-│   └── constants/               # Shared constants
+│   └── util/                    # Cross-cutting utilities
 ├── auth/                         # Authentication Domain
 │   ├── controller/              # /api/auth endpoints
 │   ├── service/                 # Authentication logic
 │   ├── provider/                # OAuth2 providers
+│   ├── resolver/                # OAuth identity resolvers
 │   ├── model/                   # Auth DTOs & requests
 │   ├── enums/                   # Auth-specific enums
-│   ├── events/                  # Auth domain events
-│   ├── constants/               # Auth constants
-│   └── resolver/                # OAuth identity resolvers
+│   └── events/                  # Auth domain events
 ├── profile/                       # User Profile Domain
 │   ├── controller/              # Profile endpoints
-|   ├── service/                 # User business logic
-│   └── model/                   # Profile DTOs
+│   ├── model/                   # Profile DTOs
+│   └── service/                 # User business logic
 ├── chat/                         # AI Chat Domain
+│   ├── advisor/                 # Usage auditing advisor
 │   ├── controller/              # /api/ai/chat endpoints
 │   ├── service/                 # Chat orchestration
 │   ├── provider/                # Chat provider implementations
-│   ├── advisor/                 # Usage auditing advisor
 │   ├── model/                   # Chat DTOs
 │   ├── enums/                   # Chat-specific enums
 │   ├── tool/                    # Tool calling (FuelServiceTool, etc.)
@@ -158,10 +176,10 @@ com/arsan/ai/
 │   └── model/                   # Admin DTOs
 ├── notification/                 # Notification Domain
 │   └── email/                   # Email service
-|       ├── listener/            # Event listeners
-│       ├── service/             # Email business logic
+│       ├── constants/           # Email constants
+│       ├── listener/            # Event listeners
 │       ├── model/               # Email DTOs
-│       └── constants/           # Email constants
+│       └── service/             # Email business logic
 └── SpringAiApplication.java     # Main application class
 ```
 
