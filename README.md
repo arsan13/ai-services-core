@@ -111,7 +111,7 @@ com/arsan/ai/
 │   ├── config/                    # Spring beans configuration
 │   ├── security/
 │   │   ├── filter/               # JWT authentication filter
-│   │   ├── handler/              # Error handlers
+│   │   ├── handler/              # Success & Error handlers
 │   │   ├── service/              # JWT & security services
 │   │   ├── evaluator/            # Permission evaluator
 │   │   └── constants/            # Security constants
@@ -134,11 +134,11 @@ com/arsan/ai/
 │   ├── model/                   # Auth DTOs & requests
 │   ├── enums/                   # Auth-specific enums
 │   ├── events/                  # Auth domain events
-│   ├── listener/                # Event listeners
 │   ├── constants/               # Auth constants
 │   └── resolver/                # OAuth identity resolvers
 ├── profile/                       # User Profile Domain
 │   ├── controller/              # Profile endpoints
+|   ├── service/                 # User business logic
 │   └── model/                   # Profile DTOs
 ├── chat/                         # AI Chat Domain
 │   ├── controller/              # /api/ai/chat endpoints
@@ -158,7 +158,8 @@ com/arsan/ai/
 │   └── model/                   # Admin DTOs
 ├── notification/                 # Notification Domain
 │   └── email/                   # Email service
-│       ├── impl/                # Implementations
+|       ├── listener/            # Event listeners
+│       ├── service/             # Email business logic
 │       ├── model/               # Email DTOs
 │       └── constants/           # Email constants
 └── SpringAiApplication.java     # Main application class

@@ -1,4 +1,4 @@
-package com.arsan.ai.auth.model;
+package com.arsan.ai.profile.model;
 
 import com.arsan.ai.core.annotation.ValidPassword;
 import lombok.Getter;

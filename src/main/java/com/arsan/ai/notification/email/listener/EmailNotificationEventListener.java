@@ -1,4 +1,4 @@
-package com.arsan.ai.auth.listener;
+package com.arsan.ai.notification.email.listener;
 
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.auth.enums.TokenPurpose;
