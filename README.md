@@ -79,7 +79,6 @@ flowchart TD
   Security --> Auth[Local Auth + OAuth2 + JWT]
   Auth --> Verify[Email Verification Flow]
   Auth --> Reset[Forgot and Reset Password Flow]
-  Auth --> Change[Authenticated Change Password]
   Auth --> Mail[Email Notification Service]
 
   API --> Services[Domain Services]
@@ -88,7 +87,7 @@ flowchart TD
   Chat --> Aviation[Aviation Chat Provider]
   Aviation --> Tools[FuelServiceTool]
 
-  Services --> UserMgmt[User Profile & Preference Service]
+  Services --> UserMgmt[User Profile Service]
   Services --> AdminMgmt[Admin User & Role Service]
   
   Services --> Audit[TokenUsageAdvisor]
