@@ -12,15 +12,16 @@ Enterprise-ready backend service for secure AI chat workflows with local and soc
 1. [Overview](#overview)
 2. [Capabilities](#capabilities)
 3. [Architecture](#architecture)
-4. [Technology Stack](#technology-stack)
-5. [Authentication and Security](#authentication-and-security)
-6. [AI Runtime](#ai-runtime)
-7. [API Reference](#api-reference)
-8. [Data and Migrations](#data-and-migrations)
-9. [Configuration](#configuration)
-10. [Observability](#observability)
-11. [Production Hardening Checklist](#production-hardening-checklist)
-12. [Known Gaps and Roadmap](#known-gaps-and-roadmap)
+4. [Package Structure](#package-structure)
+5. [Technology Stack](#technology-stack)
+6. [Authentication and Security](#authentication-and-security)
+7. [AI Runtime](#ai-runtime)
+8. [API Reference](#api-reference)
+9. [Data and Migrations](#data-and-migrations)
+10. [Configuration](#configuration)
+11. [Observability](#observability)
+12. [Production Hardening Checklist](#production-hardening-checklist)
+13. [Known Gaps and Roadmap](#known-gaps-and-roadmap)
 
 ## Overview
 
@@ -32,6 +33,7 @@ It supports:
 - Email verification and verification re-send
 - Forgot/reset password and authenticated change-password flow
 - Permission-gated chat modes (`generic`, `aviation`)
+- User profile and preference management
 - Admin endpoints for user/permission management and AI token usage analytics
 - Profile-based runtime (`dev` with H2, `prod` with PostgreSQL)
 - Database schema management via Flyway
@@ -53,12 +55,19 @@ It supports:
 - Aviation mode with domain tool-calling support
 - Token usage auditing (prompt/completion/total tokens, model, latency, cost)
 
+### User Management
+
+- Self-service profile management via `/api/me`
+- User preference management
+- Admin user management and role/permission assignment
+
 ### Operations
 
 - Global API response wrapper for consistent contracts
 - Centralized exception mapping
 - Actuator endpoints for runtime health and diagnostics
 - Docker multi-stage build
+- Email notifications via Brevo integration
 
 ## Architecture
 
@@ -71,14 +80,17 @@ flowchart TD
   Auth --> Verify[Email Verification Flow]
   Auth --> Reset[Forgot and Reset Password Flow]
   Auth --> Change[Authenticated Change Password]
-  Auth --> Mail[SMTP Email Service]
+  Auth --> Mail[Email Notification Service]
 
-  API --> Services[Business Services]
-  Services --> Chat[AI Chat Providers]
-  Chat --> Generic[Generic Chat Client]
-  Chat --> Aviation[Aviation Chat Client]
+  API --> Services[Domain Services]
+  Services --> Chat[AI Chat Services]
+  Chat --> Generic[Generic Chat Provider]
+  Chat --> Aviation[Aviation Chat Provider]
   Aviation --> Tools[FuelServiceTool]
 
+  Services --> UserMgmt[User Profile & Preference Service]
+  Services --> AdminMgmt[Admin User & Role Service]
+  
   Services --> Audit[TokenUsageAdvisor]
   Audit --> DB[(Database)]
 
@@ -89,16 +101,84 @@ flowchart TD
   Repos --> DB
 ```
 
+## Package Structure
+
+Domain-driven package organization with clear separation of concerns:
+
+```
+com/arsan/ai/
+├── core/                          # Framework & Infrastructure
+│   ├── config/                    # Spring beans configuration
+│   ├── security/
+│   │   ├── filter/               # JWT authentication filter
+│   │   ├── handler/              # Success & Error handlers
+│   │   ├── service/              # JWT & security services
+│   │   ├── evaluator/            # Permission evaluator
+│   │   └── constants/            # Security constants
+│   ├── exception/                # Exception handling
+│   ├── advice/                   # Global advice
+│   ├── annotation/               # Custom annotations
+│   └── properties/               # Configuration properties
+├── shared/                        # Shared Domain Layer
+│   ├── entity/                  # Shared entities
+│   ├── repository/              # Shared repositories
+│   ├── mapper/                  # Entity-DTO mappers
+│   ├── model/                   # Shared DTOs & value objects
+│   ├── enums/                   # Shared enums
+│   ├── util/                    # Cross-cutting utilities
+│   └── constants/               # Shared constants
+├── auth/                         # Authentication Domain
+│   ├── controller/              # /api/auth endpoints
+│   ├── service/                 # Authentication logic
+│   ├── provider/                # OAuth2 providers
+│   ├── model/                   # Auth DTOs & requests
+│   ├── enums/                   # Auth-specific enums
+│   ├── events/                  # Auth domain events
+│   ├── constants/               # Auth constants
+│   └── resolver/                # OAuth identity resolvers
+├── profile/                       # User Profile Domain
+│   ├── controller/              # Profile endpoints
+|   ├── service/                 # User business logic
+│   └── model/                   # Profile DTOs
+├── chat/                         # AI Chat Domain
+│   ├── controller/              # /api/ai/chat endpoints
+│   ├── service/                 # Chat orchestration
+│   ├── provider/                # Chat provider implementations
+│   ├── advisor/                 # Usage auditing advisor
+│   ├── model/                   # Chat DTOs
+│   ├── enums/                   # Chat-specific enums
+│   ├── tool/                    # Tool calling (FuelServiceTool, etc.)
+│   └── util/                    # Chat utilities
+├── admin/                        # Admin Management Domain
+│   ├── controller/              # Admin endpoints
+│   ├── service/                 # Admin business logic
+│   ├── entity/                  # Admin entities
+│   ├── repository/              # Admin repositories
+│   ├── projection/              # Database read projections
+│   └── model/                   # Admin DTOs
+├── notification/                 # Notification Domain
+│   └── email/                   # Email service
+|       ├── listener/            # Event listeners
+│       ├── service/             # Email business logic
+│       ├── model/               # Email DTOs
+│       └── constants/           # Email constants
+└── SpringAiApplication.java     # Main application class
+```
+
 ### Package Responsibilities
 
-- `controller`: API endpoints for auth, me, chat, and admin use cases
-- `security`: JWT filter, OAuth2 handlers, redirect URL builder, permission evaluator
-- `service`: application business logic (auth, chat, audit, user management)
-- `config`: security, CORS, async executors, AI clients, bootstrap wiring
-- `provider` and `resolver`: chat provider registry and OAuth identity resolution
-- `advisor`: AI usage auditing advisor
-- `entity`, `repository`, `projection`: persistence model and read projections
-- `advice` and `exception`: response wrapping and consistent error handling
+| Package | Responsibility |
+|---------|-----------------|
+| **core/security/** | Spring Security framework setup, JWT token operations, permission evaluation |
+| **core/config/** | Spring bean configuration (AI clients, async executors, etc.) |
+| **core/exception/** | Global exception handling and normalization |
+| **core/advice/** | Global exception advice and request/response wrapping |
+| **shared/** | Shared domain models, repositories, utilities, and DTOs used across domains |
+| **auth/** | Authentication workflows (login, register, OAuth2, email verification) |
+| **profile/** | User profile management (self-service endpoints) |
+| **chat/** | AI chat provider integration and conversation management |
+| **admin/** | Administrative functions (user management, token usage audit reporting) |
+| **notification/** | Email and other notification services |
 
 ## Technology Stack
 
@@ -178,7 +258,7 @@ CORS origins are externalized (`app.cors.allowed-origins`) and currently include
   - Message window memory (max 10)
   - Token usage advisor enabled
 - Aviation chat client:
-  - System prompt from `src/main/resources/prompts/system-prompt.st`
+  - System prompt from `src/main/resources/prompts/aviation-prompt.st`
   - Message window memory (max 10)
   - Token usage advisor enabled
   - `FuelServiceTool` registered for tool calls
@@ -222,10 +302,10 @@ OAuth2 success/failure redirects go to frontend paths:
 - `/oauth-success?token=...`
 - `/oauth-error?message=...`
 
-### Current User
+### Current User (Self-Service)
 
-- `GET /me`
-- `POST /me/change-password`
+- `GET /me` → Profile
+- `POST /me/change-password` → Change password
 
 ### AI Chat
 
@@ -324,6 +404,8 @@ Required for core runtime:
 - `JWT_SECRET_KEY`
 - `MAIL_USERNAME`
 - `MAIL_PASSWORD`
+- `BREVO_API_KEY`
+- `BREVO_SENDER_EMAIL`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `GITHUB_CLIENT_ID`
