@@ -1,6 +1,5 @@
 package com.arsan.ai.shared.model;
 
-import com.arsan.ai.shared.model.DateRange;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
