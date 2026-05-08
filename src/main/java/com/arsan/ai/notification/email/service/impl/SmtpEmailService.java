@@ -1,6 +1,6 @@
-package com.arsan.ai.notification.email.impl;
+package com.arsan.ai.notification.email.service.impl;
 
-import com.arsan.ai.notification.email.EmailService;
+import com.arsan.ai.notification.email.service.EmailService;
 import com.arsan.ai.notification.email.model.EmailRequest;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

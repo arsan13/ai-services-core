@@ -1,4 +1,4 @@
-package com.arsan.ai.notification.email;
+package com.arsan.ai.notification.email.service;
 
 import com.arsan.ai.notification.email.model.EmailRequest;
 
