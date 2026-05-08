@@ -24,4 +24,5 @@ public class UserProfile {
     private AuthProviderType providerType;
     private boolean verified;
     private LocalDateTime passwordResetDate;
+    private boolean hasPassword;
 }

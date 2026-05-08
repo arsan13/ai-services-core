@@ -18,6 +18,7 @@ public class UserMapper {
         UserProfile userProfile = modelMapper.map(user, UserProfile.class);
         userProfile.setRoles(Set.copyOf(user.getRoles()));
         userProfile.setPermissions(Set.copyOf(user.getPermissions()));
+        userProfile.setHasPassword(user.getPassword() != null);
         return userProfile;
     }
 }
