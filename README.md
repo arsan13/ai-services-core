@@ -175,7 +175,7 @@ com/arsan/ai/
 | **core/advice/** | Global exception advice and request/response wrapping |
 | **shared/** | Shared domain models, repositories, utilities, and DTOs used across domains |
 | **auth/** | Authentication workflows (login, register, OAuth2, email verification) |
-| **profile/** | User profile and preference management (self-service endpoints) |
+| **profile/** | User profile management (self-service endpoints) |
 | **chat/** | AI chat provider integration and conversation management |
 | **admin/** | Administrative functions (user management, token usage audit reporting) |
 | **notification/** | Email and other notification services |
@@ -364,7 +364,6 @@ Exceptions are normalized through global exception handling for validation, auth
 - `app_user`
 - `app_user_roles`
 - `app_user_permissions`
-- `user_preference`
 - `token_usage_audit`
 
 ### Flyway
