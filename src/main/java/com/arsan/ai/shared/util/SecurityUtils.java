@@ -17,6 +17,10 @@ public final class SecurityUtils {
         return getCurrentUser().map(AppUser::getId);
     }
 
+    public static Long getCurrentUserIdOrThrow() {
+        return getCurrentUserId().orElseThrow(ExceptionUtils::userNotFound);
+    }
+
     public static Optional<AppUser> getCurrentUser() {
         return Optional.ofNullable(getAuthentication())
                 .filter(Authentication::isAuthenticated)
@@ -24,6 +28,10 @@ public final class SecurityUtils {
                 .map(Authentication::getPrincipal)
                 .filter(AppUser.class::isInstance)
                 .map(AppUser.class::cast);
+    }
+
+    public static AppUser getCurrentUserOrThrow() {
+        return getCurrentUser().orElseThrow(ExceptionUtils::userNotFound);
     }
 
     private static Authentication getAuthentication() {

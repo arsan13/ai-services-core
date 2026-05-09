@@ -3,8 +3,8 @@ package com.arsan.ai.shared.util;
 import com.arsan.ai.auth.enums.PermissionType;
 import com.arsan.ai.shared.entity.AppUser;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class PermissionUtils {
 
@@ -17,15 +17,12 @@ public final class PermissionUtils {
             return Set.of();
         }
 
-        Set<String> permissions = new HashSet<>();
-
-        permissions.addAll(user.getRoles().stream()
+        Set<String> permissions = user.getRoles().stream()
                 .flatMap(role -> role.getPermissions().stream())
                 .map(PermissionType::getValue)
-                .toList());
+                .collect(Collectors.toSet());
 
         permissions.addAll(user.getExtraPermissions());
-
         permissions.removeAll(user.getRevokedPermissions());
 
         return Set.copyOf(permissions);
