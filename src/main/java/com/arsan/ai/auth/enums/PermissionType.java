@@ -23,7 +23,7 @@ public enum PermissionType {
     CHAT_AVIATION_USE("chat:aviation:use"),
     CHAT_GENERIC_USE("chat:generic:use"),
 
-    REQUEST_ACCESS_CREATE("request:access:view"),
+    REQUEST_ACCESS_CREATE("request:access:create"),
     REQUEST_ACCESS_VIEW("request:access:view"),
     REQUEST_ACCESS_APPROVE("request:access:approve");
 

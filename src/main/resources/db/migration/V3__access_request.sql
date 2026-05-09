@@ -70,7 +70,7 @@ CREATE TABLE access_request_roles
         UNIQUE (request_id, role),
 
     CONSTRAINT chk_access_request_role
-        CHECK (role IN ('ROLE_MANAGER', 'ROLE_ADMIN'))
+        CHECK (role IN ('ROLE_ANALYST', 'ROLE_MANAGER', 'ROLE_ADMIN'))
 );
 
 CREATE INDEX idx_access_request_roles_request

@@ -1,7 +1,6 @@
 package com.arsan.ai.shared.repository;
 
 import com.arsan.ai.auth.enums.AuthProviderType;
-import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.entity.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -19,6 +18,4 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByProviderIdAndProviderType(String providerId, AuthProviderType providerType);
 
     boolean existsByEmail(String email);
-
-    Optional<AppUser> findFirstByRole(RoleType role);
 }
