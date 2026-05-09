@@ -25,6 +25,4 @@ public interface AccessRequestRepository extends JpaRepository<AccessRequest, Lo
 
     @EntityGraph(attributePaths = {"requester", "reviewer"})
     Page<AccessRequest> findAll(Pageable pageable);
-
-    boolean existsByStatusAndRequesterId(AccessRequestStatus accessRequestStatus, Long requesterId);
 }

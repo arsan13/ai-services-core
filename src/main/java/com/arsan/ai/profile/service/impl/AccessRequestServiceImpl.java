@@ -1,6 +1,5 @@
 package com.arsan.ai.profile.service.impl;
 
-import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.service.AccessRequestService;
 import com.arsan.ai.shared.entity.AccessRequest;
@@ -9,7 +8,6 @@ import com.arsan.ai.shared.enums.AccessRequestStatus;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.model.AccessRequestResponseDto;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
-import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AccessRequestServiceImpl implements AccessRequestService {
 
-    private final UserRepository userRepository;
     private final AccessRequestRepository accessRequestRepository;
     private final AccessRequestMapper mapper;
 
@@ -53,15 +50,8 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     @Override
     public AccessRequestResponseDto requestAccess(AccessRequestCreateDto requestDto) {
         AppUser user = SecurityUtils.getCurrentUserOrThrow();
-        AppUser admin = userRepository.findFirstByRole(RoleType.ROLE_ADMIN).orElseThrow(() -> new IllegalStateException("No admin user found."));
-
-//        if (accessRequestRepository.existsByStatusAndRequesterId(AccessRequestStatus.PENDING, user.getId())) {
-//            throw new IllegalStateException("You already have a pending access request.");
-//        }
-
         AccessRequest entity = mapper.toEntity(requestDto);
         entity.setRequester(user);
-        entity.setReviewer(admin);
 
         // TODO :: Send notification mail to the admin
 
