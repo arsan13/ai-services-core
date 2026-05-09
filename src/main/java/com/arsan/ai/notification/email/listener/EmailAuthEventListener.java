@@ -6,9 +6,9 @@ import com.arsan.ai.auth.events.PasswordResetRequestedEvent;
 import com.arsan.ai.core.properties.AppProperties;
 import com.arsan.ai.core.properties.SecurityProperties;
 import com.arsan.ai.core.security.service.JwtService;
+import com.arsan.ai.notification.email.model.EmailRequest;
 import com.arsan.ai.notification.email.service.EmailService;
 import com.arsan.ai.notification.email.service.EmailTemplateService;
-import com.arsan.ai.notification.email.model.EmailRequest;
 import com.arsan.ai.shared.entity.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -26,7 +26,7 @@ import static com.arsan.ai.notification.email.constants.EmailConstants.VERIFY_EM
 
 @Component
 @RequiredArgsConstructor
-public class EmailNotificationEventListener {
+public class EmailAuthEventListener {
 
     private final AppProperties appProperties;
     private final SecurityProperties securityProperties;

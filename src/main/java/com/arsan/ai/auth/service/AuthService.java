@@ -18,5 +18,5 @@ public interface AuthService {
 
     void verifyUser(String token);
 
-    void markUserAsVerified(AppUser  user);
+    void markUserAsVerified(AppUser user);
 }

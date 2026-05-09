@@ -27,9 +27,9 @@ public enum PermissionType {
     REQUEST_ACCESS_VIEW("request:access:view"),
     REQUEST_ACCESS_APPROVE("request:access:approve");
 
-    private final String value;
     private static final Map<String, PermissionType> BY_VALUE = Arrays.stream(values())
             .collect(Collectors.toUnmodifiableMap(PermissionType::getValue, p -> p));
+    private final String value;
 
     PermissionType(String value) {
         this.value = value;

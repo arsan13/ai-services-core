@@ -1,5 +1,7 @@
 package com.arsan.ai.admin.service.impl;
 
+import com.arsan.ai.admin.events.AccessRequestApprovedEvent;
+import com.arsan.ai.admin.events.AccessRequestRejectedEvent;
 import com.arsan.ai.admin.model.AccessRequestReviewDto;
 import com.arsan.ai.admin.service.AccessReviewService;
 import com.arsan.ai.shared.entity.AccessRequest;
@@ -12,6 +14,7 @@ import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AccessReviewServiceImpl implements AccessReviewService {
 
+    private final ApplicationEventPublisher publisher;
     private final AccessRequestRepository accessRequestRepository;
     private final AccessRequestMapper mapper;
 
@@ -70,6 +74,16 @@ public class AccessReviewServiceImpl implements AccessReviewService {
         request.setReviewerComment(reviewDto.getReviewerComment());
         request.setRequestedDate(LocalDateTime.now());
 
-        // TODO :: Send notification mail to the requester
+        publishEvent(request);
+    }
+
+    private void publishEvent(AccessRequest request) {
+        if (request.getStatus() == AccessRequestStatus.APPROVED) {
+            publisher.publishEvent(new AccessRequestApprovedEvent(
+                    request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName()));
+        } else {
+            publisher.publishEvent(new AccessRequestRejectedEvent(
+                    request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName(), request.getReviewerComment()));
+        }
     }
 }

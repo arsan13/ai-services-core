@@ -3,7 +3,6 @@ package com.arsan.ai.profile.service.impl;
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.service.AccessRequestService;
 import com.arsan.ai.shared.entity.AccessRequest;
-import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.model.AccessRequestResponseDto;
@@ -49,11 +48,8 @@ public class AccessRequestServiceImpl implements AccessRequestService {
 
     @Override
     public AccessRequestResponseDto requestAccess(AccessRequestCreateDto requestDto) {
-        AppUser user = SecurityUtils.getCurrentUserOrThrow();
         AccessRequest entity = mapper.toEntity(requestDto);
-        entity.setRequester(user);
-
-        // TODO :: Send notification mail to the admin
+        entity.setRequester(SecurityUtils.getCurrentUserOrThrow());
 
         return mapper.toResponseDto(accessRequestRepository.save(entity));
     }
