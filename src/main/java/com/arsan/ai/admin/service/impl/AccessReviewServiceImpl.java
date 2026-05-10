@@ -64,16 +64,14 @@ public class AccessReviewServiceImpl implements AccessReviewService {
         AppUser reviewer = SecurityUtils.getCurrentUserOrThrow();
         AppUser requester = request.getRequester();
 
-        if (request.getStatus() != AccessRequestStatus.PENDING) {
-            throw new IllegalStateException("Only pending requests can be reviewed");
-        }
+        request.review(reviewDto.getStatus(), reviewer, reviewDto.getReviewerComment());
 
-        if (reviewDto.getStatus() == AccessRequestStatus.APPROVED) {
+        if (request.isApproved()) {
             roleService.grantRoles(requester.getId(), request.getRoles());
             permissionService.grantPermission(requester.getId(), request.getPermissions());
         }
 
-        finalizeRequest(request, reviewer, reviewDto.getStatus(), reviewDto.getReviewerComment());
+        publishEvent(request);
     }
 
     @Override
@@ -83,14 +81,12 @@ public class AccessReviewServiceImpl implements AccessReviewService {
         AppUser reviewer = SecurityUtils.getCurrentUserOrThrow();
         AppUser requester = request.getRequester();
 
-        if (request.getStatus() != AccessRequestStatus.APPROVED) {
-            throw new IllegalStateException("Only approved requests can be revoked");
-        }
+        request.revoke(reviewer, reviewDto.getReviewerComment());
 
         roleService.revokeRoles(requester.getId(), request.getRoles());
         permissionService.revokePermission(requester.getId(), request.getPermissions());
 
-        finalizeRequest(request, reviewer, AccessRequestStatus.REVOKED, reviewDto.getReviewerComment());
+        publishEvent(request);
     }
 
     private AccessRequest getRequest(Long requestId) {
@@ -99,27 +95,34 @@ public class AccessReviewServiceImpl implements AccessReviewService {
                 .orElseThrow(ExceptionUtils::resourceNotFound);
     }
 
-    private void finalizeRequest(AccessRequest request, AppUser reviewer, AccessRequestStatus status, String reviewerComment) {
-        request.setStatus(status);
-        request.setReviewer(reviewer);
-        request.setReviewerComment(reviewerComment);
-        request.setReviewedDate(LocalDateTime.now());
-
-        publishEvent(request);
-    }
-
     private void publishEvent(AccessRequest request) {
         switch (request.getStatus()) {
             case APPROVED -> publisher.publishEvent(
-                    new AccessRequestApprovedEvent(request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName()));
-
+                    new AccessRequestApprovedEvent(
+                            request.getId(),
+                            request.getRequester().getEmail(),
+                            request.getRequester().getFullName()
+                    )
+            );
             case REJECTED -> publisher.publishEvent(
-                    new AccessRequestRejectedEvent(request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName(), request.getReviewerComment()));
-
+                    new AccessRequestRejectedEvent(
+                            request.getId(),
+                            request.getRequester().getEmail(),
+                            request.getRequester().getFullName(),
+                            request.getReviewerComment()
+                    )
+            );
             case REVOKED -> publisher.publishEvent(
-                    new AccessRequestRevokedEvent(request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName(), request.getReviewerComment()));
-
-            default -> throw new IllegalStateException("Unknown request status: " + request.getStatus());
+                    new AccessRequestRevokedEvent(
+                            request.getId(),
+                            request.getRequester().getEmail(),
+                            request.getRequester().getFullName(),
+                            request.getReviewerComment()
+                    )
+            );
+            default -> throw new IllegalStateException(
+                    "Unknown request status: " + request.getStatus()
+            );
         }
     }
 }

@@ -87,4 +87,46 @@ public class AccessRequest {
     @CollectionTable(name = "access_request_permissions", joinColumns = @JoinColumn(name = "request_id"))
     @Column(name = "permission")
     private Set<String> permissions;
+
+    public void validateCreation() {
+        if ((roles == null || roles.isEmpty()) && (permissions == null || permissions.isEmpty())) {
+            throw new IllegalArgumentException("At least one role or permission must be requested.");
+        }
+    }
+
+    public void cancel() {
+        if (status != AccessRequestStatus.PENDING) {
+            throw new IllegalStateException("Only pending requests can be cancelled.");
+        }
+        this.status = AccessRequestStatus.CANCELLED;
+    }
+
+    public void review(AccessRequestStatus targetStatus, AppUser reviewer, String comment) {
+        if (status != AccessRequestStatus.PENDING) {
+            throw new IllegalStateException("Only pending requests can be reviewed");
+        }
+        if (targetStatus == AccessRequestStatus.PENDING) {
+            throw new IllegalStateException("Invalid target status");
+        }
+
+        this.status = targetStatus;
+        this.reviewer = reviewer;
+        this.reviewerComment = comment;
+        this.reviewedDate = LocalDateTime.now();
+    }
+
+    public void revoke(AppUser reviewer, String comment) {
+        if (status != AccessRequestStatus.APPROVED) {
+            throw new IllegalStateException("Only approved requests can be revoked");
+        }
+
+        this.status = AccessRequestStatus.REVOKED;
+        this.reviewer = reviewer;
+        this.reviewerComment = comment;
+        this.reviewedDate = LocalDateTime.now();
+    }
+
+    public boolean isApproved() {
+        return status == AccessRequestStatus.APPROVED;
+    }
 }

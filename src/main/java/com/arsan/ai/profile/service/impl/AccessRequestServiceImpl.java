@@ -48,12 +48,10 @@ public class AccessRequestServiceImpl implements AccessRequestService {
 
     @Override
     public AccessRequestResponseDto requestAccess(AccessRequestCreateDto requestDto) {
-        if (requestDto.getRoles().isEmpty() && requestDto.getPermissions().isEmpty()) {
-            throw new IllegalArgumentException("At least one role or permission must be requested.");
-        }
-
         AccessRequest entity = mapper.toEntity(requestDto);
+
         entity.setRequester(SecurityUtils.getCurrentUserOrThrow());
+        entity.validateCreation();
 
         return mapper.toResponseDto(accessRequestRepository.save(entity));
     }
@@ -66,11 +64,7 @@ public class AccessRequestServiceImpl implements AccessRequestService {
                 .findByIdAndRequesterId(requestId, userId)
                 .orElseThrow(ExceptionUtils::resourceNotFound);
 
-        if (request.getStatus() != AccessRequestStatus.PENDING) {
-            throw new IllegalStateException("Only pending requests can be cancelled.");
-        }
-
-        request.setStatus(AccessRequestStatus.CANCELLED);
+        request.cancel();
         accessRequestRepository.save(request);
     }
 }

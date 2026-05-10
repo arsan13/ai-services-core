@@ -34,7 +34,7 @@ public class AccessReviewController {
         if (status == null) {
             return service.getAll(pageable);
         }
-        return service.getByStatus(AccessRequestStatus.valueOf(status), pageable);
+        return service.getByStatus(AccessRequestStatus.valueOf(status.toUpperCase()), pageable);
     }
 
     @GetMapping("/{id}")
