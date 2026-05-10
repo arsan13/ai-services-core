@@ -48,7 +48,8 @@ public class SecurityConfig {
                         .requestMatchers(publicPaths).permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/admin/users/**").hasAuthority(PermissionType.ADMIN_READ.getValue())
-                        .requestMatchers(HttpMethod.GET, "/admin/users/permission/available").hasAuthority(PermissionType.ADMIN_READ.getValue())
+                        .requestMatchers(HttpMethod.GET, "/admin/roles/available").hasAuthority(PermissionType.USER_READ.getValue())
+                        .requestMatchers(HttpMethod.GET, "/admin/permissions/available").hasAuthority(PermissionType.USER_READ.getValue())
                         .requestMatchers(HttpMethod.PATCH, "/admin/users/**").hasAuthority(PermissionType.ADMIN_WRITE.getValue())
 
                         .requestMatchers(HttpMethod.GET, "/admin/token-usage/**").hasAuthority(PermissionType.TOKEN_USAGE_READ.getValue())

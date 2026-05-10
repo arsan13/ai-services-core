@@ -1,11 +1,12 @@
 package com.arsan.ai.profile.model;
 
-import jakarta.validation.constraints.NotEmpty;
+import com.arsan.ai.auth.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -15,10 +16,6 @@ import java.util.Set;
 public class AccessRequestCreateDto {
 
     private String requesterComment;
-
-    @NotEmpty
-    private Set<String> roles;
-
-    @NotEmpty
-    private Set<String> permissions;
+    private Set<RoleType> roles = new HashSet<>();
+    private Set<String> permissions = new HashSet<>();
 }

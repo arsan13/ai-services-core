@@ -6,6 +6,7 @@ public final class EmailConstants {
     public static final String RESET_PASSWORD_SUBJECT = "Reset your password";
     public static final String ACCESS_REQUEST_APPROVED_SUBJECT = "Your Access Request Has Been Approved";
     public static final String ACCESS_REQUEST_REJECTED_SUBJECT = "Your Access Request Has Been Rejected";
+    public static final String ACCESS_REQUEST_REVOKED_SUBJECT = "Your Access Request Has Been Revoked";
 
     public static final String VERIFY_EMAIL_PATH = "/verify-email";
     public static final String RESET_PASSWORD_PATH = "/reset-password";
@@ -15,6 +16,7 @@ public final class EmailConstants {
     public static final String RESET_PASSWORD_TEMPLATE = "reset-password";
     public static final String ACCESS_REQUEST_APPROVED_TEMPLATE = "access-request-approved";
     public static final String ACCESS_REQUEST_REJECTED_TEMPLATE = "access-request-rejected";
+    public static final String ACCESS_REQUEST_REVOKED_TEMPLATE = "access-request-revoked";
 
     private EmailConstants() {
         throw new IllegalStateException("Constants class");

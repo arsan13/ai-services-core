@@ -11,8 +11,9 @@ import com.arsan.ai.notification.email.service.EmailService;
 import com.arsan.ai.notification.email.service.EmailTemplateService;
 import com.arsan.ai.shared.entity.AppUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 import java.util.Map;
@@ -34,39 +35,49 @@ public class EmailAuthEventListener {
     private final EmailTemplateService emailTemplateService;
     private final EmailService emailService;
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void on(EmailVerificationRequestedEvent event) {
-        AppUser user = event.user();
-
-        String token = jwtService.generateToken(user, TokenPurpose.EMAIL_VERIFICATION);
-        String link = appProperties.getFrontendUrl() + VERIFY_EMAIL_PATH + "?token=" + token;
-
-        Map<String, Object> model = Map.of(
-                "name", user.getFullName(),
-                "link", link,
-                "expiryMinutes", securityProperties.getJwt().getEmailVerificationExpirationInMinutes()
+        sendAuthEmail(
+                event.user(),
+                TokenPurpose.EMAIL_VERIFICATION,
+                VERIFY_EMAIL_PATH,
+                VERIFY_EMAIL_TEMPLATE,
+                VERIFY_EMAIL_SUBJECT,
+                securityProperties.getJwt().getEmailVerificationExpirationInMinutes()
         );
-        String body = emailTemplateService.render(VERIFY_EMAIL_TEMPLATE, model);
-
-        EmailRequest emailRequest = new EmailRequest(List.of(user.getEmail()), VERIFY_EMAIL_SUBJECT, body);
-        emailService.send(emailRequest);
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void on(PasswordResetRequestedEvent event) {
-        AppUser user = event.user();
+        sendAuthEmail(
+                event.user(),
+                TokenPurpose.PASSWORD_RESET,
+                RESET_PASSWORD_PATH,
+                RESET_PASSWORD_TEMPLATE,
+                RESET_PASSWORD_SUBJECT,
+                securityProperties.getJwt().getPasswordResetExpirationInMinutes()
+        );
+    }
 
-        String token = jwtService.generateToken(user, TokenPurpose.PASSWORD_RESET);
-        String link = appProperties.getFrontendUrl() + RESET_PASSWORD_PATH + "?token=" + token;
+    private void sendAuthEmail(
+            AppUser user,
+            TokenPurpose purpose,
+            String path,
+            String template,
+            String subject,
+            long expiryMinutes
+    ) {
+        String token = jwtService.generateToken(user, purpose);
+        String link = appProperties.getFrontendUrl() + path + "?token=" + token;
 
         Map<String, Object> model = Map.of(
                 "name", user.getFullName(),
                 "link", link,
-                "expiryMinutes", securityProperties.getJwt().getPasswordResetExpirationInMinutes()
+                "expiryMinutes", expiryMinutes
         );
-        String body = emailTemplateService.render(RESET_PASSWORD_TEMPLATE, model);
 
-        EmailRequest emailRequest = new EmailRequest(List.of(user.getEmail()), RESET_PASSWORD_SUBJECT, body);
-        emailService.send(emailRequest);
+        String body = emailTemplateService.render(template, model);
+
+        emailService.send(new EmailRequest(List.of(user.getEmail()), subject, body));
     }
 }

@@ -1,5 +1,6 @@
 package com.arsan.ai.shared.entity;
 
+import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -79,7 +80,8 @@ public class AccessRequest {
     @ElementCollection
     @CollectionTable(name = "access_request_roles", joinColumns = @JoinColumn(name = "request_id"))
     @Column(name = "role")
-    private Set<String> roles;
+    @Enumerated(EnumType.STRING)
+    private Set<RoleType> roles;
 
     @ElementCollection
     @CollectionTable(name = "access_request_permissions", joinColumns = @JoinColumn(name = "request_id"))

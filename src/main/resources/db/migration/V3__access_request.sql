@@ -34,7 +34,8 @@ CREATE TABLE access_request
                        'PENDING',
                        'APPROVED',
                        'REJECTED',
-                       'CANCELLED'
+                       'CANCELLED',
+                       'REVOKED'
                 )
             )
 );

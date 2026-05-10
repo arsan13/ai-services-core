@@ -1,6 +1,7 @@
 package com.arsan.ai.admin.controller;
 
 import com.arsan.ai.admin.model.AccessRequestReviewDto;
+import com.arsan.ai.admin.model.AccessRequestRevokeDto;
 import com.arsan.ai.admin.service.AccessReviewService;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import com.arsan.ai.shared.model.AccessRequestSummaryDto;
@@ -44,5 +45,10 @@ public class AccessReviewController {
     @PutMapping("/review")
     public void reviewRequest(@Valid @RequestBody AccessRequestReviewDto reviewDto) {
         service.reviewRequest(reviewDto);
+    }
+
+    @PutMapping("/revoke")
+    public void revokeRequest(@Valid @RequestBody AccessRequestRevokeDto revokeDto) {
+        service.revokeRequest(revokeDto);
     }
 }

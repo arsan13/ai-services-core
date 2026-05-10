@@ -2,8 +2,12 @@ package com.arsan.ai.admin.service.impl;
 
 import com.arsan.ai.admin.events.AccessRequestApprovedEvent;
 import com.arsan.ai.admin.events.AccessRequestRejectedEvent;
+import com.arsan.ai.admin.events.AccessRequestRevokedEvent;
 import com.arsan.ai.admin.model.AccessRequestReviewDto;
+import com.arsan.ai.admin.model.AccessRequestRevokeDto;
 import com.arsan.ai.admin.service.AccessReviewService;
+import com.arsan.ai.admin.service.PermissionService;
+import com.arsan.ai.admin.service.RoleService;
 import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
@@ -27,6 +31,8 @@ public class AccessReviewServiceImpl implements AccessReviewService {
 
     private final ApplicationEventPublisher publisher;
     private final AccessRequestRepository accessRequestRepository;
+    private final RoleService roleService;
+    private final PermissionService permissionService;
     private final AccessRequestMapper mapper;
 
     @Override
@@ -54,36 +60,66 @@ public class AccessReviewServiceImpl implements AccessReviewService {
     @Override
     @Transactional
     public void reviewRequest(AccessRequestReviewDto reviewDto) {
+        AccessRequest request = getRequest(reviewDto.getRequestId());
         AppUser reviewer = SecurityUtils.getCurrentUserOrThrow();
-        AccessRequest request = accessRequestRepository
-                .findById(reviewDto.getRequestId())
+        AppUser requester = request.getRequester();
+
+        if (request.getStatus() != AccessRequestStatus.PENDING) {
+            throw new IllegalStateException("Only pending requests can be reviewed");
+        }
+
+        if (reviewDto.getStatus() == AccessRequestStatus.APPROVED) {
+            roleService.grantRoles(requester.getId(), request.getRoles());
+            permissionService.grantPermission(requester.getId(), request.getPermissions());
+        }
+
+        finalizeRequest(request, reviewer, reviewDto.getStatus(), reviewDto.getReviewerComment());
+    }
+
+    @Override
+    @Transactional
+    public void revokeRequest(AccessRequestRevokeDto reviewDto) {
+        AccessRequest request = getRequest(reviewDto.getRequestId());
+        AppUser reviewer = SecurityUtils.getCurrentUserOrThrow();
+        AppUser requester = request.getRequester();
+
+        if (request.getStatus() != AccessRequestStatus.APPROVED) {
+            throw new IllegalStateException("Only approved requests can be revoked");
+        }
+
+        roleService.revokeRoles(requester.getId(), request.getRoles());
+        permissionService.revokePermission(requester.getId(), request.getPermissions());
+
+        finalizeRequest(request, reviewer, AccessRequestStatus.REVOKED, reviewDto.getReviewerComment());
+    }
+
+    private AccessRequest getRequest(Long requestId) {
+        return accessRequestRepository
+                .findById(requestId)
                 .orElseThrow(ExceptionUtils::resourceNotFound);
+    }
 
-        if (request.getStatus() == AccessRequestStatus.APPROVED) {
-            throw new IllegalStateException("Request already reviewed");
-        }
-        if (request.getStatus() == AccessRequestStatus.CANCELLED) {
-            throw new IllegalStateException("Request already cancelled");
-        }
-        if (request.getStatus() == AccessRequestStatus.REJECTED) {
-            throw new IllegalStateException("Request already rejected");
-        }
-
-        request.setStatus(reviewDto.getStatus());
+    private void finalizeRequest(AccessRequest request, AppUser reviewer, AccessRequestStatus status, String reviewerComment) {
+        request.setStatus(status);
         request.setReviewer(reviewer);
-        request.setReviewerComment(reviewDto.getReviewerComment());
-        request.setRequestedDate(LocalDateTime.now());
+        request.setReviewerComment(reviewerComment);
+        request.setReviewedDate(LocalDateTime.now());
 
         publishEvent(request);
     }
 
     private void publishEvent(AccessRequest request) {
-        if (request.getStatus() == AccessRequestStatus.APPROVED) {
-            publisher.publishEvent(new AccessRequestApprovedEvent(
-                    request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName()));
-        } else {
-            publisher.publishEvent(new AccessRequestRejectedEvent(
-                    request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName(), request.getReviewerComment()));
+        switch (request.getStatus()) {
+            case APPROVED -> publisher.publishEvent(
+                    new AccessRequestApprovedEvent(request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName()));
+
+            case REJECTED -> publisher.publishEvent(
+                    new AccessRequestRejectedEvent(request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName(), request.getReviewerComment()));
+
+            case REVOKED -> publisher.publishEvent(
+                    new AccessRequestRevokedEvent(request.getId(), request.getRequester().getEmail(), request.getRequester().getFullName(), request.getReviewerComment()));
+
+            default -> throw new IllegalStateException("Unknown request status: " + request.getStatus());
         }
     }
 }

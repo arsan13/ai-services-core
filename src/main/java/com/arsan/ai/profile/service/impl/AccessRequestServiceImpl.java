@@ -48,6 +48,10 @@ public class AccessRequestServiceImpl implements AccessRequestService {
 
     @Override
     public AccessRequestResponseDto requestAccess(AccessRequestCreateDto requestDto) {
+        if (requestDto.getRoles().isEmpty() && requestDto.getPermissions().isEmpty()) {
+            throw new IllegalArgumentException("At least one role or permission must be requested.");
+        }
+
         AccessRequest entity = mapper.toEntity(requestDto);
         entity.setRequester(SecurityUtils.getCurrentUserOrThrow());
 

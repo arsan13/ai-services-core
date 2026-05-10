@@ -4,7 +4,8 @@ public enum AccessRequestStatus {
     PENDING,
     APPROVED,
     REJECTED,
-    CANCELLED;
+    CANCELLED,
+    REVOKED;
 
     public static AccessRequestStatus fromValue(String value) {
         try {

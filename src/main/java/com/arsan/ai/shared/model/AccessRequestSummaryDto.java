@@ -1,5 +1,6 @@
 package com.arsan.ai.shared.model;
 
+import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,7 @@ public class AccessRequestSummaryDto {
     private String requesterComment;
     private String reviewerComment;
 
-    private Set<String> roles;
+    private Set<RoleType> roles;
     private Set<String> permissions;
 
     private LocalDateTime requestedDate;
