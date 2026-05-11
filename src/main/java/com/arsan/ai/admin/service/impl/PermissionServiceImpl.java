@@ -2,6 +2,7 @@ package com.arsan.ai.admin.service.impl;
 
 import com.arsan.ai.admin.service.PermissionService;
 import com.arsan.ai.auth.enums.PermissionType;
+import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
@@ -20,6 +21,29 @@ import java.util.Set;
 public class PermissionServiceImpl implements PermissionService {
 
     private final UserRepository userRepository;
+
+    public List<String> availablePermissions() {
+        return Arrays.stream(PermissionType.values())
+                .map(PermissionType::getValue)
+                .toList();
+    }
+
+    @Override
+    public List<String> availablePermissions(Long userId) {
+        AppUser user = getUserOrThrow(userId);
+        Set<String> existingPermissions = PermissionUtils.resolvePermissions(user);
+
+        return availablePermissions().stream()
+                .filter(p -> !existingPermissions.contains(p))
+                .toList();
+    }
+
+    @Override
+    public List<String> availablePermissions(RoleType roleType) {
+        return roleType.getPermissions().stream()
+                .map(PermissionType::getValue)
+                .toList();
+    }
 
     @Transactional
     public void grantPermission(Long userId, Set<String> permissions) {
@@ -51,22 +75,6 @@ public class PermissionServiceImpl implements PermissionService {
 
         // If previously granted as extra, remove it
         user.getExtraPermissions().removeAll(new HashSet<>(permissions));
-    }
-
-    @Override
-    public List<String> availablePermissions(Long userId) {
-        AppUser user = getUserOrThrow(userId);
-        Set<String> existingPermissions = PermissionUtils.resolvePermissions(user);
-
-        return availablePermissions().stream()
-                .filter(p -> !existingPermissions.contains(p))
-                .toList();
-    }
-
-    public List<String> availablePermissions() {
-        return Arrays.stream(PermissionType.values())
-                .map(PermissionType::getValue)
-                .toList();
     }
 
     private AppUser getUserOrThrow(Long userId) {

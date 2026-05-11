@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/admin/roles")
@@ -22,26 +23,22 @@ public class RoleController {
     private final RoleService roleService;
 
     @GetMapping("/available")
-    public List<RoleType> getAvailableRoles() {
+    public Map<RoleType, Set<String>> getAvailableRoles() {
         return roleService.availableRoles();
     }
 
     @GetMapping("/available/{userId}")
-    public List<RoleType> getAvailableRoles(@PathVariable Long userId) {
+    public Map<RoleType, Set<String>> getAvailableRoles(@PathVariable Long userId) {
         return roleService.availableRoles(userId);
     }
 
     @PatchMapping("/grant/{userId}")
-    public void makeAdmin(
-            @PathVariable Long userId,
-            @RequestBody @Valid RoleActionRequest request) {
+    public void makeAdmin(@PathVariable Long userId, @RequestBody @Valid RoleActionRequest request) {
         roleService.grantRoles(userId, request.getRoles());
     }
 
     @PatchMapping("/revoke/{userId}")
-    public void revokeAdmin(
-            @PathVariable Long userId,
-            @RequestBody @Valid RoleActionRequest request) {
+    public void revokeAdmin(@PathVariable Long userId, @RequestBody @Valid RoleActionRequest request) {
         roleService.revokeRoles(userId, request.getRoles());
     }
 }

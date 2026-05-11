@@ -54,4 +54,18 @@ public enum RoleType {
 
         this.permissions = Set.copyOf(allPermissions);
     }
+
+    public static RoleType fromValue(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Role type must not be null or blank");
+        }
+
+        for (RoleType role : RoleType.values()) {
+            if (role.name().equalsIgnoreCase(value)) {
+                return role;
+            }
+        }
+
+        throw new IllegalArgumentException("Unsupported role type: " + value);
+    }
 }

@@ -2,14 +2,14 @@ package com.arsan.ai.admin.service;
 
 import com.arsan.ai.auth.enums.RoleType;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface RoleService {
 
-    List<RoleType> availableRoles();
+    Map<RoleType, Set<String>> availableRoles();
 
-    List<RoleType> availableRoles(Long userId);
+    Map<RoleType, Set<String>> availableRoles(Long userId);
 
     void grantRoles(Long userId, Set<RoleType> roles);
 

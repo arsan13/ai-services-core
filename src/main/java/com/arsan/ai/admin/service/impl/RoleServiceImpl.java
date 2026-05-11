@@ -1,6 +1,7 @@
 package com.arsan.ai.admin.service.impl;
 
 import com.arsan.ai.admin.service.RoleService;
+import com.arsan.ai.auth.enums.PermissionType;
 import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.repository.UserRepository;
@@ -9,9 +10,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,16 +45,24 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<RoleType> availableRoles(Long userId) {
+    public Map<RoleType, Set<String>> availableRoles(Long userId) {
         AppUser user = getUserOrThrow(userId);
-        return availableRoles().stream()
-                .filter(roleType -> !user.getRoles().contains(roleType))
-                .toList();
+
+        Map<RoleType, Set<String>> map = availableRoles();
+        map.keySet().removeAll(user.getRoles());
+
+        return map;
     }
 
     @Override
-    public List<RoleType> availableRoles() {
-        return List.of(RoleType.values());
+    public Map<RoleType, Set<String>> availableRoles() {
+        Map<RoleType, Set<String>> map = new EnumMap<>(RoleType.class);
+
+        for (RoleType role : RoleType.values()) {
+            map.put(role, role.getPermissions().stream().map(PermissionType::getValue).collect(Collectors.toSet()));
+        }
+
+        return map;
     }
 
     private AppUser getUserOrThrow(Long userId) {
