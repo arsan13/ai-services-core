@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,15 +30,17 @@ public class AccessRequestController {
         return service.getById(requestId);
     }
 
-    @GetMapping()
-    public Page<AccessRequestResponseDto> getAccessRequests(
-            @RequestParam(required = false) String status,
+    @GetMapping
+    public Page<AccessRequestResponseDto> getAllAccessRequests(
             @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getAll(pageable);
+    }
 
-        if (status == null) {
-            return service.getAll(pageable);
-        }
-        return service.getByStatus(AccessRequestStatus.valueOf(status.toUpperCase()), pageable);
+    @GetMapping("/status/{status}")
+    public Page<AccessRequestResponseDto> getAccessRequestsByStatus(
+            @PathVariable AccessRequestStatus status,
+            @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getByStatus(status, pageable);
     }
 
     @PostMapping()

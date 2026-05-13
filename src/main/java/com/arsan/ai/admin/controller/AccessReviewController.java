@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,20 +25,22 @@ public class AccessReviewController {
 
     private final AccessReviewService service;
 
-    @GetMapping()
-    public Page<AccessRequestSummaryDto> getAccessRequests(
-            @RequestParam(required = false) String status,
-            @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
-
-        if (status == null) {
-            return service.getAll(pageable);
-        }
-        return service.getByStatus(AccessRequestStatus.valueOf(status.toUpperCase()), pageable);
-    }
-
     @GetMapping("/{id}")
     public AccessRequestSummaryDto getById(@PathVariable Long id) {
         return service.getById(id);
+    }
+
+    @GetMapping
+    public Page<AccessRequestSummaryDto> getAllAccessRequests(
+            @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getAll(pageable);
+    }
+
+    @GetMapping("/status/{status}")
+    public Page<AccessRequestSummaryDto> getAccessRequestsByStatus(
+            @PathVariable String status,
+            @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getByStatus(AccessRequestStatus.valueOf(status.toUpperCase()), pageable);
     }
 
     @PutMapping("/review")

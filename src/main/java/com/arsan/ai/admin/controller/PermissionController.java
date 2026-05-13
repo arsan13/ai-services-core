@@ -32,8 +32,8 @@ public class PermissionController {
         return permissionService.availablePermissions(id);
     }
 
-    @GetMapping("/available")
-    public List<String> getAvailablePermissions(@RequestParam String role) {
+    @GetMapping("/available/{role}")
+    public List<String> getAvailablePermissions(@PathVariable String role) {
         return permissionService.availablePermissions(RoleType.fromValue(role));
     }
 
