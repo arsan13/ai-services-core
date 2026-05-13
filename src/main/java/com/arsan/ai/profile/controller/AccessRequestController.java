@@ -36,7 +36,7 @@ public class AccessRequestController {
         return service.getAll(pageable);
     }
 
-    @GetMapping("/status/{status}")
+    @GetMapping("/{status}")
     public Page<AccessRequestResponseDto> getAccessRequestsByStatus(
             @PathVariable AccessRequestStatus status,
             @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
