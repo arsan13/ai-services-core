@@ -10,7 +10,7 @@ public final class EmailConstants {
 
     public static final String VERIFY_EMAIL_PATH = "/verify-email";
     public static final String RESET_PASSWORD_PATH = "/reset-password";
-    public static final String ACCESS_REQUEST_CREATE_PATH = "/request-create";
+    public static final String ACCESS_REQUEST_PATH = "/access-requests/my-requests";
 
     public static final String VERIFY_EMAIL_TEMPLATE = "verify-email";
     public static final String RESET_PASSWORD_TEMPLATE = "reset-password";

@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/me/access-requests").hasAuthority(PermissionType.REQUEST_ACCESS_CREATE.getValue())
 
                         .requestMatchers(HttpMethod.GET, "/admin/access-requests/**").hasAuthority(PermissionType.REQUEST_ACCESS_VIEW.getValue())
-                        .requestMatchers(HttpMethod.PUT, "/admin/access-requests/review").hasAuthority(PermissionType.REQUEST_ACCESS_APPROVE.getValue())
+                        .requestMatchers(HttpMethod.PUT, "/admin/access-requests/").hasAuthority(PermissionType.REQUEST_ACCESS_APPROVE.getValue())
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

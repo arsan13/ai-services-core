@@ -2,9 +2,9 @@ package com.arsan.ai.admin.controller;
 
 import com.arsan.ai.admin.model.AccessRequestReviewDto;
 import com.arsan.ai.admin.model.AccessRequestRevokeDto;
+import com.arsan.ai.admin.model.AccessRequestSummaryDto;
 import com.arsan.ai.admin.service.AccessReviewService;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
-import com.arsan.ai.shared.model.AccessRequestSummaryDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class AccessReviewController {
         return service.getAll(pageable);
     }
 
-    @GetMapping("/{status}")
+    @GetMapping("/status/{status}")
     public Page<AccessRequestSummaryDto> getAccessRequestsByStatus(
             @PathVariable String status,
             @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {

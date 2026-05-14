@@ -1,4 +1,4 @@
-package com.arsan.ai.shared.model;
+package com.arsan.ai.admin.model;
 
 import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.shared.enums.AccessRequestStatus;

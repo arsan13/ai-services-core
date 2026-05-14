@@ -1,11 +1,11 @@
 package com.arsan.ai.shared.mapper;
 
+import com.arsan.ai.admin.model.AccessRequestSummaryDto;
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
-import com.arsan.ai.shared.model.AccessRequestResponseDto;
-import com.arsan.ai.shared.model.AccessRequestSummaryDto;
+import com.arsan.ai.profile.model.AccessRequestResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

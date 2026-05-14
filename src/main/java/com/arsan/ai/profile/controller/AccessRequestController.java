@@ -3,7 +3,7 @@ package com.arsan.ai.profile.controller;
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.service.AccessRequestService;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
-import com.arsan.ai.shared.model.AccessRequestResponseDto;
+import com.arsan.ai.profile.model.AccessRequestResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class AccessRequestController {
         return service.getAll(pageable);
     }
 
-    @GetMapping("/{status}")
+    @GetMapping("/status/{status}")
     public Page<AccessRequestResponseDto> getAccessRequestsByStatus(
             @PathVariable AccessRequestStatus status,
             @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {

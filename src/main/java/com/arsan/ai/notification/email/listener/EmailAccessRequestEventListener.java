@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static com.arsan.ai.notification.email.constants.EmailConstants.ACCESS_REQUEST_APPROVED_SUBJECT;
 import static com.arsan.ai.notification.email.constants.EmailConstants.ACCESS_REQUEST_APPROVED_TEMPLATE;
-import static com.arsan.ai.notification.email.constants.EmailConstants.ACCESS_REQUEST_CREATE_PATH;
+import static com.arsan.ai.notification.email.constants.EmailConstants.ACCESS_REQUEST_PATH;
 import static com.arsan.ai.notification.email.constants.EmailConstants.ACCESS_REQUEST_REJECTED_SUBJECT;
 import static com.arsan.ai.notification.email.constants.EmailConstants.ACCESS_REQUEST_REJECTED_TEMPLATE;
 import static com.arsan.ai.notification.email.constants.EmailConstants.ACCESS_REQUEST_REVOKED_SUBJECT;
@@ -52,7 +52,7 @@ public class EmailAccessRequestEventListener {
         Map<String, Object> model = Map.of(
                 NAME, event.userName(),
                 REQUEST_ID, event.requestId(),
-                REQUEST_LINK, appProperties.getFrontendUrl().concat(ACCESS_REQUEST_CREATE_PATH),
+                REQUEST_LINK, appProperties.getFrontendUrl().concat(ACCESS_REQUEST_PATH),
                 REASON, event.reason()
         );
 
@@ -65,7 +65,7 @@ public class EmailAccessRequestEventListener {
                 NAME, event.userName(),
                 REQUEST_ID, event.requestId(),
                 REASON, event.reason(),
-                REQUEST_LINK, appProperties.getFrontendUrl().concat(ACCESS_REQUEST_CREATE_PATH)
+                REQUEST_LINK, appProperties.getFrontendUrl().concat(ACCESS_REQUEST_PATH)
         );
 
         sendEmail(event.userEmail(), ACCESS_REQUEST_REVOKED_SUBJECT, ACCESS_REQUEST_REVOKED_TEMPLATE, model);
