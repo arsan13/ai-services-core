@@ -1,11 +1,11 @@
 package com.arsan.ai.profile.service.impl;
 
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
+import com.arsan.ai.profile.model.AccessRequestResponseDto;
 import com.arsan.ai.profile.service.AccessRequestService;
 import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
-import com.arsan.ai.profile.model.AccessRequestResponseDto;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
