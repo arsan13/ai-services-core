@@ -471,7 +471,6 @@ Swagger/OpenAPI in dev:
 ## Known Gaps and Roadmap
 
 - Aviation tool methods currently return mocked data
-- Introduce a user access-request module where users can request feature permissions and admins can review/approve or reject those requests
 - **Externalize config with refresh scope** - Integrate Spring Cloud Config Server for centralized configuration management with `@RefreshScope` support, enabling dynamic property updates without application restart (CORS origins, feature flags, AI model parameters, etc.)
 - **Add redis** - Implement Redis caching layer for session storage, conversation memory, user preferences, and token blacklisting to reduce database load and improve response times for frequently accessed data
 - **Add rate limiter** - Implement API rate limiting using Resilience4j or Spring Cloud Gateway to protect endpoints from abuse, with per-user and per-endpoint limits for auth, chat, and admin APIs
