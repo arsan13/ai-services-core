@@ -1,4 +1,4 @@
-package com.arsan.ai.admin.projection;
+package com.arsan.ai.admin.repository.projection;
 
 public interface UserTokenUsage {
     String getUserId();

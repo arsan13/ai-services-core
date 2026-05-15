@@ -1,4 +1,4 @@
-package com.arsan.ai.admin.projection;
+package com.arsan.ai.shared.repository.projection;
 
 import com.arsan.ai.auth.enums.RoleType;
 

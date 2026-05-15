@@ -1,6 +1,6 @@
 package com.arsan.ai.admin.service;
 
-import com.arsan.ai.admin.projection.UserResponse;
+import com.arsan.ai.shared.repository.projection.UserResponse;
 
 import java.util.List;
 

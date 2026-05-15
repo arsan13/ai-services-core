@@ -142,6 +142,7 @@ com/arsan/ai/
 ├── shared/                        # Shared Domain Layer
 │   ├── entity/                  # Shared entities
 │   ├── repository/              # Shared repositories
+|   |    └── projection           # Database read projections
 │   ├── mapper/                  # Entity-DTO mappers
 │   ├── model/                   # Shared DTOs & value objects
 │   └── util/                    # Cross-cutting utilities
@@ -171,7 +172,7 @@ com/arsan/ai/
 │   ├── service/                 # Admin business logic
 │   ├── entity/                  # Admin entities
 │   ├── repository/              # Admin repositories
-│   ├── projection/              # Database read projections
+|   |   └── projection           # Database read projections 
 │   └── model/                   # Admin DTOs
 ├── notification/                 # Notification Domain
 │   └── email/                   # Email service

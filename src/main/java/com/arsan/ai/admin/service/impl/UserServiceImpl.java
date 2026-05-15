@@ -1,6 +1,6 @@
 package com.arsan.ai.admin.service.impl;
 
-import com.arsan.ai.admin.projection.UserResponse;
+import com.arsan.ai.shared.repository.projection.UserResponse;
 import com.arsan.ai.admin.service.UserService;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;

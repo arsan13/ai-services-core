@@ -1,4 +1,4 @@
-package com.arsan.ai.admin.projection;
+package com.arsan.ai.admin.repository.projection;
 
 import java.time.LocalDateTime;
 
