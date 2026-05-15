@@ -1,7 +1,7 @@
 package com.arsan.ai.admin.controller;
 
-import com.arsan.ai.shared.repository.projection.UserResponse;
 import com.arsan.ai.admin.service.UserService;
+import com.arsan.ai.shared.repository.projection.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

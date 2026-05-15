@@ -6,6 +6,7 @@ import java.util.Set;
 
 public interface PendingAccessRequestProjection {
     Set<RoleType> getRoles();
+
     Set<String> getPermissions();
 }
 
