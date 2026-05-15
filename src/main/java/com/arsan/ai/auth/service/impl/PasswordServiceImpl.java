@@ -53,6 +53,7 @@ public class PasswordServiceImpl implements PasswordService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordResetDate(LocalDateTime.now());
+        user.setTokenVersion(user.getTokenVersion() + 1);
     }
 
     private void validateTokenReuse(ResetPasswordRequest request, AppUser user) {
