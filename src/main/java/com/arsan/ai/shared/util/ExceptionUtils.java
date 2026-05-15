@@ -11,4 +11,8 @@ public class ExceptionUtils {
     public static ResourceNotFoundException userNotFound() {
         return new ResourceNotFoundException("User not found");
     }
+
+    public static ResourceNotFoundException resourceNotFound() {
+        return new ResourceNotFoundException("Resource not found");
+    }
 }

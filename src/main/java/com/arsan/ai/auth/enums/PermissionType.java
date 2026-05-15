@@ -17,16 +17,19 @@ public enum PermissionType {
     USER_READ("user:read"),
     USER_WRITE("user:write"),
     USER_DELETE("user:delete"),
-    USER_MANAGE("user:manage"),
 
     TOKEN_USAGE_READ("token:usage:read"),
 
     CHAT_AVIATION_USE("chat:aviation:use"),
-    CHAT_GENERIC_USE("chat:generic:use");
+    CHAT_GENERIC_USE("chat:generic:use"),
 
-    private final String value;
+    REQUEST_ACCESS_CREATE("request:access:create"),
+    REQUEST_ACCESS_VIEW("request:access:view"),
+    REQUEST_ACCESS_APPROVE("request:access:approve");
+
     private static final Map<String, PermissionType> BY_VALUE = Arrays.stream(values())
             .collect(Collectors.toUnmodifiableMap(PermissionType::getValue, p -> p));
+    private final String value;
 
     PermissionType(String value) {
         this.value = value;
