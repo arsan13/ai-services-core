@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,11 +22,12 @@ public interface AccessRequestRepository extends JpaRepository<AccessRequest, Lo
     @EntityGraph(attributePaths = {"reviewer"})
     Page<AccessRequest> findByRequesterId(Long requesterId, Pageable pageable);
 
-    List<AccessRequest> findByStatusAndRequesterId(AccessRequestStatus status, Long requesterId);
+    <T> List<T> findByStatusAndRequesterId(AccessRequestStatus status, Long requesterId, Class<T> type);
 
     @EntityGraph(attributePaths = {"requester", "reviewer"})
     Page<AccessRequest> findByStatus(AccessRequestStatus status, Pageable pageable);
 
     @EntityGraph(attributePaths = {"requester", "reviewer"})
-    Page<AccessRequest> findAll(Pageable pageable);
+    @NonNull
+    Page<AccessRequest> findAll(@NonNull Pageable pageable);
 }

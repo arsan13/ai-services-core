@@ -9,6 +9,7 @@ import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
+import com.arsan.ai.shared.repository.projection.PendingAccessRequestProjection;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -55,14 +56,15 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     @Override
     public PendingRolesPermissionsDto getPendingRolesAndPermissions() {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        List<AccessRequest> pendingRequests = accessRequestRepository.findByStatusAndRequesterId(AccessRequestStatus.PENDING, userId);
+        List<PendingAccessRequestProjection> projections = accessRequestRepository
+                .findByStatusAndRequesterId(AccessRequestStatus.PENDING, userId, PendingAccessRequestProjection.class);
 
         Set<RoleType> roles = new HashSet<>();
         Set<String> permissions = new HashSet<>();
 
-        for (AccessRequest request : pendingRequests) {
-            roles.addAll(request.getRoles());
-            permissions.addAll(request.getPermissions());
+        for (PendingAccessRequestProjection projection : projections) {
+            roles.addAll(projection.getRoles());
+            permissions.addAll(projection.getPermissions());
         }
 
         return PendingRolesPermissionsDto.builder()
