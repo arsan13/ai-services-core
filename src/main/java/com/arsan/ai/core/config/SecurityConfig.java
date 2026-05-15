@@ -1,10 +1,10 @@
 package com.arsan.ai.core.config;
 
+import com.arsan.ai.auth.enums.PermissionType;
 import com.arsan.ai.core.properties.SecurityProperties;
 import com.arsan.ai.core.security.filter.JwtAuthFilter;
 import com.arsan.ai.core.security.handler.OAuth2FailureHandler;
 import com.arsan.ai.core.security.handler.OAuth2SuccessHandler;
-import com.arsan.ai.shared.enums.PermissionType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +47,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(publicPaths).permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/admin/token-usage/**").hasAuthority(PermissionType.TOKEN_USAGE_READ.getValue())
                         .requestMatchers(HttpMethod.GET, "/admin/users/**").hasAuthority(PermissionType.ADMIN_READ.getValue())
-                        .requestMatchers(HttpMethod.GET, "/admin/users/permission/available").hasAuthority(PermissionType.ADMIN_READ.getValue())
+                        .requestMatchers(HttpMethod.GET, "/admin/roles/available").hasAuthority(PermissionType.USER_READ.getValue())
+                        .requestMatchers(HttpMethod.GET, "/admin/permissions/available").hasAuthority(PermissionType.USER_READ.getValue())
                         .requestMatchers(HttpMethod.PATCH, "/admin/users/**").hasAuthority(PermissionType.ADMIN_WRITE.getValue())
+
+                        .requestMatchers(HttpMethod.GET, "/admin/token-usage/**").hasAuthority(PermissionType.TOKEN_USAGE_READ.getValue())
+
+                        .requestMatchers(HttpMethod.POST, "/me/access-requests").hasAuthority(PermissionType.REQUEST_ACCESS_CREATE.getValue())
+                        .requestMatchers(HttpMethod.PUT, "/me/access-requests").hasAuthority(PermissionType.REQUEST_ACCESS_CREATE.getValue())
+
+                        .requestMatchers(HttpMethod.GET, "/admin/access-requests/**").hasAuthority(PermissionType.REQUEST_ACCESS_VIEW.getValue())
+                        .requestMatchers(HttpMethod.PUT, "/admin/access-requests/").hasAuthority(PermissionType.REQUEST_ACCESS_APPROVE.getValue())
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

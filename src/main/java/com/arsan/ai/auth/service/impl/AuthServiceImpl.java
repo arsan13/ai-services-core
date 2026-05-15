@@ -22,6 +22,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
+import static com.arsan.ai.auth.enums.PermissionType.CHAT_GENERIC_USE;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -62,12 +66,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AvailabilityResponse isEmailAvailable(String email) {
-        return new AvailabilityResponse(!userRepository.existsByEmail(email));
+        return new AvailabilityResponse(!userRepository.existsByEmailIgnoreCase(email));
     }
 
     @Override
     public void resendVerificationEmail(String email) {
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");
@@ -81,10 +85,21 @@ public class AuthServiceImpl implements AuthService {
         jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
 
         String email = jwtService.extractEmail(token);
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
 
-        user.markAsVerified();
+        markUserAsVerified(user);
         userRepository.save(user);
+    }
+
+    @Override
+    public void markUserAsVerified(AppUser user) {
+        if (user.isVerified()) {
+            throw new IllegalStateException("Email already verified");
+        }
+
+        user.getExtraPermissions().add(CHAT_GENERIC_USE.getValue());
+        user.setVerified(true);
+        user.setVerifiedDate(LocalDateTime.now());
     }
 
     private void sendVerificationEmail(AppUser user) {

@@ -1,4 +1,4 @@
-package com.arsan.ai.admin.projection;
+package com.arsan.ai.shared.repository.projection;
 
 import com.arsan.ai.auth.enums.RoleType;
 
@@ -14,7 +14,9 @@ public interface UserResponse {
 
     List<RoleType> getRoles();
 
-    List<String> getPermissions();
+    List<String> getExtraPermissions();
+
+    List<String> getRevokedPermissions();
 
     boolean isVerified();
 

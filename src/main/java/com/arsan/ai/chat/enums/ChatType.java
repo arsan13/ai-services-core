@@ -1,6 +1,6 @@
 package com.arsan.ai.chat.enums;
 
-import com.arsan.ai.shared.enums.PermissionType;
+import com.arsan.ai.auth.enums.PermissionType;
 import lombok.Getter;
 
 @Getter

@@ -56,19 +56,36 @@ CREATE TABLE app_user_roles
 
 
 -- =========================
--- USER PERMISSIONS (ElementCollection)
+-- USER EXTRA PERMISSIONS (ElementCollection)
 -- =========================
-CREATE TABLE app_user_permissions
+CREATE TABLE app_user_extra_permissions
 (
     user_id    BIGINT       NOT NULL,
     permission VARCHAR(100) NOT NULL,
 
-    CONSTRAINT fk_user_permissions_user
+    CONSTRAINT fk_user_extra_permissions_user
         FOREIGN KEY (user_id)
             REFERENCES app_user (id)
             ON DELETE CASCADE,
 
-    CONSTRAINT uk_user_permissions UNIQUE (user_id, permission)
+    CONSTRAINT uk_user_extra_permissions UNIQUE (user_id, permission)
+);
+
+
+-- =========================
+-- USER REVOKED PERMISSIONS (ElementCollection)
+-- =========================
+CREATE TABLE app_user_revoked_permissions
+(
+    user_id    BIGINT       NOT NULL,
+    permission VARCHAR(100) NOT NULL,
+
+    CONSTRAINT fk_user_revoked_permissions_user
+        FOREIGN KEY (user_id)
+            REFERENCES app_user (id)
+            ON DELETE CASCADE,
+
+    CONSTRAINT uk_user_revoked_permissions UNIQUE (user_id, permission)
 );
 
 

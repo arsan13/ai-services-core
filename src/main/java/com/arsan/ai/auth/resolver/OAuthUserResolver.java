@@ -1,6 +1,7 @@
 package com.arsan.ai.auth.resolver;
 
 import com.arsan.ai.auth.provider.core.OAuthUserInfo;
+import com.arsan.ai.auth.service.AuthService;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class OAuthUserResolver {
 
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     public AppUser resolve(OAuthUserInfo info) {
 
@@ -39,14 +41,14 @@ public class OAuthUserResolver {
 
     private AppUser findByEmail(String email) {
         if (email == null || email.isBlank()) return null;
-        return userRepository.findByEmail(email).orElse(null);
+        return userRepository.findByEmailIgnoreCase(email).orElse(null);
     }
 
     private AppUser createUser(OAuthUserInfo info) {
         AppUser user = new AppUser();
 
         String email = info.getEmail() != null ? info.getEmail() : info.getName();
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmailIgnoreCase(email)) {
             email = info.getProviderType().name().toLowerCase() + "_" + info.getProviderId();
         }
 
@@ -54,7 +56,7 @@ public class OAuthUserResolver {
         user.setFullName(info.getName());
         user.setProviderType(info.getProviderType());
         user.setProviderId(info.getProviderId());
-        user.markAsVerified();
+        authService.markUserAsVerified(user);
 
         return userRepository.save(user);
     }

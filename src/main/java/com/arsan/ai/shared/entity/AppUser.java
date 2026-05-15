@@ -2,7 +2,7 @@ package com.arsan.ai.shared.entity;
 
 import com.arsan.ai.auth.enums.AuthProviderType;
 import com.arsan.ai.auth.enums.RoleType;
-import com.arsan.ai.shared.enums.PermissionType;
+import com.arsan.ai.shared.util.PermissionUtils;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -34,6 +34,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(
@@ -50,13 +52,14 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AppUser implements UserDetails {
 
     public static final String EMAIL_UNIQUE_KEY_NAME = "uk_user_email";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String fullName;
@@ -76,9 +79,15 @@ public class AppUser implements UserDetails {
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "app_user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "app_user_extra_permissions", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "permission")
-    private Set<String> permissions = new HashSet<>(Set.of(PermissionType.USER_READ.getValue()));
+    private Set<String> extraPermissions = new HashSet<>();
+
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "app_user_revoked_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private Set<String> revokedPermissions = new HashSet<>();
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -87,16 +96,17 @@ public class AppUser implements UserDetails {
     private String providerId;
 
     private boolean verified;
+
     private LocalDateTime verifiedDate;
 
     @CreationTimestamp
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
     private LocalDateTime passwordResetDate;
-
 
     @Override
     public String getUsername() {
@@ -105,27 +115,11 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new HashSet<>();
-
-        authorities.addAll(this.roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .toList());
-
-        authorities.addAll(permissions.stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList()
-        );
-
-        return authorities;
-    }
-
-    public void markAsVerified() {
-        if (this.verified) {
-            throw new IllegalStateException("Email already verified");
-        }
-
-        this.permissions.addAll(PermissionType.VERIFIED_USERS_VALUES);
-        this.verified = true;
-        this.verifiedDate = LocalDateTime.now();
+        return Stream
+                .concat(
+                        this.roles.stream().map(role -> new SimpleGrantedAuthority(role.name())),
+                        PermissionUtils.resolvePermissions(this).stream().map(SimpleGrantedAuthority::new)
+                )
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

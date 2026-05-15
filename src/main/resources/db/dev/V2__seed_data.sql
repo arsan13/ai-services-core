@@ -1,6 +1,7 @@
 -- DROP TABLE IF EXISTS token_usage_audit;
 -- DROP TABLE IF EXISTS app_user_roles;
--- DROP TABLE IF EXISTS app_user_permissions;
+-- DROP TABLE IF EXISTS app_user_extra_permissions;
+-- DROP TABLE IF EXISTS app_user_revoked_permissions;
 -- DROP TABLE IF EXISTS app_user;
 
 INSERT INTO token_usage_audit (id, user_id, model, provider, prompt_tokens, completion_tokens, total_tokens,

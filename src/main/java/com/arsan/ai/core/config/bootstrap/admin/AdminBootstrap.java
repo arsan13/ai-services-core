@@ -3,7 +3,6 @@ package com.arsan.ai.core.config.bootstrap.admin;
 import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.core.properties.AdminBootstrapProperties;
 import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.enums.PermissionType;
 import com.arsan.ai.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class AdminBootstrap implements CommandLineRunner {
             return;
         }
 
-        if (userRepository.existsByEmail(properties.getEmail())) {
+        if (userRepository.existsByEmailIgnoreCase(properties.getEmail())) {
             return;
         }
 
@@ -40,7 +39,6 @@ public class AdminBootstrap implements CommandLineRunner {
                 .email(properties.getEmail())
                 .password(passwordEncoder.encode(properties.getPassword()))
                 .roles(EnumSet.allOf(RoleType.class))
-                .permissions(PermissionType.ALL_VALUES)
                 .verified(true)
                 .verifiedDate(LocalDateTime.now())
                 .build();

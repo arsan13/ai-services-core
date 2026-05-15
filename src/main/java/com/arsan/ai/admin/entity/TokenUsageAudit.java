@@ -36,11 +36,12 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class TokenUsageAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,12 +51,12 @@ public class TokenUsageAudit {
     private String model;
     private String provider;
 
-    private int promptTokens;
-    private int completionTokens;
-    private int totalTokens;
+    private Integer promptTokens;
+    private Integer completionTokens;
+    private Integer totalTokens;
 
-    private double costInUsd;
-    private double latencySec;
+    private Double costInUsd;
+    private Double latencySec;
 
     @Column(columnDefinition = "TEXT")
     private String inputSummary;
@@ -64,5 +65,10 @@ public class TokenUsageAudit {
     private String outputSummary;
 
     @CreationTimestamp
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdDate;
+
+    // Optional future additions:
+    // private String requestId;
+    // private String sessionId;
 }

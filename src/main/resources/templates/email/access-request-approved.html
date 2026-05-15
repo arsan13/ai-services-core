@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{email/fragments/head :: head('Access Request Approved')}"/>
+
+<body>
+
+<table class="container" role="presentation" width="100%">
+    <tr>
+        <td>
+
+            <table class="email-card" role="presentation" width="100%">
+
+                <th:block th:replace="~{email/fragments/header :: header(${appName})}"/>
+
+                <tr>
+                    <td class="content">
+
+                        <h2 style="color: #2e7d32;">🎉 Access Request Approved</h2>
+
+                        <p>
+                            Hello
+                            <strong th:text="${name}">User</strong>,
+                        </p>
+
+                        <p>
+                            Good news! Your access request
+                            <strong th:text="${requestId}">#123</strong>
+                            has been <b>approved</b> by the admin.
+                        </p>
+
+                        <p>
+                            You can now access the system features
+                            based on your assigned permissions.
+                        </p>
+
+                        <th:block
+                                th:replace="~{email/fragments/button
+                                :: button(
+                                    'Go to Console',
+                                    ${requestLink}
+                                )}"
+                        />
+
+                        <p>
+                            If the button above does not work, copy and paste:
+                        </p>
+
+                        <div class="link-box">
+                            <span th:text="${requestLink}">
+                                dashboard-link
+                            </span>
+                        </div>
+
+                        <p>
+                            If you have any questions, please contact support.
+                        </p>
+
+                    </td>
+                </tr>
+
+                <th:block th:replace="~{email/fragments/footer :: footer(${appName})}"/>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,19 +1,20 @@
-package com.arsan.ai.auth.model;
+package com.arsan.ai.admin.model;
 
+import com.arsan.ai.auth.enums.RoleType;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PermissionRequest {
+public class RoleActionRequest {
 
-    @NotEmpty(message = "At least one permission is required")
-    private List<String> permissions;
+    @NotEmpty
+    private Set<RoleType> roles;
 }

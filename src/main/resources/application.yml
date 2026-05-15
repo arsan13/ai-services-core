@@ -99,7 +99,7 @@ app:
     response:
       wrapper:
         enabled: true
-        base-package: com.arsan.ai.controller
+        base-package: com.arsan.ai
         excluded-paths:
           - /v3/api-docs
           - /swagger

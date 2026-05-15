@@ -5,6 +5,7 @@ import com.arsan.ai.core.exception.custom.ResourceNotFoundException;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.model.ApiResponse;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -29,6 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AiServiceException.class)
     public ResponseEntity<ApiResponse<?>> handleAi(AiServiceException ex) {
+        log.error("AI Service Exception occurred: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(
                 ApiResponse.failure("AI Error", ex.getMessage()),
                 HttpStatus.BAD_GATEWAY
@@ -37,6 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<?>> handleIllegalArgument(IllegalArgumentException ex) {
+        log.warn("Illegal Argument Exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(
                 ApiResponse.failure("Invalid argument provided", ex.getMessage()),
                 HttpStatus.BAD_REQUEST
@@ -45,6 +49,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiResponse<?>> handleIllegalState(IllegalStateException ex) {
+        log.warn("Illegal State Exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(
                 ApiResponse.failure("Invalid state", ex.getMessage()),
                 HttpStatus.BAD_REQUEST
@@ -59,6 +64,7 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage())
         );
 
+        log.warn("Validation failed for request with errors: {}", errors);
         return new ResponseEntity<>(
                 ApiResponse.failure("Validation failed", errors),
                 HttpStatus.BAD_REQUEST
@@ -67,6 +73,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<?>> handleResourceNotFound(ResourceNotFoundException ex) {
+        log.warn("Resource not found: {}", ex.getMessage());
         return new ResponseEntity<>(
                 ApiResponse.failure("Not found: ", ex.getMessage()),
                 HttpStatus.NOT_FOUND
@@ -75,6 +82,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ApiResponse<?>> handleUsernameNotFound(UsernameNotFoundException ex) {
+        log.warn("User not found: {}", ex.getMessage());
         return new ResponseEntity<>(
                 ApiResponse.failure("User not found", ex.getMessage()),
                 HttpStatus.NOT_FOUND
@@ -83,6 +91,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<?>> handleAuthenticationException(AuthenticationException ex) {
+        log.warn("Authentication failed: {}", ex.getMessage());
         return new ResponseEntity<>(
                 ApiResponse.failure("Authentication failed", ex.getMessage()),
                 HttpStatus.UNAUTHORIZED
@@ -91,6 +100,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<?>> handleBadCredentials(BadCredentialsException ex) {
+        log.warn("Bad credentials provided");
         return new ResponseEntity<>(
                 ApiResponse.failure("Bad credentials", ex.getMessage()),
                 HttpStatus.UNAUTHORIZED
@@ -99,6 +109,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException ex) {
+        log.warn("Access denied: {}", ex.getMessage());
         return new ResponseEntity<>(
                 ApiResponse.failure("Insufficient Privileges", ex.getMessage()),
                 HttpStatus.FORBIDDEN
@@ -107,6 +118,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ApiResponse<?>> handleJwtException(JwtException ex) {
+        log.warn("JWT Exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(
                 ApiResponse.failure("JWT Error", ex.getMessage()),
                 HttpStatus.UNAUTHORIZED
@@ -129,6 +141,7 @@ public class GlobalExceptionHandler {
             errors.put("general", msg);
         }
 
+        log.warn("Data integrity violation: {}", errors, ex);
         return new ResponseEntity<>(
                 ApiResponse.failure("Data integrity violation", errors),
                 HttpStatus.BAD_REQUEST
@@ -137,6 +150,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleGeneric(Exception ex) {
+        log.error("Unexpected exception occurred: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(
                 ApiResponse.failure("Something went wrong", ex.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR

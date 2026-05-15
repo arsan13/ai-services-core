@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{email/fragments/head :: head('Access Revoked')}"/>
+
+<body>
+
+<table class="container" role="presentation" width="100%">
+    <tr>
+        <td>
+
+            <table class="email-card" role="presentation" width="100%">
+
+                <th:block th:replace="~{email/fragments/header :: header(${appName})}"/>
+
+                <tr>
+                    <td class="content">
+
+                        <h2 style="color: #ef6c00;">Access Revoked</h2>
+
+                        <p>
+                            Hello
+                            <strong th:text="${name}">User</strong>,
+                        </p>
+
+                        <p>
+                            Your previously approved access request
+                            <strong th:text="${requestId}">#123</strong>
+                            has been <b>revoked</b>.
+                        </p>
+
+                        <p>
+                            Your access to the associated roles and permissions
+                            has been removed.
+                        </p>
+
+                        <p th:if="${reason != null}">
+                            <b>Reason:</b>
+                            <span th:text="${reason}">
+                                Not specified
+                            </span>
+                        </p>
+
+                        <p>
+                            You may submit a new access request with updated
+                            requester comments and justification if access is still required.
+                        </p>
+
+                        <th:block
+                                th:replace="~{email/fragments/button
+                                :: button(
+                                    'Submit New Request',
+                                    ${requestLink}
+                                )}"
+                        />
+
+                        <p>
+                            If the button does not work, copy and paste:
+                        </p>
+
+                        <div class="link-box">
+                            <span th:text="${requestLink}">
+                                request-link
+                            </span>
+                        </div>
+
+                    </td>
+                </tr>
+
+                <th:block th:replace="~{email/fragments/footer :: footer(${appName})}"/>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

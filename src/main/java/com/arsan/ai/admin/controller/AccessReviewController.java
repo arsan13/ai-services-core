@@ -1,0 +1,55 @@
+package com.arsan.ai.admin.controller;
+
+import com.arsan.ai.admin.model.AccessRequestReviewDto;
+import com.arsan.ai.admin.model.AccessRequestRevokeDto;
+import com.arsan.ai.admin.model.AccessRequestSummaryDto;
+import com.arsan.ai.admin.service.AccessReviewService;
+import com.arsan.ai.shared.enums.AccessRequestStatus;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/admin/access-requests")
+@RequiredArgsConstructor
+public class AccessReviewController {
+
+    private final AccessReviewService service;
+
+    @GetMapping("/{id}")
+    public AccessRequestSummaryDto getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
+    @GetMapping
+    public Page<AccessRequestSummaryDto> getAllAccessRequests(
+            @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getAll(pageable);
+    }
+
+    @GetMapping("/status/{status}")
+    public Page<AccessRequestSummaryDto> getAccessRequestsByStatus(
+            @PathVariable String status,
+            @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getByStatus(AccessRequestStatus.valueOf(status.toUpperCase()), pageable);
+    }
+
+    @PutMapping("/review")
+    public void reviewRequest(@Valid @RequestBody AccessRequestReviewDto reviewDto) {
+        service.reviewRequest(reviewDto);
+    }
+
+    @PutMapping("/revoke")
+    public void revokeRequest(@Valid @RequestBody AccessRequestRevokeDto revokeDto) {
+        service.revokeRequest(revokeDto);
+    }
+}
