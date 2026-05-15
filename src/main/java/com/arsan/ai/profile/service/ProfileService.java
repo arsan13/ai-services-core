@@ -8,4 +8,6 @@ public interface ProfileService {
     UserProfile getUserProfile();
 
     void changePassword(ChangePasswordRequest request);
+
+    void logoutOfAllDevices();
 }

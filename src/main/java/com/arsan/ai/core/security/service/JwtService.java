@@ -18,8 +18,9 @@ import java.util.function.Function;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_AUTHORITIES;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_EMAIL;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_PROVIDER;
+import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_TOKEN_VERSION;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_USER_ID;
-import static com.arsan.ai.core.security.constants.JwtConstants.TOKEN_PURPOSE;
+import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_TOKEN_PURPOSE;
 
 @Service
 public class JwtService {
@@ -40,12 +41,13 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>(Map.of(
                 CLAIM_USER_ID, user.getId(),
                 CLAIM_EMAIL, user.getEmail(),
-                TOKEN_PURPOSE, tokenPurpose.name()
+                CLAIM_TOKEN_PURPOSE, tokenPurpose.name()
         ));
 
         if (TokenPurpose.ACCESS.equals(tokenPurpose)) {
             claims.put(CLAIM_PROVIDER, user.getProviderType());
             claims.put(CLAIM_AUTHORITIES, user.getAuthorities());
+            claims.put(CLAIM_TOKEN_VERSION, user.getTokenVersion());
         }
 
         return generateToken(claims, user, tokenPurposeExpirationMap.get(tokenPurpose));
@@ -76,7 +78,8 @@ public class JwtService {
 
     public boolean isTokenValid(String token, AppUser user) {
         final String email = extractEmail(token);
-        return email.equals(user.getEmail()) && !isTokenExpired(token);
+        final int tokenVersion =  extractClaim(token, claims -> claims.get(CLAIM_TOKEN_VERSION, Integer.class));
+        return email.equals(user.getEmail()) && user.getTokenVersion().equals(tokenVersion) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired(String token) {
@@ -84,7 +87,7 @@ public class JwtService {
     }
 
     public boolean hasInvalidPurpose(String token, TokenPurpose expectedPurpose) {
-        String purpose = extractClaim(token, claims -> claims.get(TOKEN_PURPOSE, String.class));
+        String purpose = extractClaim(token, claims -> claims.get(CLAIM_TOKEN_PURPOSE, String.class));
         return !expectedPurpose.name().equals(purpose);
     }
 

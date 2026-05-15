@@ -8,6 +8,7 @@ import com.arsan.ai.core.security.service.JwtService;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -41,6 +42,7 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Override
+    @Transactional
     public void resetPassword(ResetPasswordRequest request) {
         jwtService.validateToken(request.getToken(), TokenPurpose.PASSWORD_RESET);
 
@@ -51,7 +53,6 @@ public class PasswordServiceImpl implements PasswordService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordResetDate(LocalDateTime.now());
-        userRepository.save(user);
     }
 
     private void validateTokenReuse(ResetPasswordRequest request, AppUser user) {

@@ -108,6 +108,9 @@ public class AppUser implements UserDetails {
 
     private LocalDateTime passwordResetDate;
 
+    @Builder.Default
+    private Integer tokenVersion = 0;
+
     @Override
     public String getUsername() {
         return this.email;

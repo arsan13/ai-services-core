@@ -81,6 +81,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public void verifyUser(String token) {
         jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
 
@@ -88,7 +89,6 @@ public class AuthServiceImpl implements AuthService {
         AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
 
         markUserAsVerified(user);
-        userRepository.save(user);
     }
 
     @Override

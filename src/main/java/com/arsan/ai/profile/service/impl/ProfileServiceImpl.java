@@ -8,6 +8,7 @@ import com.arsan.ai.shared.mapper.UserMapper;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,11 +31,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional
     public void changePassword(ChangePasswordRequest request) {
-        AppUser user = SecurityUtils.getCurrentUser().orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = getCurrentUserFromDB();
 
         if (user.getPassword() == null) {
-            throw new IllegalStateException("Password change not allowed for this account");
+            throw new IllegalStateException("Password-based login is not enabled for this account");
         }
         if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
             throw new IllegalArgumentException("New password must be different");
@@ -45,7 +47,18 @@ public class ProfileServiceImpl implements ProfileService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordResetDate(LocalDateTime.now());
+        user.setTokenVersion(user.getTokenVersion() + 1);
+    }
 
-        userRepository.save(user);
+    @Override
+    @Transactional
+    public void logoutOfAllDevices() {
+        AppUser user = getCurrentUserFromDB();
+        user.setTokenVersion(user.getTokenVersion() + 1);
+    }
+
+    private AppUser getCurrentUserFromDB() {
+        Long userId = SecurityUtils.getCurrentUserId().orElseThrow(ExceptionUtils::userNotFound);
+        return userRepository.findById(userId).orElseThrow(ExceptionUtils::userNotFound);
     }
 }
