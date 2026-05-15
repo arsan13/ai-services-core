@@ -2,6 +2,7 @@ package com.arsan.ai.profile.controller;
 
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.model.AccessRequestResponseDto;
+import com.arsan.ai.profile.model.PendingRolesPermissionsDto;
 import com.arsan.ai.profile.service.AccessRequestService;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import jakarta.validation.Valid;
@@ -41,6 +42,11 @@ public class AccessRequestController {
             @PathVariable AccessRequestStatus status,
             @PageableDefault(sort = "requestedDate", direction = Sort.Direction.DESC) Pageable pageable) {
         return service.getByStatus(status, pageable);
+    }
+
+    @GetMapping("/pending/roles-permissions")
+    public PendingRolesPermissionsDto getPendingRolesAndPermissions() {
+        return service.getPendingRolesAndPermissions();
     }
 
     @PostMapping()

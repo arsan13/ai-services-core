@@ -1,7 +1,9 @@
 package com.arsan.ai.profile.service.impl;
 
+import com.arsan.ai.auth.enums.RoleType;
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.model.AccessRequestResponseDto;
+import com.arsan.ai.profile.model.PendingRolesPermissionsDto;
 import com.arsan.ai.profile.service.AccessRequestService;
 import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
@@ -13,6 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +50,25 @@ public class AccessRequestServiceImpl implements AccessRequestService {
         return accessRequestRepository
                 .findByRequesterId(userId, pageable)
                 .map(mapper::toResponseDto);
+    }
+
+    @Override
+    public PendingRolesPermissionsDto getPendingRolesAndPermissions() {
+        Long userId = SecurityUtils.getCurrentUserIdOrThrow();
+        List<AccessRequest> pendingRequests = accessRequestRepository.findByStatusAndRequesterId(AccessRequestStatus.PENDING, userId);
+
+        Set<RoleType> roles = new HashSet<>();
+        Set<String> permissions = new HashSet<>();
+
+        for (AccessRequest request : pendingRequests) {
+            roles.addAll(request.getRoles());
+            permissions.addAll(request.getPermissions());
+        }
+
+        return PendingRolesPermissionsDto.builder()
+                .roles(roles)
+                .permissions(permissions)
+                .build();
     }
 
     @Override

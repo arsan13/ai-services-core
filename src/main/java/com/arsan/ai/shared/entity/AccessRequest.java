@@ -25,6 +25,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -81,12 +82,14 @@ public class AccessRequest {
     @CollectionTable(name = "access_request_roles", joinColumns = @JoinColumn(name = "request_id"))
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private Set<RoleType> roles;
+    @Builder.Default
+    private Set<RoleType> roles = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(name = "access_request_permissions", joinColumns = @JoinColumn(name = "request_id"))
     @Column(name = "permission")
-    private Set<String> permissions;
+    @Builder.Default
+    private Set<String> permissions = new HashSet<>();
 
     public void validateCreation() {
         if ((roles == null || roles.isEmpty()) && (permissions == null || permissions.isEmpty())) {
