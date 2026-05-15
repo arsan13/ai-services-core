@@ -41,14 +41,14 @@ public class OAuthUserResolver {
 
     private AppUser findByEmail(String email) {
         if (email == null || email.isBlank()) return null;
-        return userRepository.findByEmail(email).orElse(null);
+        return userRepository.findByEmailIgnoreCase(email).orElse(null);
     }
 
     private AppUser createUser(OAuthUserInfo info) {
         AppUser user = new AppUser();
 
         String email = info.getEmail() != null ? info.getEmail() : info.getName();
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmailIgnoreCase(email)) {
             email = info.getProviderType().name().toLowerCase() + "_" + info.getProviderId();
         }
 

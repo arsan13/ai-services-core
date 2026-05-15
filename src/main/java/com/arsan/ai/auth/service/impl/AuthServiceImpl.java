@@ -66,12 +66,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AvailabilityResponse isEmailAvailable(String email) {
-        return new AvailabilityResponse(!userRepository.existsByEmail(email));
+        return new AvailabilityResponse(!userRepository.existsByEmailIgnoreCase(email));
     }
 
     @Override
     public void resendVerificationEmail(String email) {
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");
@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
 
         String email = jwtService.extractEmail(token);
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
 
         markUserAsVerified(user);
         userRepository.save(user);

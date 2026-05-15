@@ -28,7 +28,7 @@ public class AdminBootstrap implements CommandLineRunner {
             return;
         }
 
-        if (userRepository.existsByEmail(properties.getEmail())) {
+        if (userRepository.existsByEmailIgnoreCase(properties.getEmail())) {
             return;
         }
 

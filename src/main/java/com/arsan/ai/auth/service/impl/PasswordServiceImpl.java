@@ -31,7 +31,7 @@ public class PasswordServiceImpl implements PasswordService {
 
     @Override
     public void forgotPassword(String email) {
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
 
         if (user.getPassword() == null) {
             throw new IllegalStateException("Password reset is not available for OAuth2 accounts. Please sign in using " + user.getProviderType());
@@ -45,7 +45,7 @@ public class PasswordServiceImpl implements PasswordService {
         jwtService.validateToken(request.getToken(), TokenPurpose.PASSWORD_RESET);
 
         String email = jwtService.extractEmail(request.getToken());
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
 
         validateTokenReuse(request, user);
 
