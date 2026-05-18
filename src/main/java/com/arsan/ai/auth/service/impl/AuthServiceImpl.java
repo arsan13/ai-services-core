@@ -8,7 +8,9 @@ import com.arsan.ai.auth.model.AvailabilityResponse;
 import com.arsan.ai.auth.model.RegisterRequest;
 import com.arsan.ai.auth.service.AuthService;
 import com.arsan.ai.core.security.service.JwtService;
+import com.arsan.ai.shared.cache.AppUserCache;
 import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.shared.events.UserUpdatedEvent;
 import com.arsan.ai.shared.mapper.UserMapper;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
@@ -35,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
+    private final AppUserCache userCache;
     private final JwtService jwtService;
     private final UserMapper userMapper;
 
@@ -71,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void resendVerificationEmail(String email) {
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userCache.getByEmail(email);
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");
@@ -89,6 +92,8 @@ public class AuthServiceImpl implements AuthService {
         AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
         markUserAsVerified(user);
+
+        eventPublisher.publishEvent(new UserUpdatedEvent(user));
     }
 
     @Override

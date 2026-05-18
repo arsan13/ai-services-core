@@ -4,12 +4,14 @@ import com.arsan.ai.profile.model.ChangePasswordRequest;
 import com.arsan.ai.profile.model.UserProfile;
 import com.arsan.ai.profile.service.ProfileService;
 import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.shared.events.UserUpdatedEvent;
 import com.arsan.ai.shared.mapper.UserMapper;
 import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -33,7 +36,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @Transactional
     public void changePassword(ChangePasswordRequest request) {
-        AppUser user = getCurrentUserFromDB();
+        AppUser user = getCurrentUser();
 
         if (user.getPassword() == null) {
             throw new IllegalStateException("Password-based login is not enabled for this account");
@@ -48,16 +51,20 @@ public class ProfileServiceImpl implements ProfileService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordResetDate(LocalDateTime.now());
         user.setTokenVersion(user.getTokenVersion() + 1);
+
+        eventPublisher.publishEvent(new UserUpdatedEvent(user));
     }
 
     @Override
     @Transactional
     public void logoutOfAllDevices() {
-        AppUser user = getCurrentUserFromDB();
+        AppUser user = getCurrentUser();
         user.setTokenVersion(user.getTokenVersion() + 1);
+
+        eventPublisher.publishEvent(new UserUpdatedEvent(user));
     }
 
-    private AppUser getCurrentUserFromDB() {
+    private AppUser getCurrentUser() {
         Long userId = SecurityUtils.getCurrentUserId().orElseThrow(ExceptionUtils::userNotFound);
         return userRepository.findById(userId).orElseThrow(ExceptionUtils::userNotFound);
     }

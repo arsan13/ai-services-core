@@ -5,10 +5,9 @@ import com.arsan.ai.auth.events.PasswordResetRequestedEvent;
 import com.arsan.ai.auth.model.ResetPasswordRequest;
 import com.arsan.ai.auth.service.PasswordService;
 import com.arsan.ai.core.security.service.JwtService;
+import com.arsan.ai.shared.cache.AppUserCache;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.repository.UserRepository;
-import com.arsan.ai.shared.util.ExceptionUtils;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,12 +26,13 @@ public class PasswordServiceImpl implements PasswordService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final AppUserCache userCache;
     private final JwtService jwtService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public void forgotPassword(String email) {
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userCache.getByEmail(email);
 
         if (user.getPassword() == null) {
             throw new IllegalStateException("Password reset is not available for OAuth2 accounts. Please sign in using " + user.getProviderType());
@@ -42,18 +42,20 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Override
-    @Transactional
     public void resetPassword(ResetPasswordRequest request) {
         jwtService.validateToken(request.getToken(), TokenPurpose.PASSWORD_RESET);
 
         String email = jwtService.extractEmail(request.getToken());
-        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userCache.getByEmail(email);
 
         validateTokenReuse(request, user);
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordResetDate(LocalDateTime.now());
         user.setTokenVersion(user.getTokenVersion() + 1);
+
+        userRepository.save(user);
+        userCache.evict(user);
     }
 
     private void validateTokenReuse(ResetPasswordRequest request, AppUser user) {

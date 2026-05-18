@@ -1,7 +1,7 @@
 package com.arsan.ai.core.security.service;
 
+import com.arsan.ai.shared.cache.AppUserCache;
 import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,12 +11,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final AppUserCache userCache;
 
     @Override
     public AppUser loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userCache.getByEmail(email);
     }
 }
