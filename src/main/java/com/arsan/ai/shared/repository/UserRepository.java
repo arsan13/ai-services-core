@@ -13,9 +13,9 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
 
     <T> Optional<T> findById(Long id, Class<T> type);
 
-    Optional<AppUser> findByEmailIgnoreCase(String email);
+    Optional<AppUser> findByEmail(String email);
 
     Optional<AppUser> findByProviderIdAndProviderType(String providerId, AuthProviderType providerType);
 
-    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByEmail(String email);
 }

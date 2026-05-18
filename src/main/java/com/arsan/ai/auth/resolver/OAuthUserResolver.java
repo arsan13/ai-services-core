@@ -41,18 +41,18 @@ public class OAuthUserResolver {
 
     private AppUser findByEmail(String email) {
         if (email == null || email.isBlank()) return null;
-        return userRepository.findByEmailIgnoreCase(email).orElse(null);
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     private AppUser createUser(OAuthUserInfo info) {
         AppUser user = new AppUser();
 
         String email = info.getEmail() != null ? info.getEmail() : info.getName();
-        if (userRepository.existsByEmailIgnoreCase(email)) {
+        if (userRepository.existsByEmail(email)) {
             email = info.getProviderType().name().toLowerCase() + "_" + info.getProviderId();
         }
 
-        user.setEmail(email);
+        user.setEmail(email.toLowerCase());
         user.setFullName(info.getName());
         user.setProviderType(info.getProviderType());
         user.setProviderId(info.getProviderId());
