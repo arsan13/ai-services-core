@@ -21,6 +21,8 @@ springdoc:
 
 app:
   frontend-url: https://ai-services-console.onrender.com
+  cache:
+    type: redis
   security:
     public-endpoints:
       - /auth/**

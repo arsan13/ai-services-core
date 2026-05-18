@@ -1,7 +1,8 @@
-package com.arsan.ai.core.config;
+package com.arsan.ai.core.config.cache;
 
 import com.arsan.ai.shared.cache.AppUserCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -10,9 +11,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
-@EnableCaching
 @Configuration
-public class CacheConfig {
+@EnableCaching
+@ConditionalOnProperty(name = "app.cache.type", havingValue = "caffeine")
+public class CaffeineCacheConfig {
 
     @Bean
     public CacheManager cacheManager() {

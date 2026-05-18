@@ -13,6 +13,14 @@ spring:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      repositories:
+          enabled: false
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -55,7 +63,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,env,loggers,threaddump
+        include: health,info,metrics,env,loggers
   endpoint:
     health:
       show-details: always
@@ -66,6 +74,9 @@ app:
       enabled: true
       email: ${ADMIN_EMAIL:}
       password: ${ADMIN_PASSWORD:}
+
+  cache:
+    type: none   # redis | caffeine | none
 
   security:
     enabled: true
@@ -88,7 +99,7 @@ app:
       - OPTIONS
 
   email:
-    provider: brevo # Options: smtp, brevo
+    provider: brevo # smtp | brevo
     brevo:
       url: https://api.brevo.com/v3/smtp/email
       api-key: ${BREVO_API_KEY}
