@@ -12,6 +12,7 @@ import com.arsan.ai.admin.service.RoleService;
 import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
+import com.arsan.ai.shared.events.AccessRequestUpdatedEvent;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
@@ -94,6 +95,8 @@ public class AccessReviewServiceImpl implements AccessReviewService {
     }
 
     private void publishEvent(AccessRequest request) {
+        publisher.publishEvent(new AccessRequestUpdatedEvent(request.getRequester().getId()));
+
         switch (request.getStatus()) {
             case APPROVED -> publisher.publishEvent(
                     new AccessRequestApprovedEvent(

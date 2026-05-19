@@ -1,5 +1,6 @@
 package com.arsan.ai.core.config.cache;
 
+import com.arsan.ai.shared.cache.AccessRequestCache;
 import com.arsan.ai.shared.cache.AppUserCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +22,8 @@ public class CaffeineCacheConfig {
 
         CaffeineCacheManager manager = new CaffeineCacheManager(
                 AppUserCache.USER_BY_ID_CACHE,
-                AppUserCache.USER_BY_EMAIL_CACHE
+                AppUserCache.USER_BY_EMAIL_CACHE,
+                AccessRequestCache.PENDING_BY_USER_CACHE
         );
 
         manager.setCaffeine(
