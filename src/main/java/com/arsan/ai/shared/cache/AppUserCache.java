@@ -33,6 +33,6 @@ public class AppUserCache {
             @CacheEvict(value = USER_BY_EMAIL_CACHE, key = "#user.email")
     })
     public void evict(AppUser user) {
-        // Intentionally empty: cache eviction is handled entirely by Spring AOP via @CacheEvict annotations.
+        // Intentionally empty: handled by Spring cache AOP.
     }
 }

@@ -6,7 +6,6 @@ import com.arsan.ai.shared.repository.projection.PendingAccessRequestProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,15 +18,13 @@ public class AccessRequestCache {
 
     private final AccessRequestRepository accessRequestRepository;
 
-    @Cacheable(value = PENDING_BY_USER_CACHE, key = "#userId", sync = true, unless = "#result == null")
+    @Cacheable(value = PENDING_BY_USER_CACHE, key = "#userId", sync = true)
     public List<PendingAccessRequestProjection> getPendingByUser(Long userId) {
         return accessRequestRepository.findByStatusAndRequesterId(AccessRequestStatus.PENDING, userId, PendingAccessRequestProjection.class);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = PENDING_BY_USER_CACHE, key = "#requesterId")
-    })
+    @CacheEvict(value = PENDING_BY_USER_CACHE, key = "#requesterId")
     public void evict(Long requesterId) {
-        // Intentionally empty: cache eviction is handled entirely by Spring AOP via @CacheEvict annotations.
+        // Intentionally empty: handled by Spring cache AOP.
     }
 }
