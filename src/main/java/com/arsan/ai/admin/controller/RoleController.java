@@ -1,7 +1,7 @@
 package com.arsan.ai.admin.controller;
 
 import com.arsan.ai.admin.model.RoleActionRequest;
-import com.arsan.ai.admin.service.RoleService;
+import com.arsan.ai.identity.service.RoleService;
 import com.arsan.ai.auth.enums.RoleType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -2,9 +2,9 @@ package com.arsan.ai.auth.resolver;
 
 import com.arsan.ai.auth.provider.core.OAuthUserInfo;
 import com.arsan.ai.auth.service.AuthService;
-import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.events.UserUpdatedEvent;
-import com.arsan.ai.shared.repository.UserRepository;
+import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.BadCredentialsException;

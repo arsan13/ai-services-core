@@ -1,7 +1,7 @@
 package com.arsan.ai.admin.controller;
 
 import com.arsan.ai.admin.model.PermissionRequest;
-import com.arsan.ai.admin.service.PermissionService;
+import com.arsan.ai.identity.service.PermissionService;
 import com.arsan.ai.auth.enums.RoleType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +29,6 @@ public class PermissionController {
     @GetMapping("/available/{userId}")
     public List<String> getAvailablePermissions(@PathVariable Long userId) {
         return permissionService.availablePermissions(userId);
-    }
-
-    @GetMapping("/available/{role}")
-    public List<String> getAvailablePermissions(@PathVariable String role) {
-        return permissionService.availablePermissions(RoleType.fromValue(role));
     }
 
     @PatchMapping("/grant/{id}")

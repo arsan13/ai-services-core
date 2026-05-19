@@ -1,6 +1,6 @@
 package com.arsan.ai.auth.events;
 
-import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.identity.entity.AppUser;
 
 public record EmailVerificationRequestedEvent(AppUser user) {
 }

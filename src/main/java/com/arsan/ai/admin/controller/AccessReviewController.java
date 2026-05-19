@@ -1,10 +1,10 @@
 package com.arsan.ai.admin.controller;
 
+import com.arsan.ai.accessrequest.enums.AccessRequestStatus;
 import com.arsan.ai.admin.model.AccessRequestReviewDto;
 import com.arsan.ai.admin.model.AccessRequestRevokeDto;
 import com.arsan.ai.admin.model.AccessRequestSummaryDto;
 import com.arsan.ai.admin.service.AccessReviewService;
-import com.arsan.ai.shared.enums.AccessRequestStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

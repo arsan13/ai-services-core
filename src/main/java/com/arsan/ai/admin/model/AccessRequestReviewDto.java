@@ -1,6 +1,6 @@
 package com.arsan.ai.admin.model;
 
-import com.arsan.ai.shared.enums.AccessRequestStatus;
+import com.arsan.ai.accessrequest.enums.AccessRequestStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

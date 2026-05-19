@@ -1,6 +1,6 @@
 package com.arsan.ai.admin.entity;
 
-import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.identity.entity.AppUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
