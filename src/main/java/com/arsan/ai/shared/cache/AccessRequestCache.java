@@ -19,7 +19,7 @@ public class AccessRequestCache {
 
     private final AccessRequestRepository accessRequestRepository;
 
-    @Cacheable(value = PENDING_BY_USER_CACHE, key = "#userId")
+    @Cacheable(value = PENDING_BY_USER_CACHE, key = "#userId", sync = true, unless = "#result == null")
     public List<PendingAccessRequestProjection> getPendingByUser(Long userId) {
         return accessRequestRepository.findByStatusAndRequesterId(AccessRequestStatus.PENDING, userId, PendingAccessRequestProjection.class);
     }

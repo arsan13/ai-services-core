@@ -18,12 +18,12 @@ public class AppUserCache {
 
     private final UserRepository userRepository;
 
-    @Cacheable(value = USER_BY_ID_CACHE, key = "#id")
+    @Cacheable(value = USER_BY_ID_CACHE, key = "#id", sync = true)
     public AppUser getById(Long id) {
         return userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
     }
 
-    @Cacheable(value = USER_BY_EMAIL_CACHE, key = "#email")
+    @Cacheable(value = USER_BY_EMAIL_CACHE, key = "#email", sync = true)
     public AppUser getByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
     }
