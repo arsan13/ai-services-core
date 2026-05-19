@@ -16,6 +16,7 @@ import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
+import com.arsan.ai.shared.cache.AccessRequestCache;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,6 +33,7 @@ public class AccessReviewServiceImpl implements AccessReviewService {
     private final RoleService roleService;
     private final PermissionService permissionService;
     private final AccessRequestMapper mapper;
+    private final AccessRequestCache requestCache;
 
     @Override
     public AccessRequestSummaryDto getById(Long requestId) {
@@ -43,16 +45,12 @@ public class AccessReviewServiceImpl implements AccessReviewService {
 
     @Override
     public Page<AccessRequestSummaryDto> getByStatus(AccessRequestStatus status, Pageable pageable) {
-        return accessRequestRepository
-                .findByStatus(status, pageable)
-                .map(mapper::toSummaryDto);
+        return requestCache.getByStatus(status, pageable).map(mapper::toSummaryDto);
     }
 
     @Override
     public Page<AccessRequestSummaryDto> getAll(Pageable pageable) {
-        return accessRequestRepository
-                .findAll(pageable)
-                .map(mapper::toSummaryDto);
+        return requestCache.getAll(pageable).map(mapper::toSummaryDto);
     }
 
     @Override
@@ -70,6 +68,8 @@ public class AccessReviewServiceImpl implements AccessReviewService {
         }
 
         publishEvent(request);
+        // Evict caches for this access request because status changed
+        requestCache.evict(request);
     }
 
     @Override
@@ -85,6 +85,8 @@ public class AccessReviewServiceImpl implements AccessReviewService {
         permissionService.revokePermission(requester.getId(), request.getPermissions());
 
         publishEvent(request);
+        // Evict caches for this access request because status changed
+        requestCache.evict(request);
     }
 
     private AccessRequest getRequest(Long requestId) {

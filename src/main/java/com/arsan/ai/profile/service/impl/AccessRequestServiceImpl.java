@@ -6,6 +6,7 @@ import com.arsan.ai.profile.model.AccessRequestResponseDto;
 import com.arsan.ai.profile.model.PendingRolesPermissionsDto;
 import com.arsan.ai.profile.service.AccessRequestService;
 import com.arsan.ai.shared.entity.AccessRequest;
+import com.arsan.ai.shared.cache.AccessRequestCache;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
@@ -27,37 +28,33 @@ public class AccessRequestServiceImpl implements AccessRequestService {
 
     private final AccessRequestRepository accessRequestRepository;
     private final AccessRequestMapper mapper;
+    private final AccessRequestCache requestCache;
 
     @Override
     public AccessRequestResponseDto getById(Long requestId) {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        return accessRequestRepository
-                .findByIdAndRequesterId(requestId, userId)
-                .map(mapper::toResponseDto)
-                .orElseThrow(ExceptionUtils::resourceNotFound);
+        AccessRequest entity = requestCache.getByIdAndRequester(requestId, userId);
+        return mapper.toResponseDto(entity);
     }
 
     @Override
     public Page<AccessRequestResponseDto> getByStatus(AccessRequestStatus status, Pageable pageable) {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        return accessRequestRepository
-                .findByStatusAndRequesterId(status, userId, pageable)
+        return requestCache.getByStatusAndRequester(status, userId, pageable)
                 .map(mapper::toResponseDto);
     }
 
     @Override
     public Page<AccessRequestResponseDto> getAll(Pageable pageable) {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        return accessRequestRepository
-                .findByRequesterId(userId, pageable)
+        return requestCache.getAllByRequester(userId, pageable)
                 .map(mapper::toResponseDto);
     }
 
     @Override
     public PendingRolesPermissionsDto getPendingRolesAndPermissions() {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        List<PendingAccessRequestProjection> projections = accessRequestRepository
-                .findByStatusAndRequesterId(AccessRequestStatus.PENDING, userId, PendingAccessRequestProjection.class);
+        List<PendingAccessRequestProjection> projections = requestCache.getPendingByUser(userId);
 
         Set<RoleType> roles = new HashSet<>();
         Set<String> permissions = new HashSet<>();
@@ -80,7 +77,10 @@ public class AccessRequestServiceImpl implements AccessRequestService {
         entity.setRequester(SecurityUtils.getCurrentUserOrThrow());
         entity.validateCreation();
 
-        return mapper.toResponseDto(accessRequestRepository.save(entity));
+        AccessRequest saved = accessRequestRepository.save(entity);
+        // evict relevant caches for this requester/request
+        requestCache.evict(saved);
+        return mapper.toResponseDto(saved);
     }
 
     @Override
@@ -92,6 +92,7 @@ public class AccessRequestServiceImpl implements AccessRequestService {
                 .orElseThrow(ExceptionUtils::resourceNotFound);
 
         request.cancel();
-        accessRequestRepository.save(request);
+        AccessRequest saved = accessRequestRepository.save(request);
+        requestCache.evict(saved);
     }
 }
