@@ -34,6 +34,5 @@ public class AppUserCache {
     })
     public void evict(AppUser user) {
         // Intentionally empty: cache eviction is handled entirely by Spring AOP via @CacheEvict annotations.
-        // This method exists only as a declarative hook to trigger eviction for both cache keys.
     }
 }

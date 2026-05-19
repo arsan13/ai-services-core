@@ -5,15 +5,18 @@ import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.model.AccessRequestResponseDto;
 import com.arsan.ai.profile.model.PendingRolesPermissionsDto;
 import com.arsan.ai.profile.service.AccessRequestService;
-import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.cache.AccessRequestCache;
+import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
+import com.arsan.ai.shared.events.AccessRequestUpdatedEvent;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
 import com.arsan.ai.shared.repository.projection.PendingAccessRequestProjection;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,25 +32,30 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     private final AccessRequestRepository accessRequestRepository;
     private final AccessRequestMapper mapper;
     private final AccessRequestCache requestCache;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public AccessRequestResponseDto getById(Long requestId) {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        AccessRequest entity = requestCache.getByIdAndRequester(requestId, userId);
-        return mapper.toResponseDto(entity);
+        return accessRequestRepository
+                .findByIdAndRequesterId(requestId, userId)
+                .map(mapper::toResponseDto)
+                .orElseThrow(ExceptionUtils::resourceNotFound);
     }
 
     @Override
     public Page<AccessRequestResponseDto> getByStatus(AccessRequestStatus status, Pageable pageable) {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        return requestCache.getByStatusAndRequester(status, userId, pageable)
+        return accessRequestRepository
+                .findByStatusAndRequesterId(status, userId, pageable)
                 .map(mapper::toResponseDto);
     }
 
     @Override
     public Page<AccessRequestResponseDto> getAll(Pageable pageable) {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        return requestCache.getAllByRequester(userId, pageable)
+        return accessRequestRepository
+                .findByRequesterId(userId, pageable)
                 .map(mapper::toResponseDto);
     }
 
@@ -71,6 +79,7 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     }
 
     @Override
+    @Transactional
     public AccessRequestResponseDto requestAccess(AccessRequestCreateDto requestDto) {
         AccessRequest entity = mapper.toEntity(requestDto);
 
@@ -78,12 +87,13 @@ public class AccessRequestServiceImpl implements AccessRequestService {
         entity.validateCreation();
 
         AccessRequest saved = accessRequestRepository.save(entity);
-        // evict relevant caches for this requester/request
-        requestCache.evict(saved);
+
+        eventPublisher.publishEvent(new AccessRequestUpdatedEvent(entity.getRequester().getId()));
         return mapper.toResponseDto(saved);
     }
 
     @Override
+    @Transactional
     public void cancelRequest(Long requestId) {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
 
@@ -92,7 +102,6 @@ public class AccessRequestServiceImpl implements AccessRequestService {
                 .orElseThrow(ExceptionUtils::resourceNotFound);
 
         request.cancel();
-        AccessRequest saved = accessRequestRepository.save(request);
-        requestCache.evict(saved);
+        eventPublisher.publishEvent(new AccessRequestUpdatedEvent(userId));
     }
 }

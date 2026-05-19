@@ -12,11 +12,11 @@ import com.arsan.ai.admin.service.RoleService;
 import com.arsan.ai.shared.entity.AccessRequest;
 import com.arsan.ai.shared.entity.AppUser;
 import com.arsan.ai.shared.enums.AccessRequestStatus;
+import com.arsan.ai.shared.events.AccessRequestUpdatedEvent;
 import com.arsan.ai.shared.mapper.AccessRequestMapper;
 import com.arsan.ai.shared.repository.AccessRequestRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
-import com.arsan.ai.shared.cache.AccessRequestCache;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,7 +33,6 @@ public class AccessReviewServiceImpl implements AccessReviewService {
     private final RoleService roleService;
     private final PermissionService permissionService;
     private final AccessRequestMapper mapper;
-    private final AccessRequestCache requestCache;
 
     @Override
     public AccessRequestSummaryDto getById(Long requestId) {
@@ -45,12 +44,16 @@ public class AccessReviewServiceImpl implements AccessReviewService {
 
     @Override
     public Page<AccessRequestSummaryDto> getByStatus(AccessRequestStatus status, Pageable pageable) {
-        return requestCache.getByStatus(status, pageable).map(mapper::toSummaryDto);
+        return accessRequestRepository
+                .findByStatus(status, pageable)
+                .map(mapper::toSummaryDto);
     }
 
     @Override
     public Page<AccessRequestSummaryDto> getAll(Pageable pageable) {
-        return requestCache.getAll(pageable).map(mapper::toSummaryDto);
+        return accessRequestRepository
+                .findAll(pageable)
+                .map(mapper::toSummaryDto);
     }
 
     @Override
@@ -68,8 +71,6 @@ public class AccessReviewServiceImpl implements AccessReviewService {
         }
 
         publishEvent(request);
-        // Evict caches for this access request because status changed
-        requestCache.evict(request);
     }
 
     @Override
@@ -85,8 +86,6 @@ public class AccessReviewServiceImpl implements AccessReviewService {
         permissionService.revokePermission(requester.getId(), request.getPermissions());
 
         publishEvent(request);
-        // Evict caches for this access request because status changed
-        requestCache.evict(request);
     }
 
     private AccessRequest getRequest(Long requestId) {
@@ -96,6 +95,8 @@ public class AccessReviewServiceImpl implements AccessReviewService {
     }
 
     private void publishEvent(AccessRequest request) {
+        publisher.publishEvent(new AccessRequestUpdatedEvent(request.getRequester().getId()));
+
         switch (request.getStatus()) {
             case APPROVED -> publisher.publishEvent(
                     new AccessRequestApprovedEvent(
