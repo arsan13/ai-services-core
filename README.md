@@ -74,114 +74,109 @@ It supports:
 ```mermaid
 flowchart TD
   Client["Web or API Client"]
+  API["REST API Layer\n(auth, chat, profile, admin)"]
+  Security["Spring Security\n(JWT, Permission Eval)"]
   
-  API["REST API Layer<br/>auth, chat, profile, admin, oauth2"]
-  Security["Spring Security<br/>JWT Filter + Permission Evaluator"]
+  Auth["auth"]
+  Profile["profile"]
+  Chat["chat"]
+  Admin["admin"]
+  AccessRequest["accessrequest"]
+  Identity["identity"]
+  Notification["notification/email"]
+  Shared["shared"]
+  Core["core"]
   
-  AuthSvc["Auth Service<br/>Local + OAuth2"]
-  ChatSvc["Chat Service<br/>Generic, Aviation"]
-  ProfileSvc["Profile Service"]
-  AdminSvc["Admin Service"]
-  EmailSvc["Email Service<br/>Brevo Integration"]
-  
-  ChatProviders["Chat Providers<br/>Generic, Aviation with Tools"]
-  TokenAudit["Token Usage Advisor<br/>Async Audit"]
-  
-  Repos["JPA Repositories"]
+  Events["Domain Events"]
+  DB["Database\n(H2/PostgreSQL)"]
   Migrations["Flyway Migrations"]
-  
-  OAuth["OAuth2 Providers<br/>Google, GitHub"]
-  AIModels["AI Models<br/>via Spring AI"]
-  
-  DB["Database<br/>H2 / PostgreSQL"]
   
   Client --> API
   API --> Security
-  Security --> AuthSvc
-  Security --> ChatSvc
-  Security --> ProfileSvc
-  Security --> AdminSvc
+  Security --> Auth
+  Security --> Profile
+  Security --> Chat
+  Security --> Admin
   
-  AuthSvc --> OAuth
-  AuthSvc --> EmailSvc
+  Auth --> Identity
+  Profile --> Identity
+  Chat --> Identity
+  Admin --> Identity
+  AccessRequest --> Identity
+  AccessRequest --> Events
+  Events --> Admin
+  Events --> Notification
+  Admin --> Events
+  Notification --> Events
   
-  ChatSvc --> ChatProviders
-  ChatProviders --> AIModels
-  ChatSvc --> TokenAudit
-  
-  EmailSvc -.-> Brevo["Brevo Email<br/>Service"]
-  
-  AuthSvc --> Repos
-  ChatSvc --> Repos
-  ProfileSvc --> Repos
-  AdminSvc --> Repos
-  TokenAudit --> Repos
-  
-  Repos --> DB
+  Identity --> Shared
+  AccessRequest --> Shared
+  Admin --> Shared
+  Profile --> Shared
+  Chat --> Shared
+  Notification --> Shared
+  Shared --> Core
+  Core --> DB
   Migrations --> DB
 ```
 
 ## Package Structure
 
-Domain-driven package organization with clear separation of concerns:
+### Package Structure (2026+)
+
+Package-by-feature, DDD-aligned structure (each feature owns its entities, repositories, services, events, and mappers):
 
 ```
 com/arsan/ai/
-├── core/                          # Framework & Infrastructure
-│   ├── config/                    # Spring beans configuration
-│   ├── security/
-│   │   ├── filter/               # JWT authentication filter
-│   │   ├── handler/              # Success & Error handlers
-│   │   ├── service/              # JWT & security services
-│   │   ├── evaluator/            # Permission evaluator
-│   │   └── constants/            # Security constants
-│   ├── exception/                # Exception handling
-│   ├── advice/                   # Global advice
-│   ├── annotation/               # Custom annotations
-│   └── properties/               # Configuration properties
-├── shared/                        # Shared Domain Layer
-│   ├── entity/                  # Shared entities
-│   ├── repository/              # Shared repositories
-|   |    └── projection           # Database read projections
-│   ├── mapper/                  # Entity-DTO mappers
-│   ├── model/                   # Shared DTOs & value objects
-│   └── util/                    # Cross-cutting utilities
-├── auth/                         # Authentication Domain
-│   ├── controller/              # /api/auth endpoints
-│   ├── service/                 # Authentication logic
-│   ├── provider/                # OAuth2 providers
-│   ├── resolver/                # OAuth identity resolvers
-│   ├── model/                   # Auth DTOs & requests
-│   ├── enums/                   # Auth-specific enums
-│   └── events/                  # Auth domain events
-├── profile/                       # User Profile Domain
-│   ├── controller/              # Profile endpoints
-│   ├── model/                   # Profile DTOs
-│   └── service/                 # User business logic
-├── chat/                         # AI Chat Domain
-│   ├── advisor/                 # Usage auditing advisor
-│   ├── controller/              # /api/ai/chat endpoints
-│   ├── service/                 # Chat orchestration
-│   ├── provider/                # Chat provider implementations
-│   ├── model/                   # Chat DTOs
-│   ├── enums/                   # Chat-specific enums
-│   ├── tool/                    # Tool calling (FuelServiceTool, etc.)
-│   └── util/                    # Chat utilities
-├── admin/                        # Admin Management Domain
-│   ├── controller/              # Admin endpoints
-│   ├── service/                 # Admin business logic
-│   ├── entity/                  # Admin entities
-│   ├── repository/              # Admin repositories
-|   |   └── projection           # Database read projections 
-│   └── model/                   # Admin DTOs
-├── notification/                 # Notification Domain
-│   └── email/                   # Email service
-│       ├── constants/           # Email constants
-│       ├── listener/            # Event listeners
-│       ├── model/               # Email DTOs
-│       └── service/             # Email business logic
-└── SpringAiApplication.java     # Main application class
+├── core/                # Framework & infra (config, security, exception, advice, annotation, properties)
+├── shared/              # Only cross-domain utilities (minimized)
+├── identity/            # User, roles, permissions, identity events, user cache, identity services
+│   ├── entity/
+│   ├── repository/
+│   ├── service/
+│   ├── events/
+│   ├── cache/
+│   └── util/
+├── accessrequest/       # Access request domain (entity, repo, service, events, enums, cache, mappers, commands)
+│   ├── entity/
+│   ├── repository/
+│   │   └── projection/
+│   ├── service/
+│   ├── events/
+│   ├── enums/
+│   ├── cache/
+│   ├── model/           # Command models for write APIs
+│   ├── mapper/
+│   └── listener/
+├── admin/               # Admin API (controllers, DTO mappers, listeners, business logic)
+│   ├── controller/
+│   ├── service/
+│   ├── mapper/
+│   ├── model/
+│   └── listener/        # (if any)
+├── profile/             # Profile API (controllers, DTO mappers, business logic)
+│   ├── controller/
+│   ├── service/
+│   ├── mapper/
+│   └── model/
+├── chat/                # AI chat domain (advisors, providers, orchestration, tool-calling)
+├── notification/        # Email/notification (listeners, service, constants, model)
+│   └── email/
+│       ├── listener/
+│       ├── service/
+│       ├── constants/
+│       └── model/
+└── SpringAiApplication.java
 ```
+
+**Key rules:**
+- Each feature (identity, accessrequest, admin, profile, chat, notification) owns its entities, repositories, services, events, and mappers.
+- No cross-feature imports except via explicit service interfaces (e.g., accessrequest → identity for user/role/permission assignment).
+- Shared is minimized and only for true cross-domain utilities.
+- Events are published by domain services and consumed by listeners in admin/notification.
+- Command pattern is used for write APIs (accessrequest/model/RequestAccessCommand, etc.).
+- DTO mappers are feature-local (admin/mapper, profile/mapper).
+
 
 ### Package Responsibilities
 
@@ -208,6 +203,8 @@ com/arsan/ai/
 - Flyway
 - H2 (dev profile)
 - PostgreSQL (prod profile)
+- Redis (optional, for distributed cache)
+- Caffeine (optional, for in-memory cache)
 - SpringDoc OpenAPI / Swagger UI (dev profile)
 - Spring Boot Actuator
 - Maven
@@ -393,6 +390,7 @@ Exceptions are normalized through global exception handling for validation, auth
 
 ## Configuration
 
+
 ### Profiles
 
 - `dev`
@@ -441,6 +439,25 @@ Mandatory for bootstrap admin creation:
 
 When `app.bootstrap.admin.enabled=true`, both `ADMIN_EMAIL` and `ADMIN_PASSWORD` are required to create the admin user at startup (if the user does not already exist).
 
+### Cache Configuration
+
+The application supports pluggable cache backends, controlled via the `application.yml` property:
+
+```yaml
+app:
+  cache:
+    type: none   # redis | caffeine | none
+```
+
+- `redis`: Enables distributed caching using Redis. Redis connection properties are loaded from environment variables:
+  - `REDIS_HOST`
+  - `REDIS_PORT`
+  - `REDIS_PASSWORD`
+- `caffeine`: Enables fast in-memory caching (single-node, non-distributed).
+- `none`: Disables caching.
+
+You can toggle the cache backend at runtime by changing the `app.cache.type` property in your configuration or environment.
+
 ## Observability
 
 Actuator endpoints exposed via `/api/actuator` include:
@@ -472,7 +489,6 @@ Swagger/OpenAPI in dev:
 
 - Aviation tool methods currently return mocked data
 - **Externalize config with refresh scope** - Integrate Spring Cloud Config Server for centralized configuration management with `@RefreshScope` support, enabling dynamic property updates without application restart (CORS origins, feature flags, AI model parameters, etc.)
-- **Add redis** - Implement Redis caching layer for session storage, conversation memory, user preferences, and token blacklisting to reduce database load and improve response times for frequently accessed data
 - **Add rate limiter** - Implement API rate limiting using Resilience4j or Spring Cloud Gateway to protect endpoints from abuse, with per-user and per-endpoint limits for auth, chat, and admin APIs
 - **Add kafka for notification system** - Integrate Apache Kafka for asynchronous event-driven architecture to handle user notifications (token usage alerts, password reset confirmation, new feature announcements), decoupling notification producers from consumers for better scalability
 - User Preferences/Settings - Store user preferences (model selection, temperature settings, etc.)
