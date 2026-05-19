@@ -16,9 +16,7 @@ import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +33,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     private final TokenUsageAuditRepository auditRepository;
 
     @Override
-    public List<TokenUsageAuditView> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending().and(Sort.by("id").descending()));
+    public List<TokenUsageAuditView> getAll(Pageable pageable) {
         return auditRepository.findAllBy(pageable);
     }
 

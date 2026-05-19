@@ -5,13 +5,14 @@ import com.arsan.ai.admin.repository.projection.UserTokenUsage;
 import com.arsan.ai.identity.entity.AppUser;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TokenUsageAuditService {
 
-    List<TokenUsageAuditView> getAll(int page, int size);
+    List<TokenUsageAuditView> getAll(Pageable pageable);
 
     List<TokenUsageAuditView> getByUserId(Long userId);
 
