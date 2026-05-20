@@ -6,7 +6,7 @@ import com.arsan.ai.accessrequest.enums.AccessRequestStatus;
 import com.arsan.ai.accessrequest.repository.AccessRequestRepository;
 import com.arsan.ai.accessrequest.repository.projection.PendingAccessRequestProjection;
 import com.arsan.ai.accessrequest.service.AccessRequestService;
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.RoleType;
 import com.arsan.ai.profile.mapper.UserAccessRequestMapper;
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.model.AccessRequestResponseDto;

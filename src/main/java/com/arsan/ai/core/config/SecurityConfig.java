@@ -1,6 +1,6 @@
 package com.arsan.ai.core.config;
 
-import com.arsan.ai.auth.enums.PermissionType;
+import com.arsan.ai.identity.enums.PermissionType;
 import com.arsan.ai.core.properties.SecurityProperties;
 import com.arsan.ai.core.security.filter.JwtAuthFilter;
 import com.arsan.ai.core.security.handler.OAuth2FailureHandler;

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.arsan.ai.auth.enums.PermissionType.CHAT_GENERIC_USE;
+import static com.arsan.ai.identity.enums.PermissionType.CHAT_GENERIC_USE;
 
 @Service
 @RequiredArgsConstructor

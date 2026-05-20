@@ -1,7 +1,7 @@
 package com.arsan.ai.identity.entity;
 
 import com.arsan.ai.auth.enums.AuthProviderType;
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.RoleType;
 import com.arsan.ai.identity.util.PermissionUtils;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

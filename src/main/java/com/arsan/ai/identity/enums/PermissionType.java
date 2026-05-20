@@ -1,4 +1,4 @@
-package com.arsan.ai.auth.enums;
+package com.arsan.ai.identity.enums;
 
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
 package com.arsan.ai.profile.model;
 
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

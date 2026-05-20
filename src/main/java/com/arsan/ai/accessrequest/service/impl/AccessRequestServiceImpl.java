@@ -18,6 +18,7 @@ import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,6 +57,7 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('request:access:approve')")
     @Transactional
     public void reviewRequest(ReviewAccessRequestCommand reviewCommand, AppUser reviewer) {
         AccessRequest request = getRequest(reviewCommand.getRequestId());
@@ -72,6 +74,7 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('request:access:approve')")
     @Transactional
     public void revokeRequest(RevokeAccessRequestCommand revokeCommand, AppUser reviewer) {
         AccessRequest request = getRequest(revokeCommand.getRequestId());

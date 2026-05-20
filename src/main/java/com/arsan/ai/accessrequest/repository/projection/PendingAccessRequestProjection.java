@@ -1,6 +1,6 @@
 package com.arsan.ai.accessrequest.repository.projection;
 
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.RoleType;
 
 import java.util.Set;
 

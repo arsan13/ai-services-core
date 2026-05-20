@@ -1,6 +1,6 @@
 package com.arsan.ai.identity.service;
 
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.RoleType;
 
 import java.util.Map;
 import java.util.Set;

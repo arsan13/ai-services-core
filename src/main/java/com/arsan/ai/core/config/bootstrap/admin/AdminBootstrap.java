@@ -1,6 +1,6 @@
 package com.arsan.ai.core.config.bootstrap.admin;
 
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.RoleType;
 import com.arsan.ai.core.properties.AdminBootstrapProperties;
 import com.arsan.ai.identity.entity.AppUser;
 import com.arsan.ai.identity.repository.UserRepository;

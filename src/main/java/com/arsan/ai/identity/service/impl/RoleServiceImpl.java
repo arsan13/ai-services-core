@@ -1,8 +1,8 @@
 package com.arsan.ai.identity.service.impl;
 
 import com.arsan.ai.identity.service.RoleService;
-import com.arsan.ai.auth.enums.PermissionType;
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.PermissionType;
+import com.arsan.ai.identity.enums.RoleType;
 import com.arsan.ai.identity.cache.AppUserCache;
 import com.arsan.ai.identity.entity.AppUser;
 import com.arsan.ai.identity.events.UserUpdatedEvent;

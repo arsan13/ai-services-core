@@ -2,7 +2,6 @@ package com.arsan.ai.admin.controller;
 
 import com.arsan.ai.admin.model.PermissionRequest;
 import com.arsan.ai.identity.service.PermissionService;
-import com.arsan.ai.auth.enums.RoleType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,6 +1,6 @@
 package com.arsan.ai.identity.util;
 
-import com.arsan.ai.auth.enums.PermissionType;
+import com.arsan.ai.identity.enums.PermissionType;
 import com.arsan.ai.identity.entity.AppUser;
 
 import java.util.Set;

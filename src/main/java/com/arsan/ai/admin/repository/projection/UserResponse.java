@@ -1,6 +1,6 @@
 package com.arsan.ai.admin.repository.projection;
 
-import com.arsan.ai.auth.enums.RoleType;
+import com.arsan.ai.identity.enums.RoleType;
 
 import java.time.LocalDateTime;
 import java.util.List;
