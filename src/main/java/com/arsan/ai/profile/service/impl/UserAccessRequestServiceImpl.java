@@ -4,24 +4,18 @@ import com.arsan.ai.accessrequest.cache.AccessRequestCache;
 import com.arsan.ai.accessrequest.entity.AccessRequest;
 import com.arsan.ai.accessrequest.enums.AccessRequestStatus;
 import com.arsan.ai.accessrequest.repository.AccessRequestRepository;
-import com.arsan.ai.accessrequest.repository.projection.PendingAccessRequestProjection;
 import com.arsan.ai.accessrequest.service.AccessRequestService;
-import com.arsan.ai.identity.enums.RoleType;
 import com.arsan.ai.profile.mapper.UserAccessRequestMapper;
 import com.arsan.ai.profile.model.AccessRequestCreateDto;
 import com.arsan.ai.profile.model.AccessRequestResponseDto;
-import com.arsan.ai.profile.model.PendingRolesPermissionsDto;
 import com.arsan.ai.profile.service.UserAccessRequestService;
+import com.arsan.ai.shared.model.PendingRolesPermissionsDto;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -60,20 +54,7 @@ public class UserAccessRequestServiceImpl implements UserAccessRequestService {
     @Override
     public PendingRolesPermissionsDto getPendingRolesAndPermissions() {
         Long userId = SecurityUtils.getCurrentUserIdOrThrow();
-        List<PendingAccessRequestProjection> projections = requestCache.getPendingByUser(userId);
-
-        Set<RoleType> roles = new HashSet<>();
-        Set<String> permissions = new HashSet<>();
-
-        for (PendingAccessRequestProjection projection : projections) {
-            roles.addAll(projection.getRoles());
-            permissions.addAll(projection.getPermissions());
-        }
-
-        return PendingRolesPermissionsDto.builder()
-                .roles(roles)
-                .permissions(permissions)
-                .build();
+        return requestCache.getPendingByUser(userId);
     }
 
     @Override
