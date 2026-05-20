@@ -137,6 +137,14 @@ com/arsan/ai/
 │   ├── events/
 │   ├── cache/
 │   └── util/
+├── auth/                # Authentication workflows (login, register, OAuth2, email verification, password reset)
+│   ├── controller/
+│   ├── service/
+│   ├── provider/        # OAuth2 and authentication providers
+│   ├── resolver/        # Request/context resolution utilities
+│   ├── events/
+│   ├── model/           # Request/response DTOs and command models
+│   └── enums/           # Auth-related enumerations (auth types, token purposes)
 ├── accessrequest/       # Access request domain (entity, repo, service, events, enums, cache, mappers, commands)
 │   ├── entity/
 │   ├── repository/
@@ -160,6 +168,14 @@ com/arsan/ai/
 │   ├── mapper/
 │   └── model/
 ├── chat/                # AI chat domain (advisors, providers, orchestration, tool-calling)
+│   ├── controller/      # Chat API endpoints (message, conversation management)
+│   ├── service/         # Chat orchestration, conversation memory, message routing
+│   ├── provider/        # Chat client providers (abstraction layer for different chat types)
+│   ├── advisor/         # Spring AI advisors (token usage tracking, observability)
+│   ├── tool/            # Tool-calling implementations (e.g., FuelServiceTool)
+│   ├── model/           # Request/response DTOs (ChatRequest, ChatResponse, etc.)
+│   ├── enums/           # Chat type enumerations (generic, aviation)
+│   └── util/            # Chat utilities (cost calculation, prompt formatting)
 ├── notification/        # Email/notification (listeners, service, constants, model)
 │   └── email/
 │       ├── listener/
@@ -170,7 +186,7 @@ com/arsan/ai/
 ```
 
 **Key rules:**
-- Each feature (identity, accessrequest, admin, profile, chat, notification) owns its entities, repositories, services, events, and mappers.
+- Each feature (auth, identity, accessrequest, admin, profile, chat, notification) owns its entities, repositories, services, events, and mappers.
 - No cross-feature imports except via explicit service interfaces (e.g., accessrequest → identity for user/role/permission assignment).
 - Shared is minimized and only for true cross-domain utilities.
 - Events are published by domain services and consumed by listeners in admin/notification.
@@ -357,6 +373,23 @@ Example request body:
 
 Date query parameters use ISO datetime format.
 
+### User: Access Requests
+
+- `GET /me/access-requests` → List own access requests (paginated, sorted by date DESC)
+- `GET /me/access-requests/{requestId}` → Get access request details
+- `GET /me/access-requests/status/{status}` → Filter requests by status (`PENDING`, `APPROVED`, `REJECTED`, `REVOKED`)
+- `GET /me/access-requests/pending/roles-permissions` → Get available roles and permissions to request
+- `POST /me/access-requests` → Create new access request (body: roles and permissions to request)
+- `PUT /me/access-requests/{requestId}/cancel` → Cancel a pending access request
+
+### Admin: Access Requests
+
+- `GET /admin/access-requests` → List all access requests (paginated, sorted by date DESC)
+- `GET /admin/access-requests/{id}` → Get access request details with requester and reviewer info
+- `GET /admin/access-requests/status/{status}` → Filter requests by status (`PENDING`, `APPROVED`, `REJECTED`, `REVOKED`)
+- `PUT /admin/access-requests/review` → Approve or reject an access request (body: status, comment)
+- `PUT /admin/access-requests/revoke` → Revoke an approved access request
+
 ### API Response Contract
 
 Responses are wrapped in:
@@ -376,10 +409,17 @@ Exceptions are normalized through global exception handling for validation, auth
 
 ### Core Tables
 
-- `app_user`
-- `app_user_roles`
-- `app_user_permissions`
-- `token_usage_audit`
+- `app_user` – Registered users (local and OAuth2)
+- `app_user_roles` – User role assignments
+- `app_user_extra_permissions` – User additional permission assignments
+- `app_user_revoked_permissions` – User revoked permission assignments
+- `token_usage_audit` – AI call metrics (tokens, cost, latency, model)
+- `access_request` – Access request submissions (user requesting roles/permissions)
+- `access_request_roles` – Roles requested in an access request (junction table)
+- `access_request_permissions` – Permissions requested in an access request (junction table)
+
+**Access Request Module:**
+The `accessrequest` domain manages the workflow for users to request elevated roles and permissions. Admins review and approve/reject requests through dedicated endpoints. Approved requests trigger events that automatically update user roles and permissions. Requests can be revoked if access needs to be withdrawn.
 
 ### Flyway
 
