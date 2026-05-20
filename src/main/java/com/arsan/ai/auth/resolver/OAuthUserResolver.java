@@ -2,9 +2,11 @@ package com.arsan.ai.auth.resolver;
 
 import com.arsan.ai.auth.provider.core.OAuthUserInfo;
 import com.arsan.ai.auth.service.AuthService;
-import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.repository.UserRepository;
+import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OAuthUserResolver {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
     private final AuthService authService;
 
@@ -40,19 +43,21 @@ public class OAuthUserResolver {
     }
 
     private AppUser findByEmail(String email) {
-        if (email == null || email.isBlank()) return null;
-        return userRepository.findByEmailIgnoreCase(email).orElse(null);
+        if (email == null || email.isBlank()) {
+            return null;
+        }
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     private AppUser createUser(OAuthUserInfo info) {
         AppUser user = new AppUser();
 
         String email = info.getEmail() != null ? info.getEmail() : info.getName();
-        if (userRepository.existsByEmailIgnoreCase(email)) {
+        if (userRepository.existsByEmail(email)) {
             email = info.getProviderType().name().toLowerCase() + "_" + info.getProviderId();
         }
 
-        user.setEmail(email);
+        user.setEmail(email.toLowerCase());
         user.setFullName(info.getName());
         user.setProviderType(info.getProviderType());
         user.setProviderId(info.getProviderId());
@@ -64,6 +69,9 @@ public class OAuthUserResolver {
     private AppUser link(AppUser user, OAuthUserInfo info) {
         user.setProviderId(info.getProviderId());
         user.setProviderType(info.getProviderType());
-        return userRepository.save(user);
+        AppUser updatedUser = userRepository.save(user);
+
+        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        return updatedUser;
     }
 }

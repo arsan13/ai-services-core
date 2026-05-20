@@ -4,7 +4,7 @@ import com.arsan.ai.auth.model.AuthRequest;
 import com.arsan.ai.auth.model.AuthResponse;
 import com.arsan.ai.auth.model.AvailabilityResponse;
 import com.arsan.ai.auth.model.RegisterRequest;
-import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.identity.entity.AppUser;
 
 public interface AuthService {
 

@@ -1,8 +1,8 @@
 package com.arsan.ai.notification.email.listener;
 
-import com.arsan.ai.admin.events.AccessRequestApprovedEvent;
-import com.arsan.ai.admin.events.AccessRequestRejectedEvent;
-import com.arsan.ai.admin.events.AccessRequestRevokedEvent;
+import com.arsan.ai.accessrequest.events.AccessRequestApprovedEvent;
+import com.arsan.ai.accessrequest.events.AccessRequestRejectedEvent;
+import com.arsan.ai.accessrequest.events.AccessRequestRevokedEvent;
 import com.arsan.ai.core.properties.AppProperties;
 import com.arsan.ai.notification.email.model.EmailRequest;
 import com.arsan.ai.notification.email.service.EmailService;

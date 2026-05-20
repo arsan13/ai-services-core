@@ -1,6 +1,6 @@
 package com.arsan.ai.shared.util;
 
-import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.identity.entity.AppUser;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

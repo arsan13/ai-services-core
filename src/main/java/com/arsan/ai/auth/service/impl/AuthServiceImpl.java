@@ -8,9 +8,11 @@ import com.arsan.ai.auth.model.AvailabilityResponse;
 import com.arsan.ai.auth.model.RegisterRequest;
 import com.arsan.ai.auth.service.AuthService;
 import com.arsan.ai.core.security.service.JwtService;
-import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.mapper.UserMapper;
-import com.arsan.ai.shared.repository.UserRepository;
+import com.arsan.ai.identity.cache.AppUserCache;
+import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.mapper.UserMapper;
+import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.arsan.ai.auth.enums.PermissionType.CHAT_GENERIC_USE;
+import static com.arsan.ai.identity.enums.PermissionType.CHAT_GENERIC_USE;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
+    private final AppUserCache userCache;
     private final JwtService jwtService;
     private final UserMapper userMapper;
 
@@ -66,12 +69,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AvailabilityResponse isEmailAvailable(String email) {
-        return new AvailabilityResponse(!userRepository.existsByEmailIgnoreCase(email));
+        return new AvailabilityResponse(!userRepository.existsByEmail(email));
     }
 
     @Override
     public void resendVerificationEmail(String email) {
-        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userCache.getByEmail(email);
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");
@@ -81,14 +84,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public void verifyUser(String token) {
         jwtService.validateToken(token, TokenPurpose.EMAIL_VERIFICATION);
 
         String email = jwtService.extractEmail(token);
-        AppUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(ExceptionUtils::userNotFound);
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
         markUserAsVerified(user);
-        userRepository.save(user);
+
+        eventPublisher.publishEvent(new UserUpdatedEvent(user));
     }
 
     @Override
