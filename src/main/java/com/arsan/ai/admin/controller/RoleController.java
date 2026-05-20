@@ -1,8 +1,8 @@
 package com.arsan.ai.admin.controller;
 
 import com.arsan.ai.admin.model.RoleActionRequest;
-import com.arsan.ai.identity.service.RoleService;
 import com.arsan.ai.identity.enums.RoleType;
+import com.arsan.ai.identity.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

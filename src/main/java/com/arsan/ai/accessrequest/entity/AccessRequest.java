@@ -1,8 +1,8 @@
 package com.arsan.ai.accessrequest.entity;
 
 import com.arsan.ai.accessrequest.enums.AccessRequestStatus;
-import com.arsan.ai.identity.enums.RoleType;
 import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.enums.RoleType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;

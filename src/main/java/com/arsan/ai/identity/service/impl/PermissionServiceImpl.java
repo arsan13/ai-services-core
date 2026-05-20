@@ -1,11 +1,11 @@
 package com.arsan.ai.identity.service.impl;
 
-import com.arsan.ai.identity.service.PermissionService;
-import com.arsan.ai.identity.enums.PermissionType;
 import com.arsan.ai.identity.cache.AppUserCache;
 import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.enums.PermissionType;
 import com.arsan.ai.identity.events.UserUpdatedEvent;
 import com.arsan.ai.identity.repository.UserRepository;
+import com.arsan.ai.identity.service.PermissionService;
 import com.arsan.ai.identity.util.PermissionUtils;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
