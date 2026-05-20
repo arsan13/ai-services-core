@@ -2,7 +2,7 @@ package com.arsan.ai.core.security.service;
 
 import com.arsan.ai.auth.enums.TokenPurpose;
 import com.arsan.ai.core.properties.SecurityProperties;
-import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.identity.entity.AppUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -18,9 +18,9 @@ import java.util.function.Function;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_AUTHORITIES;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_EMAIL;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_PROVIDER;
+import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_TOKEN_PURPOSE;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_TOKEN_VERSION;
 import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_USER_ID;
-import static com.arsan.ai.core.security.constants.JwtConstants.CLAIM_TOKEN_PURPOSE;
 
 @Service
 public class JwtService {
@@ -78,7 +78,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, AppUser user) {
         final String email = extractEmail(token);
-        final int tokenVersion =  extractClaim(token, claims -> claims.get(CLAIM_TOKEN_VERSION, Integer.class));
+        final int tokenVersion = extractClaim(token, claims -> claims.get(CLAIM_TOKEN_VERSION, Integer.class));
         return email.equals(user.getEmail()) && user.getTokenVersion().equals(tokenVersion) && !isTokenExpired(token);
     }
 

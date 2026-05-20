@@ -1,7 +1,7 @@
 package com.arsan.ai.core.config.cache;
 
-import com.arsan.ai.shared.cache.AccessRequestCache;
-import com.arsan.ai.shared.cache.AppUserCache;
+import com.arsan.ai.accessrequest.cache.AccessRequestCache;
+import com.arsan.ai.identity.cache.AppUserCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;

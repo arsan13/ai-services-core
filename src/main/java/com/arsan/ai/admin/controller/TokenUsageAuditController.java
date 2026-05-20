@@ -4,6 +4,9 @@ import com.arsan.ai.admin.repository.projection.TokenUsageAuditView;
 import com.arsan.ai.admin.repository.projection.UserTokenUsage;
 import com.arsan.ai.admin.service.TokenUsageAuditService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +25,8 @@ public class TokenUsageAuditController {
     private final TokenUsageAuditService service;
 
     @GetMapping
-    public List<TokenUsageAuditView> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return service.getAll(page, size);
+    public List<TokenUsageAuditView> getAll(@PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @GetMapping("/user/{userId}")

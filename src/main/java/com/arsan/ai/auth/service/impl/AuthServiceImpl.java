@@ -8,11 +8,11 @@ import com.arsan.ai.auth.model.AvailabilityResponse;
 import com.arsan.ai.auth.model.RegisterRequest;
 import com.arsan.ai.auth.service.AuthService;
 import com.arsan.ai.core.security.service.JwtService;
-import com.arsan.ai.shared.cache.AppUserCache;
-import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.events.UserUpdatedEvent;
-import com.arsan.ai.shared.mapper.UserMapper;
-import com.arsan.ai.shared.repository.UserRepository;
+import com.arsan.ai.identity.cache.AppUserCache;
+import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.mapper.UserMapper;
+import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.arsan.ai.auth.enums.PermissionType.CHAT_GENERIC_USE;
+import static com.arsan.ai.identity.enums.PermissionType.CHAT_GENERIC_USE;
 
 @Service
 @RequiredArgsConstructor

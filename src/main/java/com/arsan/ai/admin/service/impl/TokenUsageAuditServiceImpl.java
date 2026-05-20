@@ -6,9 +6,9 @@ import com.arsan.ai.admin.repository.projection.TokenUsageAuditView;
 import com.arsan.ai.admin.repository.projection.UserTokenUsage;
 import com.arsan.ai.admin.service.TokenUsageAuditService;
 import com.arsan.ai.chat.util.OpenAiCostCalculator;
-import com.arsan.ai.shared.entity.AppUser;
+import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.shared.model.DateRange;
-import com.arsan.ai.shared.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +16,7 @@ import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +33,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     private final TokenUsageAuditRepository auditRepository;
 
     @Override
-    public List<TokenUsageAuditView> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending().and(Sort.by("id").descending()));
+    public List<TokenUsageAuditView> getAll(Pageable pageable) {
         return auditRepository.findAllBy(pageable);
     }
 

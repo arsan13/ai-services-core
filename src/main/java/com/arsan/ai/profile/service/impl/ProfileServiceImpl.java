@@ -1,12 +1,12 @@
 package com.arsan.ai.profile.service.impl;
 
+import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.mapper.UserMapper;
+import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.profile.model.ChangePasswordRequest;
 import com.arsan.ai.profile.model.UserProfile;
 import com.arsan.ai.profile.service.ProfileService;
-import com.arsan.ai.shared.entity.AppUser;
-import com.arsan.ai.shared.events.UserUpdatedEvent;
-import com.arsan.ai.shared.mapper.UserMapper;
-import com.arsan.ai.shared.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import com.arsan.ai.shared.util.SecurityUtils;
 import jakarta.transaction.Transactional;

@@ -1,0 +1,12 @@
+package com.arsan.ai.accessrequest.repository.projection;
+
+import com.arsan.ai.identity.enums.RoleType;
+
+import java.util.Set;
+
+public interface PendingAccessRequestProjection {
+    Set<RoleType> getRoles();
+
+    Set<String> getPermissions();
+}
+
