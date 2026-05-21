@@ -4,9 +4,10 @@ import com.arsan.ai.identity.cache.AppUserCache;
 import com.arsan.ai.identity.entity.AppUser;
 import com.arsan.ai.identity.enums.PermissionType;
 import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.mapper.UserMapper;
+import com.arsan.ai.identity.model.AppUserDto;
 import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.identity.service.PermissionService;
-import com.arsan.ai.identity.util.PermissionUtils;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class PermissionServiceImpl implements PermissionService {
     private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
     private final AppUserCache userCache;
+    private final UserMapper userMapper;
 
     public List<String> availablePermissions() {
         return Arrays.stream(PermissionType.values())
@@ -34,8 +36,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<String> availablePermissions(Long userId) {
-        AppUser user = userCache.getById(userId);
-        Set<String> existingPermissions = PermissionUtils.resolvePermissions(user);
+        AppUserDto user = userCache.getById(userId);
+        Set<String> existingPermissions = user.getPermissions();
 
         return availablePermissions().stream()
                 .filter(p -> !existingPermissions.contains(p))
@@ -57,7 +59,7 @@ public class PermissionServiceImpl implements PermissionService {
         // If previously revoked, remove from revoked list
         user.getRevokedPermissions().removeAll(new HashSet<>(permissions));
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
     }
 
     @Transactional
@@ -75,6 +77,6 @@ public class PermissionServiceImpl implements PermissionService {
         // If previously granted as extra, remove it
         user.getExtraPermissions().removeAll(new HashSet<>(permissions));
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
     }
 }

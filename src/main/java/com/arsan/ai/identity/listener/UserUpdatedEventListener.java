@@ -16,6 +16,6 @@ public class UserUpdatedEventListener {
 
     @TransactionalEventListener(phase = AFTER_COMMIT)
     public void handle(UserUpdatedEvent event) {
-        userCache.evict(event.user());
+        userCache.evict(event.userEvictDto());
     }
 }

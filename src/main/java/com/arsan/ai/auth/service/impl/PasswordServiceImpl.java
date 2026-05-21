@@ -5,9 +5,12 @@ import com.arsan.ai.auth.events.PasswordResetRequestedEvent;
 import com.arsan.ai.auth.model.ResetPasswordRequest;
 import com.arsan.ai.auth.service.PasswordService;
 import com.arsan.ai.core.security.service.JwtService;
-import com.arsan.ai.identity.cache.AppUserCache;
 import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.mapper.UserMapper;
 import com.arsan.ai.identity.repository.UserRepository;
+import com.arsan.ai.shared.util.ExceptionUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,29 +27,30 @@ import java.util.Optional;
 @Slf4j
 public class PasswordServiceImpl implements PasswordService {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final AppUserCache userCache;
     private final JwtService jwtService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final UserMapper userMapper;
 
     @Override
     public void forgotPassword(String email) {
-        AppUser user = userCache.getByEmail(email);
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
         if (user.getPassword() == null) {
             throw new IllegalStateException("Password reset is not available for OAuth2 accounts. Please sign in using " + user.getProviderType());
         }
 
-        eventPublisher.publishEvent(new PasswordResetRequestedEvent(user));
+        eventPublisher.publishEvent(new PasswordResetRequestedEvent(userMapper.toDto(user)));
     }
 
     @Override
+    @Transactional
     public void resetPassword(ResetPasswordRequest request) {
         jwtService.validateToken(request.getToken(), TokenPurpose.PASSWORD_RESET);
 
         String email = jwtService.extractEmail(request.getToken());
-        AppUser user = userCache.getByEmail(email);
+        AppUser user = userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
 
         validateTokenReuse(request, user);
 
@@ -54,8 +58,7 @@ public class PasswordServiceImpl implements PasswordService {
         user.setPasswordResetDate(LocalDateTime.now());
         user.setTokenVersion(user.getTokenVersion() + 1);
 
-        userRepository.save(user);
-        userCache.evict(user);
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
     }
 
     private void validateTokenReuse(ResetPasswordRequest request, AppUser user) {

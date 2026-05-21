@@ -12,6 +12,7 @@ import com.arsan.ai.identity.cache.AppUserCache;
 import com.arsan.ai.identity.entity.AppUser;
 import com.arsan.ai.identity.events.UserUpdatedEvent;
 import com.arsan.ai.identity.mapper.UserMapper;
+import com.arsan.ai.identity.model.AppUserDto;
 import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import jakarta.transaction.Transactional;
@@ -39,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final AppUserCache userCache;
     private final JwtService jwtService;
-    private final UserMapper userMapper;
+    private final UserMapper mapper;
 
     @Override
     public AuthResponse login(AuthRequest request) {
@@ -47,9 +48,9 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        AppUser user = (AppUser) authentication.getPrincipal();
+        AppUserDto user = (AppUserDto) authentication.getPrincipal();
         String token = jwtService.generateToken(user, TokenPurpose.ACCESS);
-        return new AuthResponse(token, userMapper.toUserProfile(user));
+        return new AuthResponse(token, mapper.toUserProfile(user));
     }
 
     @Override
@@ -61,10 +62,10 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
-        user = userRepository.save(user);
-        sendVerificationEmail(user);
-        String token = jwtService.generateToken(user, TokenPurpose.ACCESS);
-        return new AuthResponse(token, userMapper.toUserProfile(user));
+        AppUserDto userDto = mapper.toDto(userRepository.save(user));
+        sendVerificationEmail(userDto);
+        String token = jwtService.generateToken(userDto, TokenPurpose.ACCESS);
+        return new AuthResponse(token, mapper.toUserProfile(userDto));
     }
 
     @Override
@@ -74,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void resendVerificationEmail(String email) {
-        AppUser user = userCache.getByEmail(email);
+        AppUserDto user = userCache.getByEmail(email);
 
         if (user.isVerified()) {
             throw new IllegalStateException("Email already verified");
@@ -93,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
 
         markUserAsVerified(user);
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(mapper.toEvictDto(user)));
     }
 
     @Override
@@ -107,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
         user.setVerifiedDate(LocalDateTime.now());
     }
 
-    private void sendVerificationEmail(AppUser user) {
+    private void sendVerificationEmail(AppUserDto user) {
         eventPublisher.publishEvent(new EmailVerificationRequestedEvent(user));
     }
 }

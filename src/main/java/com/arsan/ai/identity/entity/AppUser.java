@@ -2,7 +2,6 @@ package com.arsan.ai.identity.entity;
 
 import com.arsan.ai.auth.enums.AuthProviderType;
 import com.arsan.ai.identity.enums.RoleType;
-import com.arsan.ai.identity.util.PermissionUtils;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -25,16 +24,10 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Entity
 @Table(
@@ -51,7 +44,7 @@ import java.util.stream.Stream;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppUser implements UserDetails {
+public class AppUser {
 
     public static final String EMAIL_UNIQUE_KEY_NAME = "uk_user_email";
 
@@ -107,21 +100,6 @@ public class AppUser implements UserDetails {
 
     @Builder.Default
     private Integer tokenVersion = 0;
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Stream
-                .concat(
-                        this.roles.stream().map(role -> new SimpleGrantedAuthority(role.name())),
-                        PermissionUtils.resolvePermissions(this).stream().map(SimpleGrantedAuthority::new)
-                )
-                .collect(Collectors.toUnmodifiableSet());
-    }
 
     @Override
     public boolean equals(Object o) {

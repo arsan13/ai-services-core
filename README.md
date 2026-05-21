@@ -530,6 +530,7 @@ Swagger/OpenAPI in dev:
 - Aviation tool methods currently return mocked data
 - **Externalize config with refresh scope** - Integrate Spring Cloud Config Server for centralized configuration management with `@RefreshScope` support, enabling dynamic property updates without application restart (CORS origins, feature flags, AI model parameters, etc.)
 - **Add rate limiter** - Implement API rate limiting using Resilience4j or Spring Cloud Gateway to protect endpoints from abuse, with per-user and per-endpoint limits for auth, chat, and admin APIs
-- **Add kafka for notification system** - Integrate Apache Kafka for asynchronous event-driven architecture to handle user notifications (token usage alerts, password reset confirmation, new feature announcements), decoupling notification producers from consumers for better scalability
-- User Preferences/Settings - Store user preferences (model selection, temperature settings, etc.)
-- Test coverage does not yet include full auth/chat/admin integration paths
+- **Break into microservices** - Extract major domains (auth/identity, profile, chat, admin, accessrequest, notification) into independently deployable services with their own datastores, API gateway, and service contracts. This enables independent scaling, ownership, and deployment cadence.
+- **Add Kafka for event-driven architecture and notifications** - Integrate Apache Kafka as a central event bus for inter-service communication, notification delivery (token usage alerts, password reset confirmations, new feature announcements), and eventual consistency between services.
+- **User Preferences/Settings** - Store user preferences (model selection, temperature settings, etc.)
+- **Testing** - Test coverage does not yet include full auth/chat/admin integration paths

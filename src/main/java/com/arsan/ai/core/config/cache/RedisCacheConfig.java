@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
@@ -16,14 +19,25 @@ import java.time.Duration;
 @ConditionalOnProperty(name = "app.cache.type", havingValue = "redis")
 public class RedisCacheConfig {
 
+    private static final Duration CACHE_TTL = Duration.ofMinutes(30);
+
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
+
         RedisCacheConfiguration config = RedisCacheConfiguration
                 .defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(30))
-                .enableTimeToIdle()
-                .disableCachingNullValues();
+                .entryTtl(CACHE_TTL)
+                .disableCachingNullValues()
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(new StringRedisSerializer())
+                )
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(serializer)
+                );
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)

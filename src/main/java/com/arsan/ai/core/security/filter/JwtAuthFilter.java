@@ -2,7 +2,7 @@ package com.arsan.ai.core.security.filter;
 
 import com.arsan.ai.core.security.service.CustomUserDetailsService;
 import com.arsan.ai.core.security.service.JwtService;
-import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.model.AppUserDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,7 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String email = jwtService.extractEmail(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            AppUser user = userDetailsService.loadUserByUsername(email);
+            AppUserDto user = userDetailsService.loadUserByUsername(email);
 
             if (jwtService.isTokenValid(token, user)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

@@ -70,10 +70,10 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     @Override
     @Async("auditTaskExecutor")
     @Transactional
-    public void recordUsage(AppUser user, ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
+    public void recordUsage(Long userId, ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
         try {
             TokenUsageAudit audit = new TokenUsageAudit();
-            audit.setUser(user);
+            audit.setUser(userRepository.getReferenceById(userId));
 
             audit.setProvider("openai");
             audit.setLatencySec((double) TimeUnit.MILLISECONDS.toSeconds(latencyMs));

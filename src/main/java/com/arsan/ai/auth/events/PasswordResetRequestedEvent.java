@@ -1,6 +1,6 @@
 package com.arsan.ai.auth.events;
 
-import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.model.AppUserDto;
 
-public record PasswordResetRequestedEvent(AppUser user) {
+public record PasswordResetRequestedEvent(AppUserDto user) {
 }

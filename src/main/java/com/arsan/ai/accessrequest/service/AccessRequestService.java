@@ -4,15 +4,14 @@ import com.arsan.ai.accessrequest.entity.AccessRequest;
 import com.arsan.ai.accessrequest.model.RequestAccessCommand;
 import com.arsan.ai.accessrequest.model.ReviewAccessRequestCommand;
 import com.arsan.ai.accessrequest.model.RevokeAccessRequestCommand;
-import com.arsan.ai.identity.entity.AppUser;
 
 public interface AccessRequestService {
 
-    AccessRequest requestAccess(RequestAccessCommand requestCommand, AppUser requester);
+    AccessRequest requestAccess(RequestAccessCommand requestCommand, Long requesterId);
 
     void cancelRequest(Long requestId, Long requesterId);
 
-    void reviewRequest(ReviewAccessRequestCommand reviewCommand, AppUser reviewer);
+    void reviewRequest(ReviewAccessRequestCommand reviewCommand, Long reviewerId);
 
-    void revokeRequest(RevokeAccessRequestCommand revokeCommand, AppUser reviewer);
+    void revokeRequest(RevokeAccessRequestCommand revokeCommand, Long reviewerId);
 }

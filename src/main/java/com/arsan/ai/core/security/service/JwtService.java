@@ -2,7 +2,7 @@ package com.arsan.ai.core.security.service;
 
 import com.arsan.ai.auth.enums.TokenPurpose;
 import com.arsan.ai.core.properties.SecurityProperties;
-import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.model.AppUserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -37,7 +37,7 @@ public class JwtService {
         );
     }
 
-    public String generateToken(AppUser user, TokenPurpose tokenPurpose) {
+    public String generateToken(AppUserDto user, TokenPurpose tokenPurpose) {
         Map<String, Object> claims = new HashMap<>(Map.of(
                 CLAIM_USER_ID, user.getId(),
                 CLAIM_EMAIL, user.getEmail(),
@@ -53,7 +53,7 @@ public class JwtService {
         return generateToken(claims, user, tokenPurposeExpirationMap.get(tokenPurpose));
     }
 
-    private String generateToken(Map<String, Object> extraClaims, AppUser user, long expirationInMinutes) {
+    private String generateToken(Map<String, Object> extraClaims, AppUserDto user, long expirationInMinutes) {
         long expirationInMs = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(expirationInMinutes);
         return Jwts.builder()
                 .subject(user.getEmail())
@@ -76,7 +76,7 @@ public class JwtService {
         return extractClaim(token, Claims::getIssuedAt);
     }
 
-    public boolean isTokenValid(String token, AppUser user) {
+    public boolean isTokenValid(String token, AppUserDto user) {
         final String email = extractEmail(token);
         final int tokenVersion = extractClaim(token, claims -> claims.get(CLAIM_TOKEN_VERSION, Integer.class));
         return email.equals(user.getEmail()) && user.getTokenVersion().equals(tokenVersion) && !isTokenExpired(token);

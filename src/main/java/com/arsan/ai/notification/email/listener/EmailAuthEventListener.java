@@ -6,7 +6,7 @@ import com.arsan.ai.auth.events.PasswordResetRequestedEvent;
 import com.arsan.ai.core.properties.AppProperties;
 import com.arsan.ai.core.properties.SecurityProperties;
 import com.arsan.ai.core.security.service.JwtService;
-import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.model.AppUserDto;
 import com.arsan.ai.notification.email.model.EmailRequest;
 import com.arsan.ai.notification.email.service.EmailService;
 import com.arsan.ai.notification.email.service.EmailTemplateService;
@@ -60,7 +60,7 @@ public class EmailAuthEventListener {
     }
 
     private void sendAuthEmail(
-            AppUser user,
+            AppUserDto user,
             TokenPurpose purpose,
             String path,
             String template,

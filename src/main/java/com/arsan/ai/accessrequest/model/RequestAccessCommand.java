@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -18,6 +17,6 @@ import java.util.Set;
 public class RequestAccessCommand {
 
     private String requesterComment;
-    private Set<RoleType> roles = new HashSet<>();
-    private Set<String> permissions = new HashSet<>();
+    private Set<RoleType> roles;
+    private Set<String> permissions;
 }

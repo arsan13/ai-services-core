@@ -4,6 +4,7 @@ import com.arsan.ai.auth.provider.core.OAuthUserInfo;
 import com.arsan.ai.auth.service.AuthService;
 import com.arsan.ai.identity.entity.AppUser;
 import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.mapper.UserMapper;
 import com.arsan.ai.identity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -17,6 +18,7 @@ public class OAuthUserResolver {
     private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final UserMapper userMapper;
 
     public AppUser resolve(OAuthUserInfo info) {
 
@@ -71,7 +73,7 @@ public class OAuthUserResolver {
         user.setProviderType(info.getProviderType());
         AppUser updatedUser = userRepository.save(user);
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
         return updatedUser;
     }
 }

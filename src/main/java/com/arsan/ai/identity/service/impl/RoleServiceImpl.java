@@ -5,6 +5,8 @@ import com.arsan.ai.identity.entity.AppUser;
 import com.arsan.ai.identity.enums.PermissionType;
 import com.arsan.ai.identity.enums.RoleType;
 import com.arsan.ai.identity.events.UserUpdatedEvent;
+import com.arsan.ai.identity.mapper.UserMapper;
+import com.arsan.ai.identity.model.AppUserDto;
 import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.identity.service.RoleService;
 import com.arsan.ai.shared.util.ExceptionUtils;
@@ -26,10 +28,11 @@ public class RoleServiceImpl implements RoleService {
     private final ApplicationEventPublisher eventPublisher;
     private final UserRepository userRepository;
     private final AppUserCache userCache;
+    private final UserMapper userMapper;
 
     @Override
     public Map<RoleType, Set<String>> availableRoles(Long userId) {
-        AppUser user = userCache.getById(userId);
+        AppUserDto user = userCache.getById(userId);
 
         Map<RoleType, Set<String>> map = availableRoles();
         map.keySet().removeAll(user.getRoles());
@@ -58,7 +61,7 @@ public class RoleServiceImpl implements RoleService {
         AppUser user = userRepository.findById(userId).orElseThrow(ExceptionUtils::userNotFound);
         user.getRoles().addAll(roles);
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
     }
 
     @Override
@@ -71,6 +74,6 @@ public class RoleServiceImpl implements RoleService {
         AppUser user = userRepository.findById(userId).orElseThrow(ExceptionUtils::userNotFound);
         user.getRoles().removeAll(new HashSet<>(roles));
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
     }
 }
