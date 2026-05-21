@@ -12,6 +12,7 @@ import com.arsan.ai.accessrequest.model.RevokeAccessRequestCommand;
 import com.arsan.ai.accessrequest.repository.AccessRequestRepository;
 import com.arsan.ai.accessrequest.service.AccessRequestService;
 import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.identity.service.PermissionService;
 import com.arsan.ai.identity.service.RoleService;
 import com.arsan.ai.shared.util.ExceptionUtils;
@@ -27,16 +28,17 @@ public class AccessRequestServiceImpl implements AccessRequestService {
 
     private final ApplicationEventPublisher publisher;
     private final AccessRequestRepository accessRequestRepository;
+    private final UserRepository userRepository;
     private final RoleService roleService;
     private final PermissionService permissionService;
     private final AccessRequestMapper mapper;
 
     @Override
     @Transactional
-    public AccessRequest requestAccess(RequestAccessCommand requestCommand, AppUser requester) {
+    public AccessRequest requestAccess(RequestAccessCommand requestCommand, Long requesterId) {
         AccessRequest entity = mapper.toEntity(requestCommand);
 
-        entity.setRequester(requester);
+        entity.setRequester(userRepository.getReferenceById(requesterId));
         entity.validateCreation();
 
         AccessRequest saved = accessRequestRepository.save(entity);
@@ -59,9 +61,10 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     @Override
     @PreAuthorize("hasAuthority('request:access:approve')")
     @Transactional
-    public void reviewRequest(ReviewAccessRequestCommand reviewCommand, AppUser reviewer) {
+    public void reviewRequest(ReviewAccessRequestCommand reviewCommand, Long reviewerId) {
         AccessRequest request = getRequest(reviewCommand.getRequestId());
         AppUser requester = request.getRequester();
+        AppUser reviewer = userRepository.getReferenceById(reviewerId);
 
         request.review(reviewCommand.getStatus(), reviewer, reviewCommand.getReviewerComment());
 
@@ -76,9 +79,10 @@ public class AccessRequestServiceImpl implements AccessRequestService {
     @Override
     @PreAuthorize("hasAuthority('request:access:approve')")
     @Transactional
-    public void revokeRequest(RevokeAccessRequestCommand revokeCommand, AppUser reviewer) {
+    public void revokeRequest(RevokeAccessRequestCommand revokeCommand, Long reviewerId) {
         AccessRequest request = getRequest(revokeCommand.getRequestId());
         AppUser requester = request.getRequester();
+        AppUser reviewer = userRepository.getReferenceById(reviewerId);
 
         request.revoke(reviewer, revokeCommand.getReviewerComment());
 

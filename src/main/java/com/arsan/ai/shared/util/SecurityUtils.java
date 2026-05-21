@@ -1,6 +1,6 @@
 package com.arsan.ai.shared.util;
 
-import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.model.AppUserDto;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,23 +14,23 @@ public final class SecurityUtils {
     }
 
     public static Optional<Long> getCurrentUserId() {
-        return getCurrentUser().map(AppUser::getId);
+        return getCurrentUser().map(AppUserDto::getId);
     }
 
     public static Long getCurrentUserIdOrThrow() {
         return getCurrentUserId().orElseThrow(ExceptionUtils::userNotFound);
     }
 
-    public static Optional<AppUser> getCurrentUser() {
+    public static Optional<AppUserDto> getCurrentUser() {
         return Optional.ofNullable(getAuthentication())
                 .filter(Authentication::isAuthenticated)
                 .filter(auth -> !(auth instanceof AnonymousAuthenticationToken))
                 .map(Authentication::getPrincipal)
-                .filter(AppUser.class::isInstance)
-                .map(AppUser.class::cast);
+                .filter(AppUserDto.class::isInstance)
+                .map(AppUserDto.class::cast);
     }
 
-    public static AppUser getCurrentUserOrThrow() {
+    public static AppUserDto getCurrentUserOrThrow() {
         return getCurrentUser().orElseThrow(ExceptionUtils::userNotFound);
     }
 

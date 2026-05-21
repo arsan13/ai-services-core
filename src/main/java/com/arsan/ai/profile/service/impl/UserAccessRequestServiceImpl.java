@@ -59,7 +59,7 @@ public class UserAccessRequestServiceImpl implements UserAccessRequestService {
 
     @Override
     public AccessRequestResponseDto requestAccess(AccessRequestCreateDto requestDto) {
-        final AccessRequest accessRequest = requestService.requestAccess(mapper.toRequestCommand(requestDto), SecurityUtils.getCurrentUserOrThrow());
+        final AccessRequest accessRequest = requestService.requestAccess(mapper.toRequestCommand(requestDto), SecurityUtils.getCurrentUserIdOrThrow());
         return mapper.toResponseDto(accessRequest);
     }
 

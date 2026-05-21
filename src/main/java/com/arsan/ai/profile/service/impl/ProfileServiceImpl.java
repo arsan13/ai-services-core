@@ -52,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
         user.setPasswordResetDate(LocalDateTime.now());
         user.setTokenVersion(user.getTokenVersion() + 1);
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
     }
 
     @Override
@@ -61,11 +61,11 @@ public class ProfileServiceImpl implements ProfileService {
         AppUser user = getCurrentUser();
         user.setTokenVersion(user.getTokenVersion() + 1);
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        eventPublisher.publishEvent(new UserUpdatedEvent(userMapper.toEvictDto(user)));
     }
 
     private AppUser getCurrentUser() {
-        Long userId = SecurityUtils.getCurrentUserId().orElseThrow(ExceptionUtils::userNotFound);
+        Long userId = SecurityUtils.getCurrentUserIdOrThrow();
         return userRepository.findById(userId).orElseThrow(ExceptionUtils::userNotFound);
     }
 }

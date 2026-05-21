@@ -1,6 +1,6 @@
 package com.arsan.ai.identity.events;
 
-import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.model.UserEvictDto;
 
-public record UserUpdatedEvent(AppUser user) {
+public record UserUpdatedEvent(UserEvictDto userEvictDto) {
 }

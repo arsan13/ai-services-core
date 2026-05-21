@@ -7,6 +7,7 @@ import com.arsan.ai.auth.resolver.OAuthUserResolver;
 import com.arsan.ai.core.security.service.JwtService;
 import com.arsan.ai.core.security.service.OAuth2RedirectService;
 import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final OAuthUserResolver oauthUserResolver;
     private final JwtService jwtService;
     private final OAuth2RedirectService redirectService;
+    private final UserMapper userMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -37,7 +39,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
             OAuthUserInfo oAuthUserInfo = oAuthUserInfoProviderRegistry.get(token.getAuthorizedClientRegistrationId(), oAuth2User);
             AppUser user = oauthUserResolver.resolve(oAuthUserInfo);
-            String jwt = jwtService.generateToken(user, TokenPurpose.ACCESS);
+            String jwt = jwtService.generateToken(userMapper.toDto(user), TokenPurpose.ACCESS);
 
             String redirectUrl = redirectService.buildSuccessUrl(jwt);
             response.sendRedirect(redirectUrl);

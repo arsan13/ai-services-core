@@ -2,8 +2,7 @@ package com.arsan.ai.shared.model;
 
 import com.arsan.ai.identity.enums.RoleType;
 
-import java.io.Serializable;
 import java.util.Set;
 
-public record PendingRolesPermissionsDto(Set<RoleType> roles, Set<String> permissions) implements Serializable {
+public record PendingRolesPermissionsDto(Set<RoleType> roles, Set<String> permissions) {
 }

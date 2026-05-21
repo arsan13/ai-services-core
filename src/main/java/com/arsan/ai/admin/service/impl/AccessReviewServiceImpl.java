@@ -47,11 +47,11 @@ public class AccessReviewServiceImpl implements AccessReviewService {
 
     @Override
     public void reviewRequest(AccessRequestReviewDto reviewDto) {
-        accessRequestService.reviewRequest(mapper.toReviewCommand(reviewDto), SecurityUtils.getCurrentUserOrThrow());
+        accessRequestService.reviewRequest(mapper.toReviewCommand(reviewDto), SecurityUtils.getCurrentUserIdOrThrow());
     }
 
     @Override
     public void revokeRequest(AccessRequestRevokeDto revokeDto) {
-        accessRequestService.revokeRequest(mapper.toRevokeCommand(revokeDto), SecurityUtils.getCurrentUserOrThrow());
+        accessRequestService.revokeRequest(mapper.toRevokeCommand(revokeDto), SecurityUtils.getCurrentUserIdOrThrow());
     }
 }

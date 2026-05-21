@@ -1,6 +1,8 @@
 package com.arsan.ai.identity.cache;
 
-import com.arsan.ai.identity.entity.AppUser;
+import com.arsan.ai.identity.mapper.UserMapper;
+import com.arsan.ai.identity.model.AppUserDto;
+import com.arsan.ai.identity.model.UserEvictDto;
 import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.shared.util.ExceptionUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,22 +19,27 @@ public class AppUserCache {
     public static final String USER_BY_EMAIL_CACHE = "usersByEmail";
 
     private final UserRepository userRepository;
+    private final UserMapper mapper;
 
     @Cacheable(value = USER_BY_ID_CACHE, key = "#id", sync = true)
-    public AppUser getById(Long id) {
-        return userRepository.findById(id).orElseThrow(ExceptionUtils::userNotFound);
+    public AppUserDto getById(Long id) {
+        return userRepository.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(ExceptionUtils::userNotFound);
     }
 
     @Cacheable(value = USER_BY_EMAIL_CACHE, key = "#email", sync = true)
-    public AppUser getByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(ExceptionUtils::userNotFound);
+    public AppUserDto getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(mapper::toDto)
+                .orElseThrow(ExceptionUtils::userNotFound);
     }
 
     @Caching(evict = {
-            @CacheEvict(value = USER_BY_ID_CACHE, key = "#user.id"),
-            @CacheEvict(value = USER_BY_EMAIL_CACHE, key = "#user.email")
+            @CacheEvict(value = USER_BY_ID_CACHE, key = "#dto.userId"),
+            @CacheEvict(value = USER_BY_EMAIL_CACHE, key = "#dto.email")
     })
-    public void evict(AppUser user) {
+    public void evict(UserEvictDto dto) {
         // Intentionally empty: handled by Spring cache AOP.
     }
 }
