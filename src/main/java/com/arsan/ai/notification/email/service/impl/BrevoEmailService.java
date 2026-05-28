@@ -9,7 +9,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,14 +66,21 @@ public class BrevoEmailService implements EmailService {
                 .bodyValue(payload)
                 .retrieve()
                 .bodyToMono(String.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)).filter(this::isRetryable))
                 .doOnSuccess(res -> log.info("Email sent to {}", request.getTo()))
-                .doOnError(err -> log.error("Email failed to {}", request.getTo(), err))
-                .subscribe();
+                .doOnError(err -> log.error("Email failed to {}", request.getTo(), err));
     }
 
     private List<Map<String, String>> mapEmails(List<String> emails) {
         return emails.stream()
                 .map(email -> Map.of(EMAIL, email))
                 .toList();
+    }
+
+    private boolean isRetryable(Throwable ex) {
+        if (ex instanceof WebClientResponseException responseEx) {
+            return responseEx.getStatusCode().is5xxServerError() || responseEx.getStatusCode().value() == 429;
+        }
+        return ex instanceof WebClientRequestException;
     }
 }
