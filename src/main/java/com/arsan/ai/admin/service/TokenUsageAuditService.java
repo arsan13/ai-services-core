@@ -23,5 +23,5 @@ public interface TokenUsageAuditService {
 
     List<UserTokenUsage> getUserTokenUsageSummary(LocalDateTime startDate, LocalDateTime endDate);
 
-    void recordUsage(Long userId, ChatClientRequest chatClientRequest, ChatClientResponse chatResponse, long latencyMs);
+    void recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatResponse, long latencyMs);
 }

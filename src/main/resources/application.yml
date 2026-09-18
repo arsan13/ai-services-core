@@ -49,10 +49,17 @@ spring:
 
     openai:
       api-key: ${OPENAI_API_KEY}
-      base-url: https://api.pawan.krd
+      base-url: ${OPENAI_BASE_URL}
       chat:
         options:
           model: openai/gpt-oss-20b
+
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      base-url: ${ANTHROPIC_BASE_URL}
+      chat:
+        options:
+          model: claude-sonnet-4-6
 
 server:
   port: ${PORT:8080}
@@ -77,6 +84,9 @@ app:
 
   cache:
     type: none   # redis | caffeine | none
+
+  chat:
+    provider: openai   # openai | anthropic
 
   security:
     enabled: true

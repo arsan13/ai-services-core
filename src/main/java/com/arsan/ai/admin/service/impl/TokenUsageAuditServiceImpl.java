@@ -6,9 +6,11 @@ import com.arsan.ai.admin.repository.projection.TokenUsageAuditView;
 import com.arsan.ai.admin.repository.projection.UserTokenUsage;
 import com.arsan.ai.admin.service.TokenUsageAuditService;
 import com.arsan.ai.chat.util.OpenAiCostCalculator;
+import com.arsan.ai.core.properties.ChatProviderProperties;
 import com.arsan.ai.identity.entity.AppUser;
 import com.arsan.ai.identity.repository.UserRepository;
 import com.arsan.ai.shared.model.DateRange;
+import com.arsan.ai.shared.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
 
     private final UserRepository userRepository;
     private final TokenUsageAuditRepository auditRepository;
+    private final ChatProviderProperties chatProviderProperties;
 
     @Override
     public List<TokenUsageAuditView> getAll(Pageable pageable) {
@@ -70,12 +73,13 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
     @Override
     @Async("auditTaskExecutor")
     @Transactional
-    public void recordUsage(Long userId, ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
+    public void recordUsage(ChatClientRequest chatClientRequest, ChatClientResponse chatClientResponse, long latencyMs) {
         try {
             TokenUsageAudit audit = new TokenUsageAudit();
-            audit.setUser(userRepository.getReferenceById(userId));
 
-            audit.setProvider("openai");
+            SecurityUtils.getCurrentUserId().ifPresent(id -> audit.setUser(userRepository.getReferenceById(id)));
+
+            audit.setProvider(chatProviderProperties.getProvider().name());
             audit.setLatencySec((double) TimeUnit.MILLISECONDS.toSeconds(latencyMs));
             audit.setInputSummary(chatClientRequest.prompt().getUserMessage().getText());
 
@@ -88,6 +92,7 @@ public class TokenUsageAuditServiceImpl implements TokenUsageAuditService {
                 audit.setCompletionTokens(usage.getCompletionTokens());
                 audit.setTotalTokens(usage.getTotalTokens());
 
+                // TODO :: This is a sample cost calculation. Calculate properly.
                 double cost = OpenAiCostCalculator.calculateCost(audit.getModel(), audit.getPromptTokens(), audit.getCompletionTokens());
                 audit.setCostInUsd(cost);
 
