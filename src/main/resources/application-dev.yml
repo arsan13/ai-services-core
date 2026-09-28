@@ -18,6 +18,15 @@ spring:
       enabled: true
       path: /h2-console
 
+  ai:
+    mcp:
+      client:
+        enabled: true
+        type: SYNC
+        request-timeout: 30s
+        stdio:
+          servers-configuration: classpath:/mcp-servers.json
+
 app:
   frontend-url: http://localhost:4200
   cache:

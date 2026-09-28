@@ -1,12 +1,12 @@
 package com.arsan.ai.core.config.chat;
 
 import com.arsan.ai.chat.advisor.TokenUsageAdvisor;
-import com.arsan.ai.chat.tool.FuelServiceTool;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,14 +30,14 @@ public class AviationChatConfig {
     }
 
     @Bean(name = AVIATION_CHAT_CLIENT_BEAN)
-    public ChatClient aviationChatClient(FuelServiceTool fuelServiceTool, ChatClient.Builder builder, ChatMemory aviationChatMemory, TokenUsageAdvisor tokenUsageAdvisor) {
+    public ChatClient aviationChatClient(ToolCallbackProvider mcpToolCallbackProvider, ChatClient.Builder builder, ChatMemory aviationChatMemory, TokenUsageAdvisor tokenUsageAdvisor) {
         return builder
                 .defaultSystem(systemPrompt)
                 .defaultAdvisors(
                         MessageChatMemoryAdvisor.builder(aviationChatMemory).build(),
                         tokenUsageAdvisor
                 )
-                .defaultTools(fuelServiceTool)
+                .defaultToolCallbacks(mcpToolCallbackProvider)
                 .build();
     }
 }

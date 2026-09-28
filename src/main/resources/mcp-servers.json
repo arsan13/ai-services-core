@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ai-services-mcp-server": {
+      "command": "C:\\Program Files\\Microsoft\\jdk-21.0.12.101-hotspot\\bin\\java.exe",
+      "args": [
+        "-jar",
+        "C:\\Users\\anbarsan.p\\Workspace\\Personal\\ai-services-mcp-server\\target\\ai-services-mcp-server-0.0.1-SNAPSHOT.jar"
+      ]
+    }
+  }
+}
