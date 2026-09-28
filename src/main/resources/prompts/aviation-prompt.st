@@ -10,7 +10,7 @@ RULES:
 - regisNbr format: N + 3 digits + 2 uppercase letters (e.g., N121FE). Ask if missing/invalid.
 - Stop immediately after the first actionable discrepancy.
 - Use strict equality (==), less than (<), and greater than (>) for numerical comparisons.
-- Fuel unit: gallons.
+- Fuel unit: pounds (lbs).
 - Airport codes: 3-letter strings.
 
 
@@ -22,11 +22,11 @@ Always begin the workflow by retrieving:
 blockInFuel = getBlockInFuel(regisNbr)
 fuelSlip = getFirstFuelSlip(regisNbr)
 
-STEP 1 - FUEL QUANTITY GAP CHECK: Equality Check: blockInFuel == fuelSlip.preFob
+STEP 1 - FUEL QUANTITY GAP CHECK: Call isFuelQuantityMatching(regisNbr).
    - IF TRUE: Fuel quantities match means no gap found. Skip to STEP 3 (COMPLETION TIME CHECK).
    - IF FALSE: Fuel quantity gap found between recorded block-in fuel and fuel slip FOB . Proceed to STEP 2 (BAD BLOCK-IN FUEL CHECK).
 
-STEP 2 - BAD BLOCK-IN FUEL CHECK: blockInFuel == getInRangeRemainingFuel(regisNbr)
+STEP 2 - BAD BLOCK-IN FUEL CHECK: Call isBlockInFuelCorrect(regisNbr).
    - IF TRUE: Block-in fuel is correct. ACTION: Correct the remaining fuel calculation. STOP analysis.
    - IF FALSE: Proceed to STEP 3 (COMPLETION TIME CHECK).
 
@@ -38,12 +38,10 @@ STEP 4 - WRONG AIRCRAFT CHECK: isWrongAircraft(regisNbr) checks if the fuel slip
    - IF TRUE: ACTION: Verify correct aircraft registration number used in fuel slip. STOP analysis.
    - IF FALSE: Proceed to STEP 5 (GAP TYPE CHECK)
 
-STEP 5 - GAP TYPE CHECK:
-    Calculate gap:
-    gap = fuelSlip.preFob - blockInFuel
-   - IF gap == 0: No gap exists. ACTION: Escalate for further investigation. STOP analysis.
-   - IF gap > 0: Positive Gap. Proceed to STEP 6 (MISSING UPLIFT FUEL SLIP CHECK).
-   - IF gap < 0: Negative Gap. Proceed to STEP 7 (MISSING APU RUN FUEL SLIP CHECK).
+STEP 5 - GAP TYPE CHECK: Call getFuelGapType(regisNbr).
+   - IF NONE: No gap exists. ACTION: Escalate for further investigation. STOP analysis.
+   - IF POSITIVE: Positive Gap. Proceed to STEP 6 (MISSING UPLIFT FUEL SLIP CHECK).
+   - IF NEGATIVE: Negative Gap. Proceed to STEP 7 (MISSING APU RUN FUEL SLIP CHECK).
 
 STEP 6 - MISSING UPLIFT FUEL SLIP CHECK: isMissingUpliftFuelSlip(regisNbr) checks for missing uplift fuel slip when gap is positive.
    - IF TRUE: ACTION: Create Uplift Fuel Slip. STOP analysis.
