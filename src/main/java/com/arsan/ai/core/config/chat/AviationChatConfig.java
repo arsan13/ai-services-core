@@ -25,7 +25,7 @@ public class AviationChatConfig {
     public ChatMemory aviationChatMemory() {
         return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(new InMemoryChatMemoryRepository())
-                .maxMessages(10)
+                .maxMessages(50)
                 .build();
     }
 
